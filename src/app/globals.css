@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  --bg:        #18140f;   /* warm dark — aged paper in a dark room */
+  --surface:   #221d16;   /* card / panel background */
+  --border:    #332b20;   /* warm dark divider */
+  --text:      #f0ece4;   /* warm cream white */
+  --text-dim:  #9a8f82;   /* warm mid-gray for secondary text */
+  --accent:    #d4920a;   /* rich amber gold */
+  --accent-dim:#a87010;   /* deeper amber for hover/muted states */
+  --danger:    #e05c4a;   /* warm red */
+  --mono:  'Courier New', Courier, monospace;
+  --sans:  -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --serif: Georgia, 'Times New Roman', serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 18px; /* base — all rem values scale from here */
+}
+
+body {
+  background:  var(--bg);
+  color:       var(--text);
+  font-family: var(--sans);   /* sans default; mono used explicitly for data */
+  line-height: 1.65;
+  min-height:  100vh;
+}
