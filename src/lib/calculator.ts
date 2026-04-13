@@ -167,18 +167,58 @@ export function fmt(n: number): string {
 // Data based on 2025-2026 averages by market tier.
 // ==============================================
 
+// Family size options
+export const FAMILY_SIZES = [
+  "Single",
+  "Couple",
+  "Family of 3",
+  "Family of 4",
+] as const;
+export type FamilySize = (typeof FAMILY_SIZES)[number];
+
+// Health insurance annual premiums by family size
+// Source: KFF Employer Health Benefits Survey 2025 / ACA marketplace 2026
+export const HEALTH_INSURANCE_BY_FAMILY: Record<FamilySize, number> = {
+  "Single":      7400,   // individual ACA avg
+  "Couple":      14800,  // two-person plan avg
+  "Family of 3": 19200,  // two adults + one child
+  "Family of 4": 22000,  // two adults + two children
+};
+
 export interface CostOfLiving {
-  rent:           number; // 1BR apartment/mo
+  rent:           number; // housing/mo (adjusted for family size)
   food:           number; // groceries + dining/mo
-  transportation: number; // car or transit/mo
-  utilities:      number; // electric, internet, phone/mo
+  transportation: number; // car payment/insurance or transit/mo
+  utilities:      number; // electric, gas, water/mo
+  cellPhone:      number; // cell plan(s)/mo
+  clothing:       number; // clothing + personal care/mo
+  entertainment:  number; // streaming, activities, misc/mo
+  childcare:      number; // daycare/school costs/mo (0 if no children)
+  savings:        number; // recommended emergency fund contribution/mo
 }
 
-// Monthly expense estimates by market tier
-export const COST_OF_LIVING: Record<LocationTier, CostOfLiving> = {
-  "Major Market": { rent: 2500, food: 550, transportation: 150, utilities: 175 },
-  "Mid Market":   { rent: 1500, food: 450, transportation: 375, utilities: 145 },
-  "Small Market": { rent:  900, food: 350, transportation: 425, utilities: 120 },
+// Monthly expense estimates by market tier AND family size
+// Sources: BLS Consumer Expenditure Survey 2024, MIT Living Wage Calculator,
+// NerdWallet Cost of Living data 2025-2026
+export const COST_OF_LIVING: Record<LocationTier, Record<FamilySize, CostOfLiving>> = {
+  "Major Market": {
+    "Single":      { rent: 2500, food: 550,  transportation: 150,  utilities: 175, cellPhone: 80,  clothing: 120, entertainment: 100, childcare: 0,    savings: 300 },
+    "Couple":      { rent: 3200, food: 900,  transportation: 400,  utilities: 220, cellPhone: 150, clothing: 200, entertainment: 150, childcare: 0,    savings: 500 },
+    "Family of 3": { rent: 3800, food: 1100, transportation: 500,  utilities: 260, cellPhone: 160, clothing: 280, entertainment: 180, childcare: 2200, savings: 600 },
+    "Family of 4": { rent: 4400, food: 1400, transportation: 600,  utilities: 300, cellPhone: 200, clothing: 350, entertainment: 200, childcare: 3800, savings: 700 },
+  },
+  "Mid Market": {
+    "Single":      { rent: 1500, food: 450,  transportation: 375,  utilities: 145, cellPhone: 80,  clothing: 100, entertainment: 80,  childcare: 0,    savings: 200 },
+    "Couple":      { rent: 1900, food: 750,  transportation: 600,  utilities: 185, cellPhone: 150, clothing: 160, entertainment: 120, childcare: 0,    savings: 350 },
+    "Family of 3": { rent: 2300, food: 900,  transportation: 700,  utilities: 220, cellPhone: 160, clothing: 220, entertainment: 140, childcare: 1400, savings: 400 },
+    "Family of 4": { rent: 2700, food: 1150, transportation: 800,  utilities: 250, cellPhone: 200, clothing: 280, entertainment: 160, childcare: 2600, savings: 500 },
+  },
+  "Small Market": {
+    "Single":      { rent:  900, food: 350,  transportation: 425,  utilities: 120, cellPhone: 75,  clothing: 80,  entertainment: 60,  childcare: 0,    savings: 150 },
+    "Couple":      { rent: 1200, food: 600,  transportation: 650,  utilities: 155, cellPhone: 140, clothing: 130, entertainment: 90,  childcare: 0,    savings: 250 },
+    "Family of 3": { rent: 1500, food: 750,  transportation: 750,  utilities: 185, cellPhone: 150, clothing: 180, entertainment: 110, childcare: 900,  savings: 300 },
+    "Family of 4": { rent: 1800, food: 950,  transportation: 850,  utilities: 210, cellPhone: 190, clothing: 230, entertainment: 130, childcare: 1800, savings: 400 },
+  },
 };
 
 // Cumulative CPI inflation from Jan 2019 → Jan 2026 (~27%)
@@ -192,15 +232,31 @@ export interface RealityCheckResult {
   food:              number;
   transportation:    number;
   utilities:         number;
+  cellPhone:         number;
+  clothing:          number;
+  entertainment:     number;
+  childcare:         number;
+  savings:           number;
+  healthInsurance:   number; // monthly portion of annual premium
   totalExpenses:     number;
   leftOver:          number;
-  in2019Dollars:     number; // purchasing power of take-home in 2019 terms
+  in2019Dollars:     number;
 }
 
-export function realityCheck(takeHome: number, location: LocationTier): RealityCheckResult {
-  const col   = COST_OF_LIVING[location];
-  const monthly = takeHome / 12;
-  const totalExpenses = col.rent + col.food + col.transportation + col.utilities;
+export function realityCheck(
+  takeHome:   number,
+  location:   LocationTier,
+  familySize: FamilySize = "Single",
+): RealityCheckResult {
+  const col            = COST_OF_LIVING[location][familySize];
+  const monthly        = takeHome / 12;
+  const healthMonthly  = HEALTH_INSURANCE_BY_FAMILY[familySize] / 12;
+
+  const totalExpenses =
+    col.rent + col.food + col.transportation + col.utilities +
+    col.cellPhone + col.clothing + col.entertainment +
+    col.childcare + col.savings + healthMonthly;
+
   const leftOver = monthly - totalExpenses;
 
   return {
@@ -209,6 +265,12 @@ export function realityCheck(takeHome: number, location: LocationTier): RealityC
     food:             col.food,
     transportation:   col.transportation,
     utilities:        col.utilities,
+    cellPhone:        col.cellPhone,
+    clothing:         col.clothing,
+    entertainment:    col.entertainment,
+    childcare:        col.childcare,
+    savings:          col.savings,
+    healthInsurance:  healthMonthly,
     totalExpenses,
     leftOver,
     in2019Dollars:    takeHome / INFLATION_SINCE_2019,

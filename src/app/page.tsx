@@ -6,11 +6,11 @@ import { Suspense } from "react";
 import { track } from "@vercel/analytics";          // custom event tracking
 import { createClient } from "@/lib/supabase/client"; // anonymous DB logging
 import {
-  DISCIPLINES, EXPERIENCE_LEVELS, LOCATION_TIERS,
+  DISCIPLINES, EXPERIENCE_LEVELS, LOCATION_TIERS, FAMILY_SIZES,
   DEFAULT_BILLABLE_DAYS, calculate, realityCheck, marketRange, fmt,
   INFLATION_BASE_YEAR, RATE_FLOORS, LOCATION_MULTIPLIERS,
   HEALTH_INSURANCE_ANNUAL, SE_TAX_RATE, PROFIT_RATE,
-  type Discipline, type ExperienceLevel, type LocationTier,
+  type Discipline, type ExperienceLevel, type LocationTier, type FamilySize,
   type CalcInputs, type CalcResults, type RealityCheckResult,
 } from "@/lib/calculator";
 
@@ -306,97 +306,121 @@ function ClientView({ params }: { params: URLSearchParams }) {
 
 // ==============================================
 // REALITY CHECK PANEL
-// Shows what the take-home goal actually means
-// month-to-month after basic living expenses.
+// Shows monthly cost of living breakdown by
+// family size, with all major expense categories.
 // ==============================================
-function RealityCheck({ rc, location }: { rc: RealityCheckResult; location: string }) {
+function RealityCheck({
+  rc, location, familySize, onFamilySizeChange,
+}: {
+  rc:                 RealityCheckResult;
+  location:           string;
+  familySize:         FamilySize;
+  onFamilySizeChange: (f: FamilySize) => void;
+}) {
   const leftOverColor = rc.leftOver < 300
     ? "var(--danger)"
     : rc.leftOver < 800
     ? "#f5a623"
     : "var(--text)";
 
-  const row = (label: string, value: string, negative = false, dim = false) => (
+  const row = (label: string, value: string, negative = false) => (
     <div key={label} style={{
-      display: "flex",
-      justifyContent: "space-between",
-      padding: "0.7rem 0",
-      borderBottom: "1px solid var(--border)",
-      fontSize: "0.8rem",
+      display: "flex", justifyContent: "space-between",
+      padding: "0.65rem 0", borderBottom: "1px solid var(--border)", fontSize: "0.8rem",
     }}>
-      <span style={{ color: dim ? "var(--text-dim)" : "var(--text)" }}>{label}</span>
-      <span style={{
-        fontFamily: "var(--mono)",
-        color: negative ? "var(--danger)" : dim ? "var(--text-dim)" : "var(--text)",
-      }}>
+      <span style={{ color: "var(--text-dim)" }}>{label}</span>
+      <span style={{ fontFamily: "var(--mono)", color: negative ? "var(--danger)" : "var(--text-dim)" }}>
         {negative ? "−" : ""}{value}
       </span>
     </div>
   );
 
   return (
-    <div style={{
-      marginTop: "3rem",
-      borderTop: "2px solid var(--border)",
-      paddingTop: "2rem",
-    }}>
+    <div style={{ marginTop: "3rem", borderTop: "2px solid var(--border)", paddingTop: "2rem" }}>
       <div style={{ fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
         Reality Check
       </div>
-      <h2 style={{ fontSize: "1.4rem", fontFamily: "var(--mono)", marginBottom: "0.5rem", lineHeight: 1.2 }}>
+      <h2 style={{ fontSize: "1.4rem", fontFamily: "var(--mono)", marginBottom: "0.75rem", lineHeight: 1.2 }}>
         What does this actually buy you?
       </h2>
 
       {/* Inflation context */}
-      <p style={{ fontSize: "0.78rem", color: "var(--text-dim)", lineHeight: 1.7, marginBottom: "1.5rem" }}>
+      <p style={{ fontFamily: "var(--serif)", fontSize: "0.88rem", color: "var(--text-dim)", lineHeight: 1.7, marginBottom: "1.5rem" }}>
         In {INFLATION_BASE_YEAR} dollars, your {fmt(rc.monthlyTakeHome * 12)} take-home goal
         has the purchasing power of <strong style={{ color: "var(--text)" }}>{fmt(rc.in2019Dollars)}</strong>.
         Inflation didn&apos;t wait for your rate to catch up.
       </p>
 
+      {/* Family size selector */}
+      <div style={{ marginBottom: "1.5rem" }}>
+        <div style={{ fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.6rem" }}>
+          Household size
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          {FAMILY_SIZES.map((f) => (
+            <button key={f} onClick={() => onFamilySizeChange(f)} style={{
+              background:    familySize === f ? "var(--accent)" : "transparent",
+              color:         familySize === f ? "#000" : "var(--text-dim)",
+              border:        `1px solid ${familySize === f ? "var(--accent)" : "var(--border)"}`,
+              fontFamily:    "var(--mono)",
+              fontSize:      "0.7rem",
+              letterSpacing: "0.08em",
+              padding:       "0.4rem 0.8rem",
+              cursor:        "pointer",
+            }}>
+              {f}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Monthly breakdown */}
       <div style={{ marginBottom: "1.5rem" }}>
         <div style={{ fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.75rem" }}>
-          Monthly in a {location}
+          Monthly expenses — {familySize} in a {location}
         </div>
 
-        {row("Monthly take-home", fmt(rc.monthlyTakeHome))}
-        {row("Rent (1BR avg)", fmt(rc.rent), true)}
-        {row("Food", fmt(rc.food), true)}
-        {row("Transportation", fmt(rc.transportation), true)}
-        {row("Utilities", fmt(rc.utilities), true)}
+        {row("Take-home",           fmt(rc.monthlyTakeHome))}
+        {row("Rent / housing",      fmt(rc.rent),           true)}
+        {row("Food",                fmt(rc.food),           true)}
+        {row("Transportation",      fmt(rc.transportation), true)}
+        {row("Utilities",           fmt(rc.utilities),      true)}
+        {row("Health insurance",    fmt(rc.healthInsurance),true)}
+        {row("Cell phone",          fmt(rc.cellPhone),      true)}
+        {row("Clothing & personal", fmt(rc.clothing),       true)}
+        {row("Entertainment",       fmt(rc.entertainment),  true)}
+        {rc.childcare > 0 && row("Childcare",  fmt(rc.childcare),  true)}
+        {row("Savings (recommended)", fmt(rc.savings),      true)}
       </div>
 
       {/* What's left */}
       <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "baseline",
-        padding: "1rem 1.2rem",
-        background: "var(--surface)",
-        borderLeft: `3px solid ${leftOverColor}`,
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        padding: "1rem 1.2rem", background: "var(--surface)",
+        borderLeft: `3px solid ${leftOverColor}`, flexWrap: "wrap", gap: "1rem",
       }}>
         <div>
           <div style={{ fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.2rem" }}>
-            Left over after essentials
+            Left over after all expenses
           </div>
-          <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", lineHeight: 1.5 }}>
-            {rc.leftOver < 300
+          <div style={{ fontFamily: "var(--serif)", fontSize: "0.8rem", color: "var(--text-dim)", lineHeight: 1.5 }}>
+            {rc.leftOver < 0
+              ? "This take-home goal doesn't cover your expenses. You need a higher rate."
+              : rc.leftOver < 300
               ? "This isn't a living wage. It's survival mode."
               : rc.leftOver < 800
-              ? "There's almost no cushion here. One bad month and you're in trouble."
-              : "This gives you some breathing room — but not much margin for the unexpected."}
+              ? "Almost no cushion. One bad month and you're in trouble."
+              : "Some breathing room — but not much margin for the unexpected."}
           </div>
         </div>
-        <div style={{ fontFamily: "var(--mono)", fontSize: "2rem", color: leftOverColor, whiteSpace: "nowrap", marginLeft: "1.5rem" }}>
+        <div style={{ fontFamily: "var(--mono)", fontSize: "2rem", color: leftOverColor, whiteSpace: "nowrap" }}>
           {rc.leftOver < 0 ? "−" : ""}{fmt(Math.abs(rc.leftOver))}/mo
         </div>
       </div>
 
       <p style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "1rem", lineHeight: 1.6 }}>
-        These are estimates based on 2025–2026 averages for a {location}. Your actual expenses will vary —
-        but if your number already feels tight here, it&apos;s tight in real life.
-        Consider raising your take-home goal before calculating your rate.
+        Estimates based on 2025–2026 averages. Sources: BLS Consumer Expenditure Survey, MIT Living Wage Calculator.
+        Your actual expenses will vary — but if it&apos;s tight here, it&apos;s tight in real life.
       </p>
     </div>
   );
@@ -595,7 +619,9 @@ function Survey({ inputs }: { inputs: CalcInputs }) {
 // RESULTS PANEL
 // ==============================================
 function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs }) {
-  const rc = realityCheck(inputs.takeHome, inputs.location);
+  // Family size lives in Results — independent of the rate calculation
+  const [familySize, setFamilySize] = useState<FamilySize>("Single");
+  const rc = realityCheck(inputs.takeHome, inputs.location, familySize);
   const lineStyle = {
     display: "flex",
     justifyContent: "space-between",
@@ -703,7 +729,12 @@ function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs
 
       <MarketRangePanel results={results} inputs={inputs} />
 
-      <RealityCheck rc={rc} location={inputs.location} />
+      <RealityCheck
+        rc={rc}
+        location={inputs.location}
+        familySize={familySize}
+        onFamilySizeChange={setFamilySize}
+      />
 
       <Survey inputs={inputs} />
     </div>
