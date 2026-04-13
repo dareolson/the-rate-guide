@@ -574,11 +574,6 @@ function Calculator() {
             How we calculate it →
           </a>
         </p>
-        <div style={{ display: "flex", gap: "1.5rem", marginTop: "1.25rem" }}>
-          <a href="/methodology" style={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-dim)", textDecoration: "none" }}>Methodology</a>
-          <a href="/store"       style={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-dim)", textDecoration: "none" }}>The Store</a>
-          <a href="/login"       style={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-dim)", textDecoration: "none" }}>Sign In</a>
-        </div>
       </div>
 
       {/* Form */}
@@ -670,24 +665,60 @@ function Calculator() {
           ))}
         </div>
 
-        <button
-          onClick={() => setResults(calculate(inputs))}
-          style={{
-            width: "100%",
-            padding: "1rem",
-            background: "var(--accent)",
-            color: "#000",
-            fontFamily: "var(--mono)",
-            fontSize: "0.85rem",
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            border: "none",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Calculate My Rate
-        </button>
+        {/* Calculate + Reset buttons */}
+        <div style={{ display: "flex", gap: "0.75rem" }}>
+          <button
+            onClick={() => setResults(calculate(inputs))}
+            style={{
+              flex: 1,
+              padding: "1rem",
+              background: "var(--accent)",
+              color: "#000",
+              fontFamily: "var(--mono)",
+              fontSize: "0.85rem",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              border: "none",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+          >
+            Calculate My Rate
+          </button>
+
+          {/* Reset — clears results and returns inputs to defaults */}
+          {results && (
+            <button
+              onClick={() => {
+                setResults(null);
+                setInputs({
+                  discipline:    "Cinematographer / DP",
+                  experience:    "Mid",
+                  location:      "Mid Market",
+                  takeHome:      60000,
+                  billableDays:  DEFAULT_BILLABLE_DAYS,
+                  hasKit:        false,
+                  includeProfit: true,
+                });
+                router.replace("/", { scroll: false });
+              }}
+              style={{
+                padding:        "1rem 1.25rem",
+                background:     "none",
+                border:         "1px solid var(--border)",
+                color:          "var(--text-dim)",
+                fontFamily:     "var(--mono)",
+                fontSize:       "0.72rem",
+                letterSpacing:  "0.15em",
+                textTransform:  "uppercase",
+                cursor:         "pointer",
+                whiteSpace:     "nowrap",
+              }}
+            >
+              Reset
+            </button>
+          )}
+        </div>
       </div>
 
       {results && <Results results={results} inputs={inputs} />}
