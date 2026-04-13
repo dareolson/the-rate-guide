@@ -392,6 +392,11 @@ function Calculator() {
             How we calculate it →
           </a>
         </p>
+        <div style={{ display: "flex", gap: "1.5rem", marginTop: "1.25rem" }}>
+          <a href="/methodology" style={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-dim)", textDecoration: "none" }}>Methodology</a>
+          <a href="/store"       style={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-dim)", textDecoration: "none" }}>The Store</a>
+          <a href="/login"       style={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-dim)", textDecoration: "none" }}>Sign In</a>
+        </div>
       </div>
 
       {/* Form */}
