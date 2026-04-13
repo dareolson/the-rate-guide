@@ -317,7 +317,16 @@ function RealityCheck({
   familySize:         FamilySize;
   onFamilySizeChange: (f: FamilySize) => void;
 }) {
-  const leftOverColor = rc.leftOver < 300
+  // Childcare toggle — on by default when family has kids, user can turn off
+  const hasKids            = rc.childcare > 0;
+  const [includeChildcare, setIncludeChildcare] = useState(true);
+
+  // Recalculate left over if childcare is toggled off
+  const effectiveChildcare = includeChildcare ? rc.childcare : 0;
+  const effectiveTotal     = rc.totalExpenses - rc.childcare + effectiveChildcare;
+  const effectiveLeftOver  = rc.monthlyTakeHome - effectiveTotal;
+
+  const leftOverColor = effectiveLeftOver < 300
     ? "var(--danger)"
     : rc.leftOver < 800
     ? "#f5a623"
@@ -389,8 +398,36 @@ function RealityCheck({
         {row("Cell phone",          fmt(rc.cellPhone),      true)}
         {row("Clothing & personal", fmt(rc.clothing),       true)}
         {row("Entertainment",       fmt(rc.entertainment),  true)}
-        {rc.childcare > 0 && row("Childcare",  fmt(rc.childcare),  true)}
-        {row("Savings (recommended)", fmt(rc.savings),      true)}
+        {/* Childcare row with toggle */}
+        {hasKids && (
+          <div style={{
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+            padding: "0.65rem 0", borderBottom: "1px solid var(--border)", fontSize: "0.8rem",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+              <span style={{ color: includeChildcare ? "var(--text-dim)" : "var(--border)" }}>
+                Childcare
+              </span>
+              {/* Toggle — lets user turn off childcare if kids are older */}
+              <button
+                onClick={() => setIncludeChildcare(!includeChildcare)}
+                style={{
+                  fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase",
+                  background: "none", border: `1px solid var(--border)`,
+                  color: "var(--text-dim)", fontFamily: "var(--mono)",
+                  padding: "0.15rem 0.5rem", cursor: "pointer",
+                }}
+              >
+                {includeChildcare ? "remove" : "add back"}
+              </button>
+            </div>
+            <span style={{ fontFamily: "var(--mono)", color: includeChildcare ? "var(--danger)" : "var(--border)" }}>
+              {includeChildcare ? `−${fmt(rc.childcare)}` : "—"}
+            </span>
+          </div>
+        )}
+
+        {row("Savings (recommended)", fmt(rc.savings), true)}
       </div>
 
       {/* What's left */}
@@ -404,17 +441,17 @@ function RealityCheck({
             Left over after all expenses
           </div>
           <div style={{ fontFamily: "var(--serif)", fontSize: "0.8rem", color: "var(--text-dim)", lineHeight: 1.5 }}>
-            {rc.leftOver < 0
+            {effectiveLeftOver < 0
               ? "This take-home goal doesn't cover your expenses. You need a higher rate."
-              : rc.leftOver < 300
+              : effectiveLeftOver < 300
               ? "This isn't a living wage. It's survival mode."
-              : rc.leftOver < 800
+              : effectiveLeftOver < 800
               ? "Almost no cushion. One bad month and you're in trouble."
               : "Some breathing room — but not much margin for the unexpected."}
           </div>
         </div>
         <div style={{ fontFamily: "var(--mono)", fontSize: "2rem", color: leftOverColor, whiteSpace: "nowrap" }}>
-          {rc.leftOver < 0 ? "−" : ""}{fmt(Math.abs(rc.leftOver))}/mo
+          {effectiveLeftOver < 0 ? "−" : ""}{fmt(Math.abs(effectiveLeftOver))}/mo
         </div>
       </div>
 
