@@ -70,6 +70,26 @@ create policy "Anyone can log a calculation"
 create policy "Authenticated users can read calc events"
   on public.calc_events for select using (auth.role() = 'authenticated');
 
+-- Current rate disclosures — what people actually charge right now
+-- Anonymous — discipline/experience/location only, no user ID, no income goal
+-- This is the raw material for community median averages in the market range panel
+create table public.current_rate_reports (
+  id           uuid default gen_random_uuid() primary key,
+  created_at   timestamptz default now(),
+  discipline   text not null,
+  experience   text not null,
+  location     text not null,
+  current_rate numeric not null
+);
+
+alter table public.current_rate_reports enable row level security;
+
+create policy "Anyone can submit a rate report"
+  on public.current_rate_reports for insert with check (true);
+
+create policy "Authenticated users can read rate reports"
+  on public.current_rate_reports for select using (auth.role() = 'authenticated');
+
 -- Survey responses — did this inspire them to raise their rate?
 create table public.survey_responses (
   id             uuid default gen_random_uuid() primary key,

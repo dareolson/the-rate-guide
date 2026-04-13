@@ -653,6 +653,113 @@ function Survey({ inputs }: { inputs: CalcInputs }) {
 }
 
 // ==============================================
+// GAP ANALYSIS
+// Optional "what do you actually charge?" input.
+// Shows how much the user is leaving on the table,
+// and logs their real rate for community median data.
+// ==============================================
+function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcInputs }) {
+  const [raw,      setRaw]      = useState("");       // raw input string
+  const [logged,   setLogged]   = useState(false);    // prevent duplicate DB writes
+
+  // Parse to a clean number — empty string = no entry yet
+  const current = raw === "" ? null : Number(raw.replace(/[^0-9]/g, ""));
+  const valid   = current !== null && !isNaN(current) && current > 0;
+
+  // Gap math
+  const gapPerDay  = valid ? results.dayRate - current!  : 0;
+  const gapPerYear = gapPerDay * results.billableDays;
+  const overMin    = valid && current! >= results.dayRate;
+
+  // Log to Supabase once per unique entry (on blur)
+  const handleBlur = async () => {
+    if (!valid || logged) return;
+    try {
+      const supabase = createClient();
+      await supabase.from("current_rate_reports").insert({
+        discipline:   inputs.discipline,
+        experience:   inputs.experience,
+        location:     inputs.location,
+        current_rate: current,
+      });
+      setLogged(true);
+    } catch (_) {
+      // Silent — never block UX on logging failure
+    }
+  };
+
+  return (
+    <div style={{ marginTop: "2.5rem", paddingTop: "2rem", borderTop: "1px solid var(--border)" }}>
+      <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.75rem" }}>
+        Reality Check
+      </div>
+      <div style={{ fontSize: "0.9rem", color: "var(--text)", marginBottom: "1rem", lineHeight: 1.5 }}>
+        What are you currently charging?{" "}
+        <span style={{ color: "var(--text-dim)", fontSize: "0.8rem" }}>(optional — helps us show real market averages)</span>
+      </div>
+
+      {/* Input */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.25rem" }}>
+        <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "1.1rem" }}>$</span>
+        <input
+          type="number"
+          min="0"
+          placeholder="e.g. 450"
+          value={raw}
+          onChange={e => { setRaw(e.target.value); setLogged(false); }}
+          onBlur={handleBlur}
+          style={{
+            background:   "var(--surface)",
+            border:       "1px solid var(--border)",
+            color:        "var(--text)",
+            fontFamily:   "var(--mono)",
+            fontSize:     "1.1rem",
+            padding:      "0.6rem 0.85rem",
+            width:        "160px",
+            outline:      "none",
+          }}
+        />
+        <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "0.8rem" }}>/day</span>
+      </div>
+
+      {/* Gap display — only shown once they've entered a valid number */}
+      {valid && (
+        <div style={{
+          background:  "var(--surface)",
+          border:      `1px solid ${overMin ? "var(--accent)" : "var(--danger)"}`,
+          padding:     "1.25rem 1.5rem",
+          lineHeight:  1.7,
+        }}>
+          {overMin ? (
+            // Charging at or above their minimum — positive reinforcement
+            <div>
+              <div style={{ fontFamily: "var(--mono)", fontSize: "1.1rem", color: "var(--accent)", marginBottom: "0.4rem" }}>
+                You&apos;re charging above your minimum. Nice.
+              </div>
+              <div style={{ fontSize: "0.82rem", color: "var(--text-dim)" }}>
+                {fmt(current!)}/day vs. {fmt(results.dayRate)}/day minimum. You have {fmt(current! - results.dayRate)}/day of cushion — {fmt((current! - results.dayRate) * results.billableDays)}/year.
+              </div>
+            </div>
+          ) : (
+            // Undercharging — show the dollar gap clearly
+            <div>
+              <div style={{ fontFamily: "var(--mono)", fontSize: "1.1rem", color: "var(--danger)", marginBottom: "0.4rem" }}>
+                You&apos;re leaving {fmt(gapPerYear)}/year on the table.
+              </div>
+              <div style={{ fontSize: "0.82rem", color: "var(--text-dim)", lineHeight: 1.7 }}>
+                {fmt(current!)}/day vs. {fmt(results.dayRate)}/day minimum — a gap of {fmt(gapPerDay)}/day.
+                At {results.billableDays} billable days, that&apos;s <strong style={{ color: "var(--danger)" }}>{fmt(gapPerYear)}</strong> per year
+                you&apos;re effectively working for free.
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ==============================================
 // RESULTS PANEL
 // ==============================================
 function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs }) {
@@ -763,6 +870,8 @@ function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs
       </div>
 
       <ShareButton inputs={inputs} results={results} />
+
+      <GapAnalysis results={results} inputs={inputs} />
 
       <MarketRangePanel results={results} inputs={inputs} />
 
