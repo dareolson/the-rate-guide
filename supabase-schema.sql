@@ -70,6 +70,25 @@ create policy "Anyone can log a calculation"
 create policy "Authenticated users can read calc events"
   on public.calc_events for select using (auth.role() = 'authenticated');
 
+-- Survey responses — did this inspire them to raise their rate?
+create table public.survey_responses (
+  id             uuid default gen_random_uuid() primary key,
+  created_at     timestamptz default now(),
+  response       text not null,
+  increase_range text,        -- only set if "Yes, I'm raising it"
+  discipline     text,
+  experience     text,
+  location       text
+);
+
+alter table public.survey_responses enable row level security;
+
+create policy "Anyone can submit a survey response"
+  on public.survey_responses for insert with check (true);
+
+create policy "Authenticated users can read survey responses"
+  on public.survey_responses for select using (auth.role() = 'authenticated');
+
 -- Auto-create a profile row when a new user signs up
 create or replace function public.handle_new_user()
 returns trigger as $$

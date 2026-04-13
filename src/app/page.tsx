@@ -403,6 +403,124 @@ function RealityCheck({ rc, location }: { rc: RealityCheckResult; location: stri
 }
 
 // ==============================================
+// SURVEY
+// Single question at the end of results.
+// Captures whether the calculator changed how
+// the user thinks about their rate — used as
+// marketing data ("X% were inspired to raise").
+// ==============================================
+const RESPONSES = [
+  "Yes, I'm raising it",
+  "Yes, I realized I was already fair",
+  "Not sure yet",
+  "No change",
+] as const;
+
+const INCREASE_RANGES = [
+  "Less than $50/day",
+  "$50–$100/day",
+  "$100–$200/day",
+  "$200–$500/day",
+  "More than $500/day",
+] as const;
+
+function Survey({ inputs }: { inputs: CalcInputs }) {
+  const [selected,  setSelected]  = useState<string | null>(null);
+  const [range,     setRange]     = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleResponse = async (response: string) => {
+    setSelected(response);
+    // If raising their rate, wait for the follow-up range before submitting
+    if (response !== "Yes, I'm raising it") {
+      await submit(response, null);
+    }
+  };
+
+  const handleRange = async (r: string) => {
+    setRange(r);
+    await submit(selected!, r);
+  };
+
+  const submit = async (response: string, increaseRange: string | null) => {
+    try {
+      const supabase = createClient();
+      await supabase.from("survey_responses").insert({
+        response,
+        increase_range: increaseRange,
+        discipline:     inputs.discipline,
+        experience:     inputs.experience,
+        location:       inputs.location,
+      });
+    } catch (_) {
+      // Silent — never block UX on a survey failure
+    } finally {
+      setSubmitted(true);
+    }
+  };
+
+  const btnStyle = (active: boolean) => ({
+    background:    active ? "var(--accent)" : "var(--surface)",
+    color:         active ? "#000" : "var(--text-dim)",
+    border:        `1px solid ${active ? "var(--accent)" : "var(--border)"}`,
+    fontFamily:    "var(--sans)",
+    fontSize:      "0.82rem",
+    padding:       "0.65rem 1rem",
+    cursor:        "pointer",
+    textAlign:     "left" as const,
+    lineHeight:    1.4,
+    transition:    "all 0.15s",
+  });
+
+  return (
+    <div style={{ marginTop: "3rem", borderTop: "2px solid var(--border)", paddingTop: "2rem" }}>
+      <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
+        Quick question
+      </div>
+
+      {/* Submitted state */}
+      {submitted ? (
+        <div>
+          <p style={{ fontFamily: "var(--serif)", fontSize: "1rem", color: "var(--text)", lineHeight: 1.7 }}>
+            Thanks for sharing. Every response helps us show the world what freelancers are really worth.
+          </p>
+        </div>
+
+      /* Follow-up: how much are you raising it? */
+      ) : selected === "Yes, I'm raising it" && !range ? (
+        <div>
+          <h3 style={{ fontFamily: "var(--sans)", fontWeight: 700, fontSize: "1.1rem", marginBottom: "1.25rem", lineHeight: 1.3 }}>
+            By how much?
+          </h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {INCREASE_RANGES.map((r) => (
+              <button key={r} onClick={() => handleRange(r)} style={btnStyle(false)}>
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+
+      /* Initial question */
+      ) : (
+        <div>
+          <h3 style={{ fontFamily: "var(--sans)", fontWeight: 700, fontSize: "1.1rem", marginBottom: "1.25rem", lineHeight: 1.3 }}>
+            Did this change how you think about your rate?
+          </h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {RESPONSES.map((r) => (
+              <button key={r} onClick={() => handleResponse(r)} style={btnStyle(selected === r)}>
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ==============================================
 // RESULTS PANEL
 // ==============================================
 function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs }) {
@@ -513,6 +631,8 @@ function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs
       <ShareButton inputs={inputs} results={results} />
 
       <RealityCheck rc={rc} location={inputs.location} />
+
+      <Survey inputs={inputs} />
     </div>
   );
 }
