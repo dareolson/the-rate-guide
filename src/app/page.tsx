@@ -7,7 +7,7 @@ import { track } from "@vercel/analytics";          // custom event tracking
 import { createClient } from "@/lib/supabase/client"; // anonymous DB logging
 import {
   DISCIPLINES, EXPERIENCE_LEVELS, LOCATION_TIERS,
-  DEFAULT_BILLABLE_DAYS, calculate, realityCheck, fmt,
+  DEFAULT_BILLABLE_DAYS, calculate, realityCheck, marketRange, fmt,
   INFLATION_BASE_YEAR, RATE_FLOORS, LOCATION_MULTIPLIERS,
   HEALTH_INSURANCE_ANNUAL, SE_TAX_RATE, PROFIT_RATE,
   type Discipline, type ExperienceLevel, type LocationTier,
@@ -403,6 +403,77 @@ function RealityCheck({ rc, location }: { rc: RealityCheckResult; location: stri
 }
 
 // ==============================================
+// MARKET RANGE PANEL
+// Shows where the user's rate sits within the
+// typical floor→ceiling range for their profile.
+// Phase 2: swap in real median from calc_events
+// once enough data exists (target: 10+ per combo).
+// ==============================================
+function MarketRangePanel({ results, inputs }: { results: CalcResults; inputs: CalcInputs }) {
+  const mr = marketRange(inputs.discipline, inputs.experience, inputs.location, results.dayRate);
+
+  // Position label and color
+  const config = {
+    below: { label: "Below market",       color: "var(--danger)",  message: "Your rate is below the floor for your discipline and market. This isn't humility — it's leaving money on the table." },
+    low:   { label: "Low end of market",  color: "#f5a623",        message: "You're in the market but on the lower end. There's meaningful room to grow without pricing yourself out." },
+    mid:   { label: "Mid market",         color: "var(--accent)",  message: "Your rate is solid and defensible. You're where working professionals at your level typically land." },
+    high:  { label: "High end of market", color: "var(--accent)",  message: "You're commanding a strong rate. This is where well-positioned, in-demand professionals operate." },
+    above: { label: "Above market",       color: "var(--text-dim)", message: "Your rate is above the typical ceiling. Make sure your credits and reputation can support it — or reconsider your take-home goal." },
+  }[mr.position];
+
+  // Bar width clamped to 4–96% so it never touches the edges
+  const barWidth = Math.min(Math.max(mr.percentile, 4), 96);
+
+  return (
+    <div style={{ marginTop: "3rem", borderTop: "2px solid var(--border)", paddingTop: "2rem" }}>
+      <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
+        Market Context
+      </div>
+      <h2 style={{ fontFamily: "var(--sans)", fontWeight: 700, fontSize: "1.3rem", marginBottom: "0.5rem", lineHeight: 1.2 }}>
+        Where does your rate land?
+      </h2>
+      <p style={{ fontFamily: "var(--serif)", fontSize: "0.88rem", color: "var(--text-dim)", lineHeight: 1.7, marginBottom: "1.75rem" }}>
+        Based on 2024–2025 market data for a <strong style={{ color: "var(--text)" }}>{inputs.experience} {inputs.discipline}</strong> in a <strong style={{ color: "var(--text)" }}>{inputs.location}</strong>.
+      </p>
+
+      {/* Position label */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.6rem" }}>
+        <span style={{ fontFamily: "var(--mono)", fontSize: "0.78rem", color: config.color, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+          {config.label}
+        </span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: "0.78rem", color: "var(--text-dim)" }}>
+          {fmt(mr.floor)} — {fmt(mr.ceiling)}
+        </span>
+      </div>
+
+      {/* Range bar */}
+      <div style={{ position: "relative", height: "6px", background: "var(--border)", marginBottom: "0.5rem" }}>
+        {/* Filled portion */}
+        <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${barWidth}%`, background: config.color, transition: "width 0.4s ease" }} />
+        {/* Marker dot */}
+        <div style={{ position: "absolute", top: "50%", left: `${barWidth}%`, transform: "translate(-50%, -50%)", width: "14px", height: "14px", borderRadius: "50%", background: config.color, border: "2px solid var(--bg)" }} />
+      </div>
+
+      {/* Floor / ceiling labels */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1.25rem" }}>
+        <span style={{ fontSize: "0.65rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Floor</span>
+        <span style={{ fontSize: "0.65rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Ceiling</span>
+      </div>
+
+      {/* Contextual message */}
+      <p style={{ fontFamily: "var(--serif)", fontSize: "0.88rem", color: "var(--text-dim)", lineHeight: 1.75, borderLeft: `3px solid ${config.color}`, paddingLeft: "1rem" }}>
+        {config.message}
+      </p>
+
+      {/* Future: community median note */}
+      <p style={{ fontSize: "0.68rem", color: "var(--text-dim)", marginTop: "1rem", lineHeight: 1.6, fontStyle: "italic" }}>
+        Range based on industry rate surveys and union data. As more users calculate their rates, we&apos;ll show real community medians here.
+      </p>
+    </div>
+  );
+}
+
+// ==============================================
 // SURVEY
 // Single question at the end of results.
 // Captures whether the calculator changed how
@@ -629,6 +700,8 @@ function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs
       </div>
 
       <ShareButton inputs={inputs} results={results} />
+
+      <MarketRangePanel results={results} inputs={inputs} />
 
       <RealityCheck rc={rc} location={inputs.location} />
 

@@ -31,6 +31,50 @@ export const RATE_FLOORS: Record<Discipline, Record<ExperienceLevel, number>> = 
   "Producer":              { Emerging: 400, Mid: 650, Senior: 900,  Expert: 1200 },
 };
 
+// Typical rate ceilings by discipline + experience ($/day)
+// Represents what well-positioned professionals at each level command.
+// Floor = minimum the market pays. Ceiling = strong-but-realistic top end.
+// Source: industry rate surveys, union cards, production rate data 2024-2025.
+export const RATE_CEILINGS: Record<Discipline, Record<ExperienceLevel, number>> = {
+  "Camera Operator":       { Emerging: 600,  Mid: 900,  Senior: 1300, Expert: 1800 },
+  "Cinematographer / DP":  { Emerging: 800,  Mid: 1400, Senior: 2000, Expert: 3000 },
+  "Video Editor":          { Emerging: 550,  Mid: 900,  Senior: 1400, Expert: 2000 },
+  "Colorist":              { Emerging: 650,  Mid: 1000, Senior: 1600, Expert: 2500 },
+  "Motion Designer":       { Emerging: 600,  Mid: 1000, Senior: 1500, Expert: 2200 },
+  "Producer":              { Emerging: 650,  Mid: 1100, Senior: 1600, Expert: 2500 },
+};
+
+// Returns the market range (floor → ceiling) adjusted for location
+// and the position label for the user's rate within that range.
+export function marketRange(
+  discipline: Discipline,
+  experience: ExperienceLevel,
+  location:   LocationTier,
+  dayRate:    number,
+): {
+  floor:       number;
+  ceiling:     number;
+  position:    "below" | "low" | "mid" | "high" | "above";
+  percentile:  number; // 0–100 within the floor→ceiling range
+} {
+  const multiplier = LOCATION_MULTIPLIERS[location];
+  const floor      = RATE_FLOORS[discipline][experience]   * multiplier;
+  const ceiling    = RATE_CEILINGS[discipline][experience] * multiplier;
+
+  // Position within range as 0–100
+  const raw        = (dayRate - floor) / (ceiling - floor);
+  const percentile = Math.round(Math.min(Math.max(raw * 100, 0), 100));
+
+  const position =
+    dayRate < floor            ? "below" :
+    dayRate < floor + (ceiling - floor) * 0.33 ? "low"   :
+    dayRate < floor + (ceiling - floor) * 0.66 ? "mid"   :
+    dayRate <= ceiling         ? "high"  :
+    "above";
+
+  return { floor, ceiling, position, percentile };
+}
+
 export const LOCATION_MULTIPLIERS: Record<LocationTier, number> = {
   "Major Market": 1.3,
   "Mid Market":   1.0,
