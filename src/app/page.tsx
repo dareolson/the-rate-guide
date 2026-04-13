@@ -956,11 +956,18 @@ function Calculator() {
         <h1 style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", fontFamily: "var(--mono)", lineHeight: 1.1, marginBottom: "1rem" }}>
           Know your rate.<br />Stop undercharging.
         </h1>
-        <p style={{ color: "var(--text-dim)", fontSize: "0.85rem", lineHeight: 1.7 }}>
+        <p style={{ color: "var(--text-dim)", fontSize: "0.85rem", lineHeight: 1.7, marginBottom: "0.75rem" }}>
           This calculator shows the math — every line, every reason. No guessing. No apology.{" "}
           <a href="/methodology" style={{ color: "var(--accent)", textDecoration: "none", borderBottom: "1px solid var(--accent)" }}>
             How we calculate it →
           </a>
+        </p>
+        {/* Descriptive paragraph — crawlable by search engines, surfaces all disciplines and use cases */}
+        <p style={{ color: "var(--text-dim)", fontSize: "0.78rem", lineHeight: 1.8, maxWidth: "540px", opacity: 0.7 }}>
+          A free day rate calculator for cinematographers, DPs, video editors, colorists, motion designers,
+          producers, and camera operators. Enter your take-home goal and we&apos;ll calculate the freelance
+          day rate you need to cover self-employment tax, health insurance, and a profit margin — then check
+          it against real market floors for your experience level and location.
         </p>
       </div>
 
@@ -1143,34 +1150,109 @@ function Calculator() {
 
 // ==============================================
 // STRUCTURED DATA (JSON-LD)
-// Tells Google this is a web application tool.
-// Improves rich result eligibility in search.
+// Two schemas:
+//   1. WebApplication — tells Google this is a tool
+//   2. FAQPage — targets "People Also Ask" results
+//      for the exact questions freelancers search
 // ==============================================
 function StructuredData() {
-  const schema = {
-    "@context":       "https://schema.org",
-    "@type":          "WebApplication",
-    "name":           "The Rate Guide",
-    "url":            "https://therateguide.com",
-    "description":    "A free, transparent day rate calculator for creative freelancers. Calculate your fair rate based on take-home goal, self-employment tax, health insurance, and market floors.",
+  const appSchema = {
+    "@context":          "https://schema.org",
+    "@type":             "WebApplication",
+    "name":              "The Rate Guide — Freelance Day Rate Calculator",
+    "url":               "https://therateguide.com",
+    "description":       "Free day rate calculator for creative freelancers. Enter your take-home goal and calculate the day rate you need to cover self-employment tax, health insurance, and profit margin — then see where you fall in the market.",
     "applicationCategory": "BusinessApplication",
-    "operatingSystem": "Web",
+    "operatingSystem":   "Web",
     "offers": {
-      "@type": "Offer",
-      "price": "0",
+      "@type":         "Offer",
+      "price":         "0",
       "priceCurrency": "USD",
     },
     "audience": {
-      "@type":       "Audience",
-      "audienceType": "Creative Freelancers — Cinematographers, Video Editors, Colorists, Motion Designers, Producers, Camera Operators",
+      "@type":        "Audience",
+      "audienceType": "Creative freelancers — cinematographers, DPs, video editors, colorists, motion designers, producers, camera operators",
     },
   };
 
+  // FAQ schema targets "People Also Ask" boxes in Google results.
+  // Each question matches a real search query pattern.
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type":    "FAQPage",
+    "mainEntity": [
+      {
+        "@type":          "Question",
+        "name":           "How do I calculate my freelance day rate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text":  "Start with your annual take-home goal, add health insurance (~$7,400/year for an individual), then add self-employment tax (15.3%), and an optional 20% profit margin. Divide the total by your estimated billable days (typically 100–175/year). This gives the day rate you need to break even and build a sustainable business.",
+        },
+      },
+      {
+        "@type":          "Question",
+        "name":           "How much should a freelance cinematographer or DP charge per day?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text":  "Freelance cinematographer (DP) day rates typically range from $500–$800/day for emerging-level, $800–$1,400/day for mid-level, $1,200–$2,000/day for senior, and $1,500–$3,000/day for expert-level DPs. Rates increase by roughly 30% in major markets like New York or Los Angeles.",
+        },
+      },
+      {
+        "@type":          "Question",
+        "name":           "What is a fair day rate for a freelance video editor?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text":  "Freelance video editor day rates generally range from $350–$550/day for emerging editors, $550–$900/day mid-level, $750–$1,400/day senior, and $1,000–$2,000/day for expert editors. Rates vary by market — major markets like LA and NYC command a 30% premium over the national baseline.",
+        },
+      },
+      {
+        "@type":          "Question",
+        "name":           "How much does a freelance colorist charge per day?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text":  "Freelance colorist day rates range from $400–$650/day for emerging colorists up to $900–$2,500/day for expert colorists. Colorists who own a DaVinci Resolve Studio suite or work in specialized genres (narrative, commercial) typically command higher rates.",
+        },
+      },
+      {
+        "@type":          "Question",
+        "name":           "What should a freelance motion designer charge per day?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text":  "Freelance motion designer day rates range from $350–$600/day for emerging designers to $850–$2,200/day for expert motion designers. Rates depend on software specialization (After Effects, Cinema 4D, Houdini), client type (agency, brand, broadcast), and market.",
+        },
+      },
+      {
+        "@type":          "Question",
+        "name":           "Why do freelancers need to charge more than salaried employees?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text":  "Freelancers pay both the employee and employer halves of Social Security and Medicare taxes — a 15.3% self-employment tax that salaried workers split with their employer. Freelancers also pay their own health insurance (often $600–$1,800/month), have no paid time off, and must cover slow periods with revenue from billable days. These costs must be built into the day rate to break even.",
+        },
+      },
+      {
+        "@type":          "Question",
+        "name":           "How many billable days per year does a freelancer actually work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text":  "Most full-time freelancers bill between 100 and 175 days per year. The rest is spent on unpaid administrative work, business development, travel, invoicing, taxes, and seasonal slowdowns. 150 days is a common realistic estimate for an established freelancer.",
+        },
+      },
+      {
+        "@type":          "Question",
+        "name":           "How does location affect freelance day rates?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text":  "Major markets like New York, Los Angeles, and Chicago typically pay 25–35% more than national baseline rates due to higher cost of living and denser production markets. Mid-sized markets approximate the national baseline, while smaller markets are typically 10–20% below.",
+        },
+      },
+    ],
+  };
+
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+    </>
   );
 }
 
