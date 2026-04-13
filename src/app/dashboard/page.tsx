@@ -352,7 +352,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "3rem", flexWrap: "wrap", gap: "1rem" }}>
         <div>
-          <a href="/" style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>URWorthy</a>
+          <a href="/" style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>The Rate Guide</a>
           <h1 style={{ fontFamily: "var(--mono)", fontSize: "1.8rem", marginTop: "0.5rem" }}>Your Dashboard</h1>
           <p style={{ color: "var(--text-dim)", fontSize: "0.78rem", marginTop: "0.25rem" }}>{profile.email}</p>
         </div>

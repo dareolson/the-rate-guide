@@ -381,7 +381,7 @@ function Calculator() {
       {/* Header */}
       <div style={{ marginBottom: "3.5rem" }}>
         <div style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.75rem" }}>
-          URWorthy
+          The Rate Guide
         </div>
         <h1 style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", fontFamily: "var(--mono)", lineHeight: 1.1, marginBottom: "1rem" }}>
           Know your rate.<br />Stop undercharging.

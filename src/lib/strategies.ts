@@ -1,5 +1,5 @@
 // ==============================================
-// URWorthy — Rate Justification Strategies
+// The Rate Guide — Rate Justification Strategies
 // Discipline-specific proficiencies, skills, credits,
 // and positioning moves that justify a higher rate.
 // Key format: "Discipline__ExperienceLevel"

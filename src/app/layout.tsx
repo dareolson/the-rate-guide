@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "URWorthy — Know Your Rate",
+  title: "The Rate Guide — Know Your Rate",
   description: "A transparent rate calculator for creative freelancers. Stop undercharging.",
 };
 

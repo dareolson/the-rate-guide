@@ -61,7 +61,7 @@ export default function LoginPage() {
 
       <div style={{ marginBottom: "3rem" }}>
         <a href="/" style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>
-          ← URWorthy
+          ← The Rate Guide
         </a>
         <h1 style={{ fontSize: "2rem", fontFamily: "var(--mono)", marginTop: "1.5rem", lineHeight: 1.1 }}>
           {mode === "login" ? "Welcome back." : "Create your account."}

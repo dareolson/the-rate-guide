@@ -1,5 +1,5 @@
 // ==============================================
-// URWorthy — Methodology & Rate Justification
+// The Rate Guide — Methodology & Rate Justification
 // A transparent breakdown of how every number
 // in the calculator was derived and sourced.
 // ==============================================
@@ -91,7 +91,7 @@ export default function MethodologyPage() {
       {/* Header */}
       <div style={{ marginBottom: "3rem" }}>
         <a href="/" style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>
-          ← URWorthy
+          ← The Rate Guide
         </a>
         <h1 style={{ fontFamily: "var(--mono)", fontSize: "2rem", marginTop: "1.5rem", lineHeight: 1.1 }}>
           How We Calculate Your Rate

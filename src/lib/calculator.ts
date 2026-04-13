@@ -1,5 +1,5 @@
 // ==============================================
-// URWorthy Rate Calculator Logic
+// The Rate Guide — Rate Calculator Logic
 // Mirrors the formula in LOGIC.md exactly.
 // ==============================================
 
