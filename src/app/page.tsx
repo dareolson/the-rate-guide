@@ -6,7 +6,8 @@ import { Suspense } from "react";
 import {
   DISCIPLINES, EXPERIENCE_LEVELS, LOCATION_TIERS,
   DEFAULT_BILLABLE_DAYS, calculate, realityCheck, fmt,
-  INFLATION_BASE_YEAR,
+  INFLATION_BASE_YEAR, RATE_FLOORS, LOCATION_MULTIPLIERS,
+  HEALTH_INSURANCE_ANNUAL, SE_TAX_RATE, PROFIT_RATE,
   type Discipline, type ExperienceLevel, type LocationTier,
   type CalcInputs, type CalcResults, type RealityCheckResult,
 } from "@/lib/calculator";
@@ -90,40 +91,214 @@ function RadioGroup<T extends string>({
 }
 
 // ==============================================
-// SHARE BUTTON
+// SHARE BUTTONS
+// Two versions: personal (full inputs) and
+// client-safe (rate only, no income/days exposed)
 // ==============================================
-function ShareButton({ inputs }: { inputs: CalcInputs }) {
-  const [copied, setCopied] = useState(false);
+function ShareButton({ inputs, results }: { inputs: CalcInputs; results: CalcResults }) {
+  const [copiedPersonal, setCopiedPersonal] = useState(false);
+  const [copiedClient,   setCopiedClient]   = useState(false);
 
-  const copy = () => {
+  // Personal link — full inputs, for sharing with yourself or peers
+  const copyPersonal = () => {
     const params = inputsToParams(inputs);
     const url = `${window.location.origin}?${params.toString()}`;
     navigator.clipboard.writeText(url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopiedPersonal(true);
+      setTimeout(() => setCopiedPersonal(false), 2000);
     });
   };
 
+  // Client-safe link — hides income goal and billable days
+  // Only passes discipline, experience, location, computed rate, and kit flag
+  const copyClient = () => {
+    const p = new URLSearchParams();
+    p.set("d",      inputs.discipline);
+    p.set("e",      inputs.experience);
+    p.set("l",      inputs.location);
+    p.set("r",      String(Math.round(results.dayRate)));  // computed rate only
+    p.set("k",      inputs.hasKit ? "1" : "0");
+    p.set("client", "1");                                  // triggers client view
+    const url = `${window.location.origin}?${p.toString()}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedClient(true);
+      setTimeout(() => setCopiedClient(false), 2000);
+    });
+  };
+
+  const btnBase = {
+    background:     "none",
+    fontFamily:     "var(--mono)",
+    fontSize:       "0.72rem",
+    letterSpacing:  "0.15em",
+    textTransform:  "uppercase" as const,
+    padding:        "0.65rem 1.5rem",
+    cursor:         "pointer",
+    transition:     "color 0.2s, border-color 0.2s",
+    flex:           1,
+  };
+
   return (
-    <button
-      onClick={copy}
-      style={{
-        marginTop: "1.5rem",
-        background: "none",
-        border: `1px solid ${copied ? "var(--accent)" : "var(--border)"}`,
-        color: copied ? "var(--accent)" : "var(--text-dim)",
-        fontFamily: "var(--mono)",
-        fontSize: "0.72rem",
-        letterSpacing: "0.15em",
-        textTransform: "uppercase",
-        padding: "0.65rem 1.5rem",
-        cursor: "pointer",
-        transition: "color 0.2s, border-color 0.2s",
-        width: "100%",
-      }}
-    >
-      {copied ? "Link Copied ✓" : "Copy Shareable Link ↗"}
-    </button>
+    <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+      {/* Personal share — shows all your numbers */}
+      <button onClick={copyPersonal} style={{
+        ...btnBase,
+        border: `1px solid ${copiedPersonal ? "var(--accent)" : "var(--border)"}`,
+        color:  copiedPersonal ? "var(--accent)" : "var(--text-dim)",
+      }}>
+        {copiedPersonal ? "Copied ✓" : "Copy My Link ↗"}
+      </button>
+
+      {/* Client share — hides income goal, shows only rate + overhead context */}
+      <button onClick={copyClient} style={{
+        ...btnBase,
+        border:      `1px solid ${copiedClient ? "var(--accent)" : "var(--accent)"}`,
+        color:       copiedClient ? "var(--accent)" : "#000",
+        background:  copiedClient ? "transparent" : "var(--accent)",
+        fontWeight:  "bold",
+      }}>
+        {copiedClient ? "Client Link Copied ✓" : "Share With Client ↗"}
+      </button>
+    </div>
+  );
+}
+
+// ==============================================
+// CLIENT VIEW
+// Shown when ?client=1 is in the URL.
+// Displays the rate with structural justifications
+// only — no personal income or billable day count.
+// ==============================================
+function ClientView({ params }: { params: URLSearchParams }) {
+  const d = params.get("d") as Discipline | null;
+  const e = params.get("e") as ExperienceLevel | null;
+  const l = params.get("l") as LocationTier | null;
+  const r = Number(params.get("r"));
+  const hasKit = params.get("k") === "1";
+
+  // Validate params — fall back gracefully if malformed
+  const discipline = d && DISCIPLINES.includes(d)         ? d : null;
+  const experience = e && EXPERIENCE_LEVELS.includes(e)   ? e : null;
+  const location   = l && LOCATION_TIERS.includes(l)      ? l : null;
+
+  if (!discipline || !experience || !location || !r) {
+    return (
+      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "6rem 1.5rem", textAlign: "center" }}>
+        <p style={{ color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Invalid rate card link.</p>
+      </div>
+    );
+  }
+
+  const floor = RATE_FLOORS[discipline][experience] * LOCATION_MULTIPLIERS[location];
+
+  // Generic overhead breakdown — no personal numbers
+  // Uses median take-home as basis for illustration only
+  const medianTakeHome     = 75000;
+  const healthPct          = HEALTH_INSURANCE_ANNUAL / (medianTakeHome + HEALTH_INSURANCE_ANNUAL) * 100;
+  const seTaxPct           = Math.round(SE_TAX_RATE * 100 * 10) / 10;
+  const profitPct          = Math.round(PROFIT_RATE * 100);
+
+  const row = (label: string, value: string, note: string) => (
+    <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "1.1rem 0", borderBottom: "1px solid var(--border)", gap: "1.5rem" }}>
+      <div>
+        <div style={{ fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.25rem" }}>{label}</div>
+        <div style={{ fontFamily: "var(--serif)", fontSize: "0.82rem", color: "var(--text-dim)", lineHeight: 1.65, maxWidth: "400px" }}>{note}</div>
+      </div>
+      <div style={{ fontFamily: "var(--mono)", fontSize: "0.95rem", color: "var(--accent)", whiteSpace: "nowrap", textAlign: "right", paddingTop: "0.1rem" }}>{value}</div>
+    </div>
+  );
+
+  return (
+    <div style={{ maxWidth: "720px", margin: "0 auto", padding: "5rem 1.5rem 6rem" }}>
+
+      {/* Header */}
+      <div style={{ marginBottom: "3rem" }}>
+        <a href="/" style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>
+          The Rate Guide
+        </a>
+        <h1 style={{ fontFamily: "var(--mono)", fontSize: "1.6rem", marginTop: "1.25rem", lineHeight: 1.2 }}>
+          Rate Justification<br />for a {experience} {discipline}
+        </h1>
+        <p style={{ fontFamily: "var(--serif)", color: "var(--text-dim)", fontSize: "0.9rem", marginTop: "0.75rem", lineHeight: 1.75 }}>
+          This document explains how a professional day rate is calculated for a creative freelancer.
+          Every line item reflects a real cost — not a preference.
+        </p>
+      </div>
+
+      {/* The rate */}
+      <div style={{ borderTop: "2px solid var(--accent)", paddingTop: "2rem", marginBottom: "2.5rem" }}>
+        <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.5rem" }}>
+          Day Rate
+        </div>
+        <div style={{ fontFamily: "var(--mono)", fontSize: "clamp(3rem, 8vw, 4.5rem)", lineHeight: 1, color: "var(--accent)" }}>
+          {fmt(r)}
+        </div>
+        {hasKit && (
+          <div style={{ fontSize: "0.75rem", color: "var(--text-dim)", marginTop: "0.5rem" }}>
+            + Kit fee billed separately
+          </div>
+        )}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginTop: "1.5rem", background: "var(--surface)", padding: "1.25rem" }}>
+          {[
+            ["Half-Day", fmt(r * 0.6)],
+            ["Hourly",   fmt(r / 10)],
+          ].map(([label, value]) => (
+            <div key={label}>
+              <div style={{ fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.25rem" }}>{label}</div>
+              <div style={{ fontFamily: "var(--mono)", fontSize: "1.3rem", color: "var(--text)" }}>{value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Market floor reference */}
+      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: "1rem 1.25rem", marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
+        <div style={{ fontSize: "0.75rem", color: "var(--text-dim)", lineHeight: 1.6 }}>
+          Market floor for a {experience} {discipline} in a {location}
+        </div>
+        <div style={{ fontFamily: "var(--mono)", fontSize: "1.1rem", color: r >= floor ? "var(--text)" : "var(--danger)" }}>
+          {fmt(floor)}/day
+        </div>
+      </div>
+
+      {/* Why this number — structural overhead */}
+      <div style={{ marginBottom: "2rem" }}>
+        <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "1.25rem" }}>
+          What this rate covers
+        </div>
+
+        {row(
+          "Self-employment tax",
+          `${seTaxPct}%`,
+          `Freelancers pay both the employer and employee sides of Social Security and Medicare — ${seTaxPct}% of gross income. A salaried employee's employer absorbs half this cost invisibly. Freelancers absorb it entirely.`
+        )}
+        {row(
+          "Health insurance",
+          `~${fmt(HEALTH_INSURANCE_ANNUAL)}/yr`,
+          `Without employer-sponsored coverage, freelancers purchase individual health insurance on the open market. The 2026 ACA marketplace average for an individual is approximately ${fmt(HEALTH_INSURANCE_ANNUAL)} per year before subsidies.`
+        )}
+        {row(
+          "Operating margin",
+          `${profitPct}%`,
+          `A ${profitPct}% operating margin is standard practice for professional service businesses. It covers equipment maintenance, dry periods between projects, professional development, and the administrative cost of running an independent business.`
+        )}
+        {row(
+          "Billable days",
+          "~150/yr",
+          `Freelancers do not bill 260 days a year. Time is lost to project sourcing, proposal writing, invoicing, travel, equipment prep, and the unavoidable gaps between engagements. 150 billable days is the realistic industry standard.`
+        )}
+      </div>
+
+      {/* Footer links */}
+      <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+        <a href="/methodology" style={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>
+          Full methodology with sources →
+        </a>
+        <a href="/" style={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-dim)", textDecoration: "none" }}>
+          Calculate your own rate →
+        </a>
+      </div>
+    </div>
   );
 }
 
@@ -333,7 +508,7 @@ function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs
         ))}
       </div>
 
-      <ShareButton inputs={inputs} />
+      <ShareButton inputs={inputs} results={results} />
 
       <RealityCheck rc={rc} location={inputs.location} />
     </div>
@@ -342,10 +517,17 @@ function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs
 
 // ==============================================
 // CALCULATOR — form + state
+// Detects ?client=1 and renders ClientView instead
 // ==============================================
 function Calculator() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // If client=1 is in the URL, render the client-safe view
+  if (searchParams.get("client") === "1") {
+    return <ClientView params={searchParams} />;
+  }
+
   const urlInputs = paramsToInputs(searchParams);
 
   const [inputs, setInputs] = useState<CalcInputs>({
