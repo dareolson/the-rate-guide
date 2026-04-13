@@ -4,6 +4,20 @@
 // in the calculator was derived and sourced.
 // ==============================================
 
+import type { Metadata } from "next";
+
+// Page-specific metadata — inherits site name from layout title template
+export const metadata: Metadata = {
+  title:       "How We Calculate Freelance Day Rates",
+  description: "A fully sourced breakdown of the freelance rate formula — self-employment tax, health insurance, billable days, market floors, and inflation. Show your clients the math.",
+  alternates:  { canonical: "/methodology" },
+  openGraph: {
+    title:       "How We Calculate Freelance Day Rates — The Rate Guide",
+    description: "Every number sourced. SE tax from the IRS, health insurance from KFF, inflation from BLS CPI-U. Show this page to any client who questions your rate.",
+    url:         "https://therateguide.com/methodology",
+  },
+};
+
 import {
   HEALTH_INSURANCE_ANNUAL,
   SE_TAX_RATE,

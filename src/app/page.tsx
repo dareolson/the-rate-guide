@@ -755,11 +755,47 @@ function Calculator() {
   );
 }
 
+// ==============================================
+// STRUCTURED DATA (JSON-LD)
+// Tells Google this is a web application tool.
+// Improves rich result eligibility in search.
+// ==============================================
+function StructuredData() {
+  const schema = {
+    "@context":       "https://schema.org",
+    "@type":          "WebApplication",
+    "name":           "The Rate Guide",
+    "url":            "https://therateguide.com",
+    "description":    "A free, transparent day rate calculator for creative freelancers. Calculate your fair rate based on take-home goal, self-employment tax, health insurance, and market floors.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+    },
+    "audience": {
+      "@type":       "Audience",
+      "audienceType": "Creative Freelancers — Cinematographers, Video Editors, Colorists, Motion Designers, Producers, Camera Operators",
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
 // Suspense required for useSearchParams in Next.js App Router
 export default function Page() {
   return (
-    <Suspense>
-      <Calculator />
-    </Suspense>
+    <>
+      <StructuredData />
+      <Suspense>
+        <Calculator />
+      </Suspense>
+    </>
   );
 }

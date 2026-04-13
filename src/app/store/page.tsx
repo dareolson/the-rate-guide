@@ -6,6 +6,19 @@
 // affiliate links once accounts are approved.
 // ==============================================
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title:       "Resources for Creative Freelancers",
+  description: "Hand-picked books, courses, software, and tools for cinematographers, editors, colorists, motion designers, and producers who want to charge what they're worth.",
+  alternates:  { canonical: "/store" },
+  openGraph: {
+    title:       "The Store — The Rate Guide",
+    description: "Curated resources for creative freelancers. Negotiation, mindset, business tools, software, and gear — everything hand-picked.",
+    url:         "https://therateguide.com/store",
+  },
+};
+
 // ==============================================
 // TYPES
 // ==============================================

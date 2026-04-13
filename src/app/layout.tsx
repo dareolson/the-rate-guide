@@ -3,8 +3,53 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"; // page view + event tracking
 
 export const metadata: Metadata = {
-  title: "The Rate Guide — Know Your Rate",
-  description: "A transparent rate calculator for creative freelancers. Stop undercharging.",
+  // Title template — child pages override the first part, site name stays
+  title: {
+    default:  "The Rate Guide — Know Your Rate",
+    template: "%s — The Rate Guide",
+  },
+  description:
+    "A free, transparent day rate calculator for creative freelancers — cinematographers, editors, colorists, motion designers, and producers. Stop undercharging.",
+  keywords: [
+    "freelance day rate calculator",
+    "cinematographer day rate",
+    "video editor rates",
+    "how much to charge as a freelancer",
+    "freelance creative rates",
+    "DP day rate",
+    "colorist rates",
+    "motion designer rates",
+    "producer day rate",
+    "freelance rate guide",
+  ],
+  // Canonical URL — prevents duplicate content penalties
+  metadataBase: new URL("https://therateguide.com"),
+  alternates: { canonical: "/" },
+  // Open Graph — controls how the link looks when shared on social
+  openGraph: {
+    type:        "website",
+    url:         "https://therateguide.com",
+    title:       "The Rate Guide — Know Your Rate",
+    description: "Free day rate calculator for creative freelancers. See the full math — SE tax, health insurance, market floors, and more.",
+    siteName:    "The Rate Guide",
+  },
+  // Twitter card
+  twitter: {
+    card:        "summary_large_image",
+    title:       "The Rate Guide — Know Your Rate",
+    description: "Stop undercharging. See exactly what your day rate needs to cover.",
+  },
+  // Crawling permissions
+  robots: {
+    index:          true,
+    follow:         true,
+    googleBot: {
+      index:             true,
+      follow:            true,
+      "max-snippet":     -1,
+      "max-image-preview": "large",
+    },
+  },
 };
 
 // ==============================================
