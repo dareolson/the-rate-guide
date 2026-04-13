@@ -737,6 +737,22 @@ function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs
       />
 
       <Survey inputs={inputs} />
+
+      {/* Start Over — clears all URL params and results */}
+      <div style={{ marginTop: "3rem", textAlign: "center" }}>
+        <a href="/" style={{
+          fontSize:       "0.7rem",
+          letterSpacing:  "0.15em",
+          textTransform:  "uppercase",
+          color:          "var(--text-dim)",
+          textDecoration: "none",
+          fontFamily:     "var(--mono)",
+          borderBottom:   "1px solid var(--border)",
+          paddingBottom:  "2px",
+        }}>
+          Start Over
+        </a>
+      </div>
     </div>
   );
 }

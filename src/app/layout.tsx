@@ -84,7 +84,6 @@ function Nav() {
       {/* Page links */}
       <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
         {[
-          { label: "Start Over", href: "/" },          // clears all URL params
           { label: "Methodology", href: "/methodology" },
           { label: "The Store", href: "/store" },
           { label: "Sign In", href: "/login" },
