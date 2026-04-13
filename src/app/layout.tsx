@@ -68,7 +68,7 @@ function Nav() {
       gap:            "1rem",
       flexWrap:       "wrap",
     }}>
-      {/* Logo / home */}
+      {/* Logo — links home, clears all URL params for a fresh start */}
       <a href="/" style={{
         fontFamily:     "var(--mono)",
         fontSize:       "0.78rem",
@@ -84,12 +84,12 @@ function Nav() {
       {/* Page links */}
       <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
         {[
-          { label: "Calculator", href: "/" },
+          { label: "Start Over", href: "/" },          // clears all URL params
           { label: "Methodology", href: "/methodology" },
           { label: "The Store", href: "/store" },
           { label: "Sign In", href: "/login" },
         ].map(({ label, href }) => (
-          <a key={href} href={href} style={{
+          <a key={label} href={href} style={{
             fontFamily:     "var(--mono)",
             fontSize:       "0.68rem",
             letterSpacing:  "0.12em",
