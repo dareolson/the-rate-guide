@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { track } from "@vercel/analytics";          // custom event tracking
+import { createClient } from "@/lib/supabase/client"; // anonymous DB logging
 import {
   DISCIPLINES, EXPERIENCE_LEVELS, LOCATION_TIERS,
   DEFAULT_BILLABLE_DAYS, calculate, realityCheck, fmt,
@@ -668,7 +670,34 @@ function Calculator() {
         {/* Calculate + Reset buttons */}
         <div style={{ display: "flex", gap: "0.75rem" }}>
           <button
-            onClick={() => setResults(calculate(inputs))}
+            onClick={async () => {
+            const r = calculate(inputs);
+            setResults(r);
+
+            // Track custom event in Vercel Analytics
+            track("calculate", {
+              discipline: inputs.discipline,
+              experience: inputs.experience,
+              location:   inputs.location,
+            });
+
+            // Log anonymous calculation to Supabase for aggregate market data
+            // Does NOT store take-home goal — only the computed rate and context
+            try {
+              const supabase = createClient();
+              await supabase.from("calc_events").insert({
+                discipline:    inputs.discipline,
+                experience:    inputs.experience,
+                location:      inputs.location,
+                day_rate:      Math.round(r.dayRate),
+                below_floor:   r.belowFloor,
+                has_kit:       inputs.hasKit,
+                billable_days: inputs.billableDays,
+              });
+            } catch (_) {
+              // Logging failure is silent — never block the user experience
+            }
+          }}
             style={{
               flex: 1,
               padding: "1rem",

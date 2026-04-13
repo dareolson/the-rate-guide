@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next"; // page view + event tracking
 
 export const metadata: Metadata = {
   title: "The Rate Guide — Know Your Rate",
@@ -69,6 +70,7 @@ export default function RootLayout({
       <body>
         <Nav />
         {children}
+        <Analytics /> {/* Vercel Analytics — tracks page views automatically */}
       </body>
     </html>
   );

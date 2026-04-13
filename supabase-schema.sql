@@ -45,6 +45,31 @@ create policy "Users can insert own rate history"
 create policy "Users can delete own rate history"
   on public.rate_history for delete using (auth.uid() = user_id);
 
+-- Anonymous calculation events — logged every time someone hits Calculate
+-- No user ID required — this is aggregate market data, not personal data
+create table public.calc_events (
+  id           uuid default gen_random_uuid() primary key,
+  created_at   timestamptz default now(),
+  discipline   text not null,
+  experience   text not null,
+  location     text not null,
+  day_rate     numeric not null,   -- computed result
+  below_floor  boolean not null,   -- was the rate below market floor?
+  has_kit      boolean not null,
+  billable_days integer not null
+  -- intentionally no take_home — we don't store personal income goals
+);
+
+-- Anyone can insert — no auth required (anonymous logging)
+alter table public.calc_events enable row level security;
+
+create policy "Anyone can log a calculation"
+  on public.calc_events for insert with check (true);
+
+-- Only authenticated users (future admin) can read aggregate data
+create policy "Authenticated users can read calc events"
+  on public.calc_events for select using (auth.role() = 'authenticated');
+
 -- Auto-create a profile row when a new user signs up
 create or replace function public.handle_new_user()
 returns trigger as $$
