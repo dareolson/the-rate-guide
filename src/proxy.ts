@@ -26,10 +26,12 @@ export async function proxy(request: NextRequest) {
   // Refresh session — do not remove this
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Protect /dashboard — redirect to /login if not authenticated
+  // Protect /dashboard — redirect to /login if not authenticated.
+  // Preserve the intended destination in ?next= so login can redirect back.
   if (!user && request.nextUrl.pathname.startsWith("/dashboard")) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    url.searchParams.set("next", request.nextUrl.pathname);
     return NextResponse.redirect(url);
   }
 
