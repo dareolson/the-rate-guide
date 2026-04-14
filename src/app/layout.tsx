@@ -1,6 +1,27 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"; // page view + event tracking
+import { JetBrains_Mono, Lora, Inter } from "next/font/google";
+import PaletteSwitcher from "@/components/PaletteSwitcher"; // DEV ONLY — remove after picking a palette
+
+// Load fonts via next/font — self-hosted, zero layout shift, no external requests
+const jetbrainsMono = JetBrains_Mono({
+  subsets:  ["latin"],
+  variable: "--font-mono",
+  display:  "swap",
+});
+
+const lora = Lora({
+  subsets:  ["latin"],
+  variable: "--font-serif",
+  display:  "swap",
+});
+
+const inter = Inter({
+  subsets:  ["latin"],
+  variable: "--font-sans",
+  display:  "swap",
+});
 
 export const metadata: Metadata = {
   // Title template — child pages override the first part, site name stays
@@ -133,11 +154,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${jetbrainsMono.variable} ${lora.variable} ${inter.variable}`}>
       <body>
         <Nav />
         {children}
         <Analytics /> {/* Vercel Analytics — tracks page views automatically */}
+        <PaletteSwitcher /> {/* DEV ONLY — remove after picking a palette */}
       </body>
     </html>
   );
