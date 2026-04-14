@@ -47,6 +47,27 @@ p {
   font-variant-numeric:  tabular-nums;
 }
 
+/* Scroll / mount animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Applied to sections that should animate in — add class fade-in to trigger */
+.fade-in {
+  animation: fadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Stagger children inside a fade-in container */
+.fade-in-stagger > * {
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.fade-in-stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.fade-in-stagger > *:nth-child(2) { animation-delay: 0.12s; }
+.fade-in-stagger > *:nth-child(3) { animation-delay: 0.19s; }
+.fade-in-stagger > *:nth-child(4) { animation-delay: 0.26s; }
+.fade-in-stagger > *:nth-child(5) { animation-delay: 0.33s; }
+
 /* Global focus states — amber glow ring on all form controls */
 input:focus,
 select:focus,

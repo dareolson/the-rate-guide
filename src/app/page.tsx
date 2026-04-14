@@ -346,7 +346,7 @@ function RealityCheck({
   );
 
   return (
-    <div style={{ marginTop: "3rem", borderTop: "2px solid var(--accent-2)", paddingTop: "2rem" }}>
+    <div style={{ marginTop: "3.5rem", borderTop: "2px solid var(--accent-2)", paddingTop: "2.5rem" }}>
       <div style={{ fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
         Monthly Breakdown
       </div>
@@ -623,7 +623,7 @@ function Survey({ inputs }: { inputs: CalcInputs }) {
   });
 
   return (
-    <div style={{ marginTop: "3rem", borderTop: "2px solid var(--accent-2)", paddingTop: "2rem" }}>
+    <div style={{ marginTop: "3.5rem", borderTop: "2px solid var(--accent-2)", paddingTop: "2.5rem" }}>
       <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.5rem" }}>
         Quick question
       </div>
@@ -794,7 +794,29 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
   };
 
   return (
-    <div style={{ marginTop: "3rem" }}>
+    <div className="fade-in" style={{ marginTop: "4.5rem" }}>
+
+      {/* ── ARRIVAL MARKER ─────────────────────────────────────────── */}
+      {/* Visual break between form and results — signals "you've arrived" */}
+      <div style={{
+        display:       "flex",
+        alignItems:    "center",
+        gap:           "1rem",
+        marginBottom:  "2.5rem",
+      }}>
+        <div style={{ flex: 1, height: "1px", background: "var(--accent-2)" }} />
+        <div style={{
+          fontFamily:    "var(--mono)",
+          fontSize:      "0.65rem",
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color:         "var(--accent)",
+          whiteSpace:    "nowrap",
+        }}>
+          Your Results
+        </div>
+        <div style={{ flex: 1, height: "1px", background: "var(--accent-2)" }} />
+      </div>
 
       {/* Sticky rate bar — stays visible as user scrolls through the breakdown */}
       <div style={{
@@ -922,6 +944,28 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
 
       <ShareButton inputs={inputs} results={results} />
 
+      {/* ── RHYTHM BREAK ───────────────────────────────────────────── */}
+      {/* Minimal pause between dense breakdown and market context.    */}
+      {/* A single large stat gives the eye a resting point.          */}
+      <div style={{
+        marginTop:  "3.5rem",
+        marginBottom: "3.5rem",
+        textAlign:  "center",
+        padding:    "2.5rem 1.5rem",
+        borderTop:    "1px solid var(--border)",
+        borderBottom: "1px solid var(--border)",
+      }}>
+        <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", fontFamily: "var(--mono)", marginBottom: "0.75rem" }}>
+          At {results.billableDays} billable days
+        </div>
+        <div style={{ fontFamily: "var(--mono)", fontSize: "clamp(2rem, 6vw, 3rem)", color: "var(--text)", lineHeight: 1, marginBottom: "0.6rem" }}>
+          {fmt((results.dayRate + results.kitFee) * results.billableDays)}/yr
+        </div>
+        <div style={{ fontSize: "0.8rem", color: "var(--text-dim)", fontFamily: "var(--serif)", lineHeight: 1.6 }}>
+          gross — before tax, insurance, and overhead
+        </div>
+      </div>
+
       {/* Gap summary — only shown if user entered their current rate above */}
       {currentRate !== null && currentRate > 0 && (() => {
         const gap    = results.dayRate - currentRate;
@@ -939,7 +983,9 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
       })()}
 
       {/* Market range — now shows where the CALCULATED minimum falls */}
-      <MarketRangePanel inputs={inputs} dayRate={results.dayRate} rateLabel="Your minimum" />
+      <div style={{ marginTop: "3.5rem" }}>
+        <MarketRangePanel inputs={inputs} dayRate={results.dayRate} rateLabel="Your minimum" topBorder={false} />
+      </div>
 
       <RealityCheck
         rc={rc}
@@ -1045,7 +1091,7 @@ function Calculator() {
     <div style={{ maxWidth: "720px", margin: "0 auto", padding: "4rem 1.5rem 6rem" }}>
 
       {/* Header */}
-      <div style={{ marginBottom: "3.5rem" }}>
+      <div className="fade-in" style={{ marginBottom: "4rem" }}>
         <div style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.75rem" }}>
           The Rate Guide
         </div>
@@ -1068,7 +1114,7 @@ function Calculator() {
       </div>
 
       {/* ── STEP 1: Profile ── */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+      <div className="fade-in-stagger" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
 
         <div>
           <Label>What do you do?</Label>
@@ -1141,7 +1187,7 @@ function Calculator() {
       </div>
 
       {/* ── STEP 3: Income calculator — collapsible ── */}
-      <div style={{ marginTop: "2.5rem", borderTop: "1px solid var(--border)", paddingTop: "1.75rem" }}>
+      <div style={{ marginTop: "3rem", borderTop: "1px solid var(--accent-2)", paddingTop: "2rem" }}>
 
         {/* Toggle */}
         <button
