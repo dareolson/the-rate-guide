@@ -822,7 +822,7 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
       {/* Main rate */}
       <div style={{ borderTop: "2px solid var(--accent)", paddingTop: "2rem", marginBottom: "2rem" }}>
         <div style={{ fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.5rem" }}>
-          Your Fair Day Rate
+          Your Target Day Rate
         </div>
         <div style={{ fontSize: "clamp(3rem, 8vw, 5rem)", fontFamily: "var(--mono)", lineHeight: 1, color: "var(--accent)" }}>
           {fmt(results.dayRate)}
