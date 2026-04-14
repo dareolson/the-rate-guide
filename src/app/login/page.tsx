@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import dynamic from "next/dynamic";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -154,10 +155,4 @@ function LoginForm() {
   );
 }
 
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
-  );
-}
+export default dynamic(() => Promise.resolve(LoginForm), { ssr: false });
