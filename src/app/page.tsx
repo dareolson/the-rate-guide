@@ -530,6 +530,11 @@ function MarketRangePanel({ results, inputs }: { results: CalcResults; inputs: C
       <p style={{ fontSize: "0.68rem", color: "var(--text-dim)", marginTop: "1rem", lineHeight: 1.6, fontStyle: "italic" }}>
         Range based on industry rate surveys and union data. As more users calculate their rates, we&apos;ll show real community medians here.
       </p>
+
+      {/* International disclaimer */}
+      <p style={{ fontSize: "0.65rem", color: "var(--text-dim)", marginTop: "0.5rem", lineHeight: 1.6, opacity: 0.6 }}>
+        Rate floors, market tiers, and cost of living data are based on the US market.
+      </p>
     </div>
   );
 }
