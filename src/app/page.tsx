@@ -812,10 +812,11 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
           Your Rate
         </span>
         <span style={{ fontFamily: "var(--mono)", fontSize: "1.4rem", color: "var(--accent)", fontWeight: "bold" }}>
-          {fmt(results.dayRate)}/day
+          {fmt(results.dayRate + results.kitFee)}/day
         </span>
         <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", color: "var(--text-dim)" }}>
           {fmt(results.halfDayRate)} half · {fmt(results.hourlyRate)}/hr
+          {results.kitFee > 0 && ` · incl. ${fmt(results.kitFee)} kit`}
         </span>
       </div>
 
@@ -825,8 +826,13 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
           Your Target Day Rate
         </div>
         <div style={{ fontSize: "clamp(3rem, 8vw, 5rem)", fontFamily: "var(--mono)", lineHeight: 1, color: "var(--accent)" }}>
-          {fmt(results.dayRate)}
+          {fmt(results.dayRate + results.kitFee)}
         </div>
+        {results.kitFee > 0 && (
+          <div style={{ fontSize: "0.75rem", fontFamily: "var(--mono)", color: "var(--text-dim)", marginTop: "0.5rem" }}>
+            {fmt(results.dayRate)} day rate + {fmt(results.kitFee)} kit fee
+          </div>
+        )}
         <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "0.5rem", letterSpacing: "0.08em" }}>
           Here&apos;s exactly how we got there — and why every line matters.
         </div>
@@ -898,16 +904,19 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
         gap: "1.25rem 2rem",
       }}>
         {[
-          ["Day Rate",  fmt(results.dayRate)],
-          ["Half-Day",  fmt(results.halfDayRate)],
-          ["Hourly",    fmt(results.hourlyRate)],
-          ...(results.kitFee > 0 ? [["Kit Fee", `${fmt(results.kitFee)}/day`]] : []),
-        ].map(([label, value]) => (
-          <div key={label}>
-            <div style={{ fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.25rem" }}>{label}</div>
-            <div style={{ fontFamily: "var(--mono)", fontSize: "1.4rem", color: "var(--text)" }}>{value}</div>
-          </div>
-        ))}
+          ["Day Rate",              fmt(results.dayRate + results.kitFee)],
+          ["Half-Day",              fmt(results.halfDayRate)],
+          ["Hourly",                fmt(results.hourlyRate)],
+          ...(results.kitFee > 0 ? [["  ↳ Rate",  fmt(results.dayRate)], ["  ↳ Kit Fee", fmt(results.kitFee)]] : []),
+        ].map(([label, value]) => {
+          const isBreakdown = label.startsWith("  ↳");
+          return (
+            <div key={label}>
+              <div style={{ fontSize: isBreakdown ? "0.6rem" : "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.25rem" }}>{label.trim()}</div>
+              <div style={{ fontFamily: "var(--mono)", fontSize: isBreakdown ? "0.95rem" : "1.4rem", color: isBreakdown ? "var(--text-dim)" : "var(--text)" }}>{value}</div>
+            </div>
+          );
+        })}
       </div>
 
       <ShareButton inputs={inputs} results={results} />
@@ -1197,20 +1206,28 @@ function Calculator() {
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
               {([
                 { key: "hasKit" as const, label: "I carry a kit (+$300/day)" },
                 { key: "includeProfit" as const, label: "Include profit margin (20%)" },
               ]).map(({ key, label }) => (
-                <label key={key} style={{ display: "flex", alignItems: "center", gap: "0.6rem", cursor: "pointer", fontSize: "0.8rem", color: "var(--text-dim)" }}>
-                  <input
-                    type="checkbox"
-                    checked={inputs[key]}
-                    onChange={(e) => set(key, e.target.checked)}
-                    style={{ accentColor: "var(--accent)", width: "1rem", height: "1rem", cursor: "pointer" }}
-                  />
-                  {label}
-                </label>
+                <button
+                  key={key}
+                  onClick={() => set(key, !inputs[key])}
+                  style={{
+                    background:    inputs[key] ? "rgba(212,146,10,0.12)" : "transparent",
+                    color:         "var(--accent)",
+                    border:        `1px solid ${inputs[key] ? "var(--accent)" : "rgba(212,146,10,0.35)"}`,
+                    fontFamily:    "var(--mono)",
+                    fontSize:      "0.72rem",
+                    letterSpacing: "0.08em",
+                    padding:       "0.45rem 0.9rem",
+                    cursor:        "pointer",
+                    transition:    "all 0.15s",
+                  }}
+                >
+                  {inputs[key] ? "✓ " : ""}{label}
+                </button>
               ))}
             </div>
 
