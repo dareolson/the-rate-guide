@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -29,7 +29,7 @@ const btnStyle = {
   fontWeight: "bold",
 };
 
-export default function LoginPage() {
+function LoginForm() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const supabase     = createClient();
@@ -151,5 +151,13 @@ export default function LoginPage() {
         {mode === "login" ? "Don't have an account? Sign up." : "Already have an account? Log in."}
       </button>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }
