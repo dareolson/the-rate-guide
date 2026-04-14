@@ -9,7 +9,11 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      // Bad or expired confirmation link — send back to login with a message
+      return NextResponse.redirect(`${origin}/login?error=confirmation_failed`);
+    }
   }
 
   return NextResponse.redirect(`${origin}${next}`);

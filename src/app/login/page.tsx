@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 // Shared input style
@@ -30,31 +30,68 @@ const btnStyle = {
 };
 
 export default function LoginPage() {
-  const router   = useRouter();
-  const supabase = createClient();
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const supabase     = createClient();
 
-  const [mode,     setMode]     = useState<"login" | "signup">("login");
-  const [email,    setEmail]    = useState("");
-  const [password, setPassword] = useState("");
-  const [error,    setError]    = useState<string | null>(null);
-  const [loading,  setLoading]  = useState(false);
+  const callbackError = searchParams.get("error") === "confirmation_failed"
+    ? "That confirmation link is invalid or has expired. Please sign up again."
+    : null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const [mode,      setMode]      = useState<"login" | "signup">("login");
+  const [email,     setEmail]     = useState("");
+  const [password,  setPassword]  = useState("");
+  const [error,     setError]     = useState<string | null>(callbackError);
+  const [loading,   setLoading]   = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     if (mode === "signup") {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      });
       if (error) { setError(error.message); setLoading(false); return; }
-      // After signup, go straight to dashboard to finish profile setup
-      router.push("/dashboard");
+      // Show "check your email" — don't navigate until they confirm
+      setConfirmed(true);
+      setLoading(false);
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) { setError(error.message); setLoading(false); return; }
       router.push("/dashboard");
     }
   };
+
+  if (confirmed) {
+    return (
+      <div style={{ maxWidth: "420px", margin: "0 auto", padding: "6rem 1.5rem" }}>
+        <a href="/" style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>
+          ← The Rate Guide
+        </a>
+        <h1 style={{ fontSize: "2rem", fontFamily: "var(--mono)", marginTop: "1.5rem", lineHeight: 1.1 }}>
+          Check your email.
+        </h1>
+        <p style={{ color: "var(--text-dim)", fontSize: "0.82rem", marginTop: "0.6rem", lineHeight: 1.6 }}>
+          We sent a confirmation link to <strong style={{ color: "var(--text)" }}>{email}</strong>.
+          Click it to activate your account and get to your dashboard.
+        </p>
+        <p style={{ color: "var(--text-dim)", fontSize: "0.75rem", marginTop: "1.25rem", lineHeight: 1.6 }}>
+          Didn&apos;t get it? Check your spam folder, or{" "}
+          <button
+            onClick={() => { setConfirmed(false); setMode("signup"); }}
+            style={{ background: "none", border: "none", color: "var(--accent)", fontFamily: "var(--mono)", fontSize: "0.75rem", cursor: "pointer", padding: 0, textDecoration: "underline" }}
+          >
+            try again
+          </button>.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ maxWidth: "420px", margin: "0 auto", padding: "6rem 1.5rem" }}>
