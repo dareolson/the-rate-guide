@@ -346,7 +346,7 @@ function RealityCheck({
   );
 
   return (
-    <div style={{ marginTop: "3rem", borderTop: "2px solid var(--border)", paddingTop: "2rem" }}>
+    <div style={{ marginTop: "3rem", borderTop: "2px solid var(--accent-2)", paddingTop: "2rem" }}>
       <div style={{ fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
         Monthly Breakdown
       </div>
@@ -503,7 +503,7 @@ function MarketRangePanel({
   const config = mr ? POSITION_CONFIG[mr.position] : null;
 
   return (
-    <div style={{ marginTop: "2rem", borderTop: topBorder ? "2px solid var(--border)" : "none", paddingTop: topBorder ? "2rem" : "0" }}>
+    <div style={{ marginTop: "2rem", borderTop: topBorder ? "2px solid var(--accent-2)" : "none", paddingTop: topBorder ? "2rem" : "0" }}>
       <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.4rem" }}>
         Market Context
       </div>
@@ -623,7 +623,7 @@ function Survey({ inputs }: { inputs: CalcInputs }) {
   });
 
   return (
-    <div style={{ marginTop: "3rem", borderTop: "2px solid var(--border)", paddingTop: "2rem" }}>
+    <div style={{ marginTop: "3rem", borderTop: "2px solid var(--accent-2)", paddingTop: "2rem" }}>
       <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.5rem" }}>
         Quick question
       </div>

@@ -39,7 +39,7 @@ function Section({ id, label, title, children }: {
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} style={{ borderTop: "2px solid var(--border)", paddingTop: "2.5rem", marginTop: "3rem" }}>
+    <section id={id} style={{ borderTop: "2px solid var(--accent-2)", paddingTop: "2.5rem", marginTop: "3rem" }}>
       <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.5rem" }}>
         {label}
       </div>
@@ -63,7 +63,7 @@ function P({ children }: { children: React.ReactNode }) {
 
 function Callout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ background: "var(--surface)", borderLeft: "3px solid var(--accent)", padding: "1.25rem 1.5rem" }}>
+    <div style={{ background: "var(--surface)", borderLeft: "3px solid var(--accent-2)", padding: "1.25rem 1.5rem" }}>
       <p style={{ fontSize: "1rem", color: "var(--text)", lineHeight: 1.8, margin: 0, fontFamily: "var(--serif)" }}>
         {children}
       </p>
@@ -268,7 +268,7 @@ export default function MethodologyPage() {
       </Section>
 
       {/* Closing */}
-      <section style={{ borderTop: "2px solid var(--border)", paddingTop: "2.5rem", marginTop: "3rem" }}>
+      <section style={{ borderTop: "2px solid var(--accent-2)", paddingTop: "2.5rem", marginTop: "3rem" }}>
         <h2 style={{ fontFamily: "var(--mono)", fontSize: "1.4rem", marginBottom: "1rem", lineHeight: 1.2 }}>
           The rate isn&apos;t high. The conversation is overdue.
         </h2>

@@ -8,6 +8,7 @@
   --text-dim:  #9a8f82;   /* warm mid-gray for secondary text */
   --accent:    #d4920a;   /* rich amber gold */
   --accent-dim:#a87010;   /* deeper amber for hover/muted states */
+  --accent-2:  #d4920a;   /* secondary accent — defaults to amber, palettes override this */
   --danger:    #e05c4a;   /* warm red */
   --mono:  var(--font-mono, 'JetBrains Mono', 'Courier New', monospace);
   --sans:  var(--font-sans, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif);
@@ -44,6 +45,26 @@ p {
 [style*="font-mono"] {
   font-feature-settings: "tnum" 1;
   font-variant-numeric:  tabular-nums;
+}
+
+/* accent-2 wiring — these elements pick up the secondary palette color */
+/* so palette switches are immediately visible across the whole site   */
+
+/* Nav bottom border */
+nav {
+  border-bottom-color: var(--accent-2) !important;
+  border-bottom-width: 1px !important;
+  border-bottom-style: solid !important;
+}
+
+/* Section / page dividers */
+section[id] {
+  border-top-color: var(--accent-2) !important;
+}
+
+/* Callout left-accent stripe (methodology page) */
+.callout-stripe {
+  border-left-color: var(--accent-2) !important;
 }
 
 /* Global focus states — amber glow ring on all form controls */

@@ -104,7 +104,7 @@ export const metadata: Metadata = {
 function Nav() {
   return (
     <nav style={{
-      borderBottom:   "1px solid var(--border)",
+      borderBottom:   "1px solid var(--accent-2)",
       padding:        "0.85rem 1.5rem",
       display:        "flex",
       justifyContent: "space-between",
