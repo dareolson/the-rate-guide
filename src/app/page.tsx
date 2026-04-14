@@ -997,6 +997,13 @@ function Calculator() {
     router.replace(`?${params.toString()}`, { scroll: false });
   }, [inputs, router]);
 
+  // Live recalculate whenever inputs change — but only if results already exist
+  // This makes kit, profit, and billable days feel instant after the first calculate
+  useEffect(() => {
+    if (results) setResults(calculate(inputs));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputs]);
+
   // Auto-calculate and expand income section if URL had params on load
   useEffect(() => {
     if (searchParams.toString()) {
