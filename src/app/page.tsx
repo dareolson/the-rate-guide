@@ -48,12 +48,13 @@ function paramsToInputs(p: URLSearchParams): Partial<CalcInputs> {
 function Label({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
-      fontFamily: "var(--mono)",
-      fontSize: "0.7rem",
-      letterSpacing: "0.18em",
+      fontFamily:    "var(--mono)",
+      fontSize:      "0.78rem",      // raised from 0.7 → 14px
+      letterSpacing: "0.07em",       // tightened from 0.18em — less work for the eye
       textTransform: "uppercase",
-      color: "var(--text-dim)",
-      marginBottom: "0.6rem",
+      fontWeight:    600,            // weight carries hierarchy instead of size alone
+      color:         "var(--text)",  // full cream — text-dim fails contrast at this size
+      marginBottom:  "0.6rem",
     }}>
       {children}
     </div>
@@ -77,10 +78,10 @@ function RadioGroup<T extends string>({
             background: value === opt ? "rgba(212,146,10,0.12)" : "transparent",
             color:      value === opt ? "var(--accent)" : "var(--text-dim)",
             border:     `1px solid ${value === opt ? "var(--accent)" : "var(--border)"}`,
-            fontFamily: "var(--mono)",
-            fontSize:   "0.72rem",
-            letterSpacing: "0.1em",
-            padding:    "0.45rem 0.9rem",
+            fontFamily:    "var(--mono)",
+            fontSize:      "0.83rem",   // raised from 0.72 → 15px
+            letterSpacing: "0.04em",    // tightened from 0.1em
+            padding:       "0.45rem 0.9rem",
             cursor:     "pointer",
             transition: "all 0.15s",
           }}
@@ -203,7 +204,7 @@ function ClientView({ params }: { params: URLSearchParams }) {
   const row = (label: string, value: string, note: string) => (
     <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "1.1rem 0", borderBottom: "1px solid var(--border)", gap: "1.5rem" }}>
       <div>
-        <div style={{ fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.25rem" }}>{label}</div>
+        <div style={{ fontSize: "0.75rem", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.25rem" }}>{label}</div>
         <div style={{ fontFamily: "var(--serif)", fontSize: "0.82rem", color: "var(--text-dim)", lineHeight: 1.65, maxWidth: "400px" }}>{note}</div>
       </div>
       <div style={{ fontFamily: "var(--mono)", fontSize: "0.95rem", color: "var(--accent)", whiteSpace: "nowrap", textAlign: "right", paddingTop: "0.1rem" }}>{value}</div>
@@ -229,7 +230,7 @@ function ClientView({ params }: { params: URLSearchParams }) {
 
       {/* The rate */}
       <div style={{ borderTop: "2px solid var(--accent)", paddingTop: "2rem", marginBottom: "2.5rem" }}>
-        <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.5rem" }}>
+        <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--accent)", marginBottom: "0.5rem" }}>
           Day Rate
         </div>
         <div style={{ fontFamily: "var(--mono)", fontSize: "clamp(3rem, 8vw, 4.5rem)", lineHeight: 1, color: "var(--accent)" }}>
@@ -246,7 +247,7 @@ function ClientView({ params }: { params: URLSearchParams }) {
             ["Hourly",   fmt(r / 10)],
           ].map(([label, value]) => (
             <div key={label}>
-              <div style={{ fontSize: "0.62rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.25rem" }}>{label}</div>
+              <div style={{ fontSize: "0.75rem", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.25rem" }}>{label}</div>
               <div style={{ fontFamily: "var(--mono)", fontSize: "1.3rem", color: "var(--text)" }}>{value}</div>
             </div>
           ))}
@@ -265,7 +266,7 @@ function ClientView({ params }: { params: URLSearchParams }) {
 
       {/* Why this number — structural overhead */}
       <div style={{ marginBottom: "2rem" }}>
-        <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "1.25rem" }}>
+        <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "1.25rem" }}>
           What this rate covers
         </div>
 
@@ -293,10 +294,10 @@ function ClientView({ params }: { params: URLSearchParams }) {
 
       {/* Footer links */}
       <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
-        <a href="/methodology" style={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>
+        <a href="/methodology" style={{ fontSize: "0.78rem", letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>
           Full methodology with sources →
         </a>
-        <a href="/" style={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-dim)", textDecoration: "none" }}>
+        <a href="/" style={{ fontSize: "0.78rem", letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--text-dim)", textDecoration: "none" }}>
           Calculate your own rate →
         </a>
       </div>
@@ -362,7 +363,7 @@ function RealityCheck({
 
       {/* Family size selector */}
       <div style={{ marginBottom: "1.5rem" }}>
-        <div style={{ fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.6rem" }}>
+        <div style={{ fontSize: "0.75rem", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.6rem" }}>
           Household size
         </div>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -386,7 +387,7 @@ function RealityCheck({
 
       {/* Monthly breakdown */}
       <div style={{ marginBottom: "1.5rem" }}>
-        <div style={{ fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.75rem" }}>
+        <div style={{ fontSize: "0.75rem", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.75rem" }}>
           Monthly expenses — {familySize} in a {location}
         </div>
 
@@ -413,7 +414,7 @@ function RealityCheck({
               <button
                 onClick={() => setIncludeChildcare(!includeChildcare)}
                 style={{
-                  fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase",
+                  fontSize: "0.72rem", letterSpacing: "0.04em", textTransform: "uppercase",
                   background: "none", border: `1px solid var(--border)`,
                   color: "var(--text-dim)", fontFamily: "var(--mono)",
                   padding: "0.15rem 0.5rem", cursor: "pointer",
@@ -438,7 +439,7 @@ function RealityCheck({
         borderLeft: `3px solid ${leftOverColor}`, flexWrap: "wrap", gap: "1rem",
       }}>
         <div>
-          <div style={{ fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.2rem" }}>
+          <div style={{ fontSize: "0.75rem", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.2rem" }}>
             Left over after all expenses
           </div>
           <div style={{ fontFamily: "var(--serif)", fontSize: "0.8rem", color: "var(--text-dim)", lineHeight: 1.5 }}>
@@ -503,7 +504,7 @@ function MarketRangePanel({
 
   return (
     <div style={{ marginTop: "2rem", borderTop: topBorder ? "2px solid var(--border)" : "none", paddingTop: topBorder ? "2rem" : "0" }}>
-      <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.4rem" }}>
+      <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.4rem" }}>
         Market Context
       </div>
       <p style={{ fontSize: "0.8rem", color: "var(--text-dim)", lineHeight: 1.6, marginBottom: "1.25rem" }}>
@@ -513,7 +514,7 @@ function MarketRangePanel({
 
       {/* Position label row */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.6rem" }}>
-        <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", color: config ? config.color : "var(--text-dim)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+        <span style={{ fontFamily: "var(--mono)", fontSize: "0.78rem", color: config ? config.color : "var(--text-dim)", letterSpacing: "0.05em", textTransform: "uppercase", fontWeight: 600 }}>
           {config ? `${rateLabel} — ${config.label}` : "Market range"}
         </span>
         <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", color: "var(--text-dim)" }}>
@@ -533,8 +534,8 @@ function MarketRangePanel({
 
       {/* Floor / ceiling labels */}
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-        <span style={{ fontSize: "0.62rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Floor</span>
-        <span style={{ fontSize: "0.62rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Ceiling</span>
+        <span style={{ fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Floor</span>
+        <span style={{ fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Ceiling</span>
       </div>
 
       {/* Contextual message — only when a rate is provided */}
@@ -623,7 +624,7 @@ function Survey({ inputs }: { inputs: CalcInputs }) {
 
   return (
     <div style={{ marginTop: "3rem", borderTop: "2px solid var(--border)", paddingTop: "2rem" }}>
-      <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
+      <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.5rem" }}>
         Quick question
       </div>
 
@@ -707,7 +708,7 @@ function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcIn
 
   return (
     <div style={{ marginTop: "2.5rem", paddingTop: "2rem", borderTop: "1px solid var(--border)" }}>
-      <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.75rem" }}>
+      <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.75rem" }}>
         Gap Analysis
       </div>
       <div style={{ fontSize: "0.9rem", color: "var(--text)", marginBottom: "1rem", lineHeight: 1.5 }}>
@@ -808,7 +809,7 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
         alignItems:      "baseline",
         gap:             "0.75rem",
       }}>
-        <span style={{ fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--mono)" }}>
+        <span style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--mono)", fontWeight: 600 }}>
           Your Rate
         </span>
         <span style={{ fontFamily: "var(--mono)", fontSize: "1.4rem", color: "var(--accent)", fontWeight: "bold" }}>
@@ -822,7 +823,7 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
 
       {/* Main rate */}
       <div style={{ borderTop: "2px solid var(--accent)", paddingTop: "2rem", marginBottom: "2rem" }}>
-        <div style={{ fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.5rem" }}>
+        <div style={{ fontSize: "0.78rem", letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--accent)", fontWeight: 600, marginBottom: "0.5rem" }}>
           Your Target Day Rate
         </div>
         <div style={{ fontSize: "clamp(3rem, 8vw, 5rem)", fontFamily: "var(--mono)", lineHeight: 1, color: "var(--accent)" }}>
@@ -886,7 +887,7 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
         ].map(({ label, amount, note, last }) => (
           <div key={label} style={{ ...lineStyle, ...(last ? { borderBottom: "2px solid var(--accent)" } : {}) }}>
             <div>
-              <div style={{ fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-dim)" }}>{label}</div>
+              <div style={{ fontSize: "0.78rem", letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--text-dim)" }}>{label}</div>
               <div style={{ fontSize: "0.75rem", color: "var(--text-dim)", lineHeight: 1.6, maxWidth: "420px", marginTop: "0.3rem" }}>{note}</div>
             </div>
             <div style={{ fontFamily: "var(--mono)", fontSize: "1rem", color: "var(--text)", whiteSpace: "nowrap", textAlign: "right" }}>{amount}</div>
@@ -912,7 +913,7 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
           const isBreakdown = label.startsWith("  ↳");
           return (
             <div key={label}>
-              <div style={{ fontSize: isBreakdown ? "0.6rem" : "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.25rem" }}>{label.trim()}</div>
+              <div style={{ fontSize: isBreakdown ? "0.72rem" : "0.75rem", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, color: isBreakdown ? "var(--text-dim)" : "var(--text)", marginBottom: "0.25rem" }}>{label.trim()}</div>
               <div style={{ fontFamily: "var(--mono)", fontSize: isBreakdown ? "0.95rem" : "1.4rem", color: isBreakdown ? "var(--text-dim)" : "var(--text)" }}>{value}</div>
             </div>
           );
@@ -1201,7 +1202,7 @@ function Calculator() {
                 onChange={(e) => set("billableDays", Number(e.target.value))}
                 style={{ width: "100%", accentColor: "var(--accent)", cursor: "pointer" }}
               />
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.65rem", color: "var(--text-dim)", marginTop: "0.25rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "var(--text-dim)", marginTop: "0.25rem" }}>
                 <span>50 days</span><span>220 days</span>
               </div>
             </div>
@@ -1219,8 +1220,8 @@ function Calculator() {
                     color:         "var(--accent)",
                     border:        `1px solid ${inputs[key] ? "var(--accent)" : "rgba(212,146,10,0.35)"}`,
                     fontFamily:    "var(--mono)",
-                    fontSize:      "0.72rem",
-                    letterSpacing: "0.08em",
+                    fontSize:      "0.83rem",
+                    letterSpacing: "0.04em",
                     padding:       "0.45rem 0.9rem",
                     cursor:        "pointer",
                     transition:    "all 0.15s",

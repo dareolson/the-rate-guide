@@ -40,7 +40,7 @@ function Section({ id, label, title, children }: {
 }) {
   return (
     <section id={id} style={{ borderTop: "2px solid var(--border)", paddingTop: "2.5rem", marginTop: "3rem" }}>
-      <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
+      <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.5rem" }}>
         {label}
       </div>
       <h2 style={{ fontFamily: "var(--sans)", fontSize: "1.5rem", fontWeight: 700, marginBottom: "1.5rem", lineHeight: 1.2 }}>
@@ -55,7 +55,7 @@ function Section({ id, label, title, children }: {
 
 function P({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: "1rem", color: "var(--text-dim)", lineHeight: 1.85, margin: 0, fontFamily: "var(--serif)" }}>
+    <p style={{ fontSize: "1rem", color: "var(--text-dim)", lineHeight: 1.75, margin: 0, fontFamily: "var(--serif)", maxWidth: "65ch" }}>
       {children}
     </p>
   );
@@ -73,7 +73,7 @@ function Callout({ children }: { children: React.ReactNode }) {
 
 function Source({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: "0.7rem", color: "var(--text-dim)", lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>
+    <p style={{ fontSize: "0.78rem", color: "var(--text-dim)", lineHeight: 1.6, margin: 0, fontStyle: "italic" }}>
       Source: {children}
     </p>
   );

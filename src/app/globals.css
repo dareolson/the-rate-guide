@@ -32,6 +32,12 @@ body {
   min-height:  100vh;
 }
 
+/* Constrain prose line length to ~65 characters — optimal for reading */
+p {
+  max-width: 65ch;
+  line-height: 1.65;
+}
+
 /* Global focus states — amber glow ring on all form controls */
 input:focus,
 select:focus,
