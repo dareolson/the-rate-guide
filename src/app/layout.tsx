@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"; // page view + event tracking
 import { JetBrains_Mono, Lora, Inter } from "next/font/google";
-import PaletteSwitcher from "@/components/PaletteSwitcher"; // DEV ONLY — remove after picking a palette
 
 // Load fonts via next/font — self-hosted, zero layout shift, no external requests
 const jetbrainsMono = JetBrains_Mono({
@@ -159,7 +158,6 @@ export default function RootLayout({
         <Nav />
         {children}
         <Analytics /> {/* Vercel Analytics — tracks page views automatically */}
-        <PaletteSwitcher /> {/* DEV ONLY — remove after picking a palette */}
       </body>
     </html>
   );
