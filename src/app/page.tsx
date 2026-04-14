@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client"; // anonymous DB logging
 import {
   DISCIPLINES, EXPERIENCE_LEVELS, LOCATION_TIERS, FAMILY_SIZES,
   DEFAULT_BILLABLE_DAYS, calculate, realityCheck, marketRange, fmt,
-  INFLATION_BASE_YEAR, RATE_FLOORS, LOCATION_MULTIPLIERS,
+  INFLATION_BASE_YEAR, RATE_FLOORS, RATE_CEILINGS, LOCATION_MULTIPLIERS,
   HEALTH_INSURANCE_ANNUAL, SE_TAX_RATE, PROFIT_RATE,
   type Discipline, type ExperienceLevel, type LocationTier, type FamilySize,
   type CalcInputs, type CalcResults, type RealityCheckResult,
@@ -470,71 +470,82 @@ function RealityCheck({
 // typical floor→ceiling range for their profile.
 // Phase 2: swap in real median from calc_events
 // once enough data exists (target: 10+ per combo).
+//
+// dayRate is optional — when omitted the panel shows the range with no marker,
+// used at the top of the page before the user enters a rate.
 // ==============================================
-function MarketRangePanel({ results, inputs }: { results: CalcResults; inputs: CalcInputs }) {
-  const mr = marketRange(inputs.discipline, inputs.experience, inputs.location, results.dayRate);
+function MarketRangePanel({
+  inputs,
+  dayRate,
+  rateLabel = "Your rate",
+  topBorder = true,
+}: {
+  inputs:     CalcInputs;
+  dayRate?:   number;
+  rateLabel?: string;
+  topBorder?: boolean;
+}) {
+  const multiplier = LOCATION_MULTIPLIERS[inputs.location];
+  const floor      = RATE_FLOORS[inputs.discipline][inputs.experience]   * multiplier;
+  const ceiling    = RATE_CEILINGS[inputs.discipline][inputs.experience] * multiplier;
 
-  // Position label and color
-  const config = {
-    below: { label: "Below market",       color: "var(--danger)",  message: "Your rate is below the floor for your discipline and market. This isn't humility — it's leaving money on the table." },
-    low:   { label: "Low end of market",  color: "#f5a623",        message: "You're in the market but on the lower end. There's meaningful room to grow without pricing yourself out." },
-    mid:   { label: "Mid market",         color: "var(--accent)",  message: "Your rate is solid and defensible. You're where working professionals at your level typically land." },
-    high:  { label: "High end of market", color: "var(--accent)",  message: "You're commanding a strong rate. This is where well-positioned, in-demand professionals operate." },
-    above: { label: "Above market",       color: "var(--text-dim)", message: "Your rate is above the typical ceiling. Make sure your credits and reputation can support it — or reconsider your take-home goal." },
-  }[mr.position];
+  const mr       = dayRate !== undefined ? marketRange(inputs.discipline, inputs.experience, inputs.location, dayRate) : null;
+  const barWidth = mr ? Math.min(Math.max(mr.percentile, 4), 96) : null;
 
-  // Bar width clamped to 4–96% so it never touches the edges
-  const barWidth = Math.min(Math.max(mr.percentile, 4), 96);
+  const POSITION_CONFIG = {
+    below: { label: "Below market",       color: "var(--danger)",   message: "This rate is below the floor for your discipline and market. This isn't humility — it's leaving money on the table." },
+    low:   { label: "Low end of market",  color: "#f5a623",         message: "You're in the market but on the lower end. There's meaningful room to grow without pricing yourself out." },
+    mid:   { label: "Mid market",         color: "var(--accent)",   message: "This rate is solid and defensible. You're where working professionals at your level typically land." },
+    high:  { label: "High end of market", color: "var(--accent)",   message: "You're commanding a strong rate. This is where well-positioned, in-demand professionals operate." },
+    above: { label: "Above market",       color: "var(--text-dim)", message: "This rate is above the typical ceiling. Make sure your credits and reputation can support it." },
+  };
+  const config = mr ? POSITION_CONFIG[mr.position] : null;
 
   return (
-    <div style={{ marginTop: "3rem", borderTop: "2px solid var(--border)", paddingTop: "2rem" }}>
-      <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
+    <div style={{ marginTop: "2rem", borderTop: topBorder ? "2px solid var(--border)" : "none", paddingTop: topBorder ? "2rem" : "0" }}>
+      <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.4rem" }}>
         Market Context
       </div>
-      <h2 style={{ fontFamily: "var(--sans)", fontWeight: 700, fontSize: "1.3rem", marginBottom: "0.5rem", lineHeight: 1.2 }}>
-        Where does your rate land?
-      </h2>
-      <p style={{ fontFamily: "var(--serif)", fontSize: "0.88rem", color: "var(--text-dim)", lineHeight: 1.7, marginBottom: "1.75rem" }}>
-        Based on 2024–2025 market data for a <strong style={{ color: "var(--text)" }}>{inputs.experience} {inputs.discipline}</strong> in a <strong style={{ color: "var(--text)" }}>{inputs.location}</strong>.
+      <p style={{ fontSize: "0.8rem", color: "var(--text-dim)", lineHeight: 1.6, marginBottom: "1.25rem" }}>
+        <strong style={{ color: "var(--text)" }}>{inputs.experience} {inputs.discipline}</strong>{" · "}
+        <strong style={{ color: "var(--text)" }}>{inputs.location}</strong>{" · "}2024–2025 data
       </p>
 
-      {/* Position label */}
+      {/* Position label row */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.6rem" }}>
-        <span style={{ fontFamily: "var(--mono)", fontSize: "0.78rem", color: config.color, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-          {config.label}
+        <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", color: config ? config.color : "var(--text-dim)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+          {config ? `${rateLabel} — ${config.label}` : "Market range"}
         </span>
-        <span style={{ fontFamily: "var(--mono)", fontSize: "0.78rem", color: "var(--text-dim)" }}>
-          {fmt(mr.floor)} — {fmt(mr.ceiling)}
+        <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", color: "var(--text-dim)" }}>
+          {fmt(floor)} — {fmt(ceiling)}
         </span>
       </div>
 
       {/* Range bar */}
       <div style={{ position: "relative", height: "6px", background: "var(--border)", marginBottom: "0.5rem" }}>
-        {/* Filled portion */}
-        <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${barWidth}%`, background: config.color, transition: "width 0.4s ease" }} />
-        {/* Marker dot */}
-        <div style={{ position: "absolute", top: "50%", left: `${barWidth}%`, transform: "translate(-50%, -50%)", width: "14px", height: "14px", borderRadius: "50%", background: config.color, border: "2px solid var(--bg)" }} />
+        {mr && config && barWidth !== null && (
+          <>
+            <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${barWidth}%`, background: config.color, transition: "width 0.4s ease" }} />
+            <div style={{ position: "absolute", top: "50%", left: `${barWidth}%`, transform: "translate(-50%, -50%)", width: "14px", height: "14px", borderRadius: "50%", background: config.color, border: "2px solid var(--bg)", transition: "left 0.4s ease" }} />
+          </>
+        )}
       </div>
 
       {/* Floor / ceiling labels */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1.25rem" }}>
-        <span style={{ fontSize: "0.65rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Floor</span>
-        <span style={{ fontSize: "0.65rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Ceiling</span>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
+        <span style={{ fontSize: "0.62rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Floor</span>
+        <span style={{ fontSize: "0.62rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Ceiling</span>
       </div>
 
-      {/* Contextual message */}
-      <p style={{ fontFamily: "var(--serif)", fontSize: "0.88rem", color: "var(--text-dim)", lineHeight: 1.75, borderLeft: `3px solid ${config.color}`, paddingLeft: "1rem" }}>
-        {config.message}
-      </p>
+      {/* Contextual message — only when a rate is provided */}
+      {config && (
+        <p style={{ fontFamily: "var(--serif)", fontSize: "0.85rem", color: "var(--text-dim)", lineHeight: 1.75, borderLeft: `3px solid ${config.color}`, paddingLeft: "1rem", marginBottom: "0.75rem" }}>
+          {config.message}
+        </p>
+      )}
 
-      {/* Future: community median note */}
-      <p style={{ fontSize: "0.68rem", color: "var(--text-dim)", marginTop: "1rem", lineHeight: 1.6, fontStyle: "italic" }}>
-        Range based on industry rate surveys and union data. As more users calculate their rates, we&apos;ll show real community medians here.
-      </p>
-
-      {/* International disclaimer */}
-      <p style={{ fontSize: "0.65rem", color: "var(--text-dim)", marginTop: "0.5rem", lineHeight: 1.6, opacity: 0.6 }}>
-        Rate floors, market tiers, and cost of living data are based on the US market.
+      <p style={{ fontSize: "0.65rem", color: "var(--text-dim)", lineHeight: 1.6, fontStyle: "italic", opacity: 0.7 }}>
+        Range based on industry rate surveys and union data. US market only. Community medians coming as data grows.
       </p>
     </div>
   );
@@ -768,7 +779,7 @@ function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcIn
 // ==============================================
 // RESULTS PANEL
 // ==============================================
-function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs }) {
+function Results({ results, inputs, currentRate }: { results: CalcResults; inputs: CalcInputs; currentRate: number | null }) {
   // Family size lives in Results — independent of the rate calculation
   const [familySize, setFamilySize] = useState<FamilySize>("Single");
   const rc = realityCheck(inputs.takeHome, inputs.location, familySize);
@@ -901,9 +912,24 @@ function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs
 
       <ShareButton inputs={inputs} results={results} />
 
-      <GapAnalysis results={results} inputs={inputs} />
+      {/* Gap summary — only shown if user entered their current rate above */}
+      {currentRate !== null && currentRate > 0 && (() => {
+        const gap    = results.dayRate - currentRate;
+        const gapYr  = gap * results.billableDays;
+        const over   = gap <= 0;
+        return (
+          <div style={{ marginTop: "2rem", padding: "1rem 1.25rem", background: "var(--surface)", border: `1px solid ${over ? "var(--accent)" : "var(--danger)"}` }}>
+            <span style={{ fontFamily: "var(--mono)", fontSize: "0.85rem", color: over ? "var(--accent)" : "var(--danger)" }}>
+              {over
+                ? `You're ${fmt(Math.abs(gap))}/day above your minimum — ${fmt(Math.abs(gapYr))}/year of cushion.`
+                : `Gap vs minimum: ${fmt(gap)}/day = ${fmt(gapYr)}/year you're leaving on the table.`}
+            </span>
+          </div>
+        );
+      })()}
 
-      <MarketRangePanel results={results} inputs={inputs} />
+      {/* Market range — now shows where the CALCULATED minimum falls */}
+      <MarketRangePanel inputs={inputs} dayRate={results.dayRate} rateLabel="Your minimum" />
 
       <RealityCheck
         rc={rc}
@@ -958,7 +984,12 @@ function Calculator() {
     includeProfit: urlInputs.includeProfit ?? true,
   });
 
-  const [results, setResults] = useState<CalcResults | null>(null);
+  const [results,        setResults]        = useState<CalcResults | null>(null);
+  const [currentRate,    setCurrentRate]    = useState<number | null>(null);
+  const [currentRateRaw, setCurrentRateRaw] = useState("");
+  const [rateLogged,     setRateLogged]     = useState(false);
+  // Income calculator starts collapsed; auto-expands when URL has params (shared link)
+  const [showIncomeCalc, setShowIncomeCalc] = useState(false);
 
   // Sync inputs to URL whenever they change
   useEffect(() => {
@@ -966,11 +997,29 @@ function Calculator() {
     router.replace(`?${params.toString()}`, { scroll: false });
   }, [inputs, router]);
 
-  // Auto-calculate if URL had params on load (shared link)
+  // Auto-calculate and expand income section if URL had params on load
   useEffect(() => {
-    if (searchParams.toString()) setResults(calculate(inputs));
+    if (searchParams.toString()) {
+      setResults(calculate(inputs));
+      setShowIncomeCalc(true);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Log current rate to Supabase on blur (anonymous market data)
+  const handleCurrentRateBlur = async () => {
+    if (!currentRate || rateLogged) return;
+    try {
+      const supabase = createClient();
+      await supabase.from("current_rate_reports").insert({
+        discipline:   inputs.discipline,
+        experience:   inputs.experience,
+        location:     inputs.location,
+        current_rate: currentRate,
+      });
+      setRateLogged(true);
+    } catch (_) { /* silent */ }
+  };
 
   const set = <K extends keyof CalcInputs>(key: K, value: CalcInputs[K]) =>
     setInputs((prev) => ({ ...prev, [key]: value }));
@@ -1001,7 +1050,7 @@ function Calculator() {
         </p>
       </div>
 
-      {/* Form */}
+      {/* ── STEP 1: Profile ── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
 
         <div>
@@ -1034,146 +1083,213 @@ function Calculator() {
           <RadioGroup options={LOCATION_TIERS} value={inputs.location} onChange={(v) => set("location", v)} />
         </div>
 
-        <div>
-          <Label>Desired annual take-home</Label>
-          <div style={{ position: "relative" }}>
-            <span style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>$</span>
-            <input
-              type="number"
-              value={inputs.takeHome}
-              onChange={(e) => set("takeHome", Number(e.target.value))}
-              min={0}
-              style={{
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                color: "var(--text)",
-                fontFamily: "var(--mono)",
-                fontSize: "0.95rem",
-                padding: "0.65rem 1rem 0.65rem 2rem",
-                width: "100%",
-              }}
-            />
-          </div>
-          <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
-            What you want in your pocket after taxes and expenses.
-          </div>
-        </div>
+      </div>
 
-        <div>
-          <Label>Estimated billable days / year — <span style={{ color: "var(--text)" }}>{inputs.billableDays} days</span></Label>
+      {/* ── STEP 2: Market snapshot — renders immediately from profile ── */}
+      <MarketRangePanel inputs={inputs} dayRate={currentRate ?? undefined} rateLabel="Your current rate" />
+
+      {/* Current rate input — primary CTA */}
+      <div style={{ marginTop: "1.75rem" }}>
+        <Label>What are you currently charging?</Label>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)" }}>$</span>
           <input
-            type="range"
-            min={50} max={220} step={5}
-            value={inputs.billableDays}
-            onChange={(e) => set("billableDays", Number(e.target.value))}
-            style={{ width: "100%", accentColor: "var(--accent)", cursor: "pointer" }}
-          />
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.65rem", color: "var(--text-dim)", marginTop: "0.25rem" }}>
-            <span>50 days</span><span>220 days</span>
-          </div>
-        </div>
-
-        <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
-          {([
-            { key: "hasKit" as const, label: "I carry a kit (+$300/day)" },
-            { key: "includeProfit" as const, label: "Include profit margin (20%)" },
-          ]).map(({ key, label }) => (
-            <label key={key} style={{ display: "flex", alignItems: "center", gap: "0.6rem", cursor: "pointer", fontSize: "0.8rem", color: "var(--text-dim)" }}>
-              <input
-                type="checkbox"
-                checked={inputs[key]}
-                onChange={(e) => set(key, e.target.checked)}
-                style={{ accentColor: "var(--accent)", width: "1rem", height: "1rem", cursor: "pointer" }}
-              />
-              {label}
-            </label>
-          ))}
-        </div>
-
-        {/* Calculate + Reset buttons */}
-        <div style={{ display: "flex", gap: "0.75rem" }}>
-          <button
-            onClick={async () => {
-            const r = calculate(inputs);
-            setResults(r);
-
-            // Track custom event in Vercel Analytics
-            track("calculate", {
-              discipline: inputs.discipline,
-              experience: inputs.experience,
-              location:   inputs.location,
-            });
-
-            // Log anonymous calculation to Supabase for aggregate market data
-            // Does NOT store take-home goal — only the computed rate and context
-            try {
-              const supabase = createClient();
-              await supabase.from("calc_events").insert({
-                discipline:    inputs.discipline,
-                experience:    inputs.experience,
-                location:      inputs.location,
-                day_rate:      Math.round(r.dayRate),
-                below_floor:   r.belowFloor,
-                has_kit:       inputs.hasKit,
-                billable_days: inputs.billableDays,
-              });
-            } catch (_) {
-              // Logging failure is silent — never block the user experience
-            }
-          }}
-            style={{
-              flex: 1,
-              padding: "1rem",
-              background: "var(--accent)",
-              color: "#000",
-              fontFamily: "var(--mono)",
-              fontSize: "0.85rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              border: "none",
-              cursor: "pointer",
-              fontWeight: "bold",
+            type="number"
+            min="0"
+            placeholder="e.g. 450"
+            value={currentRateRaw}
+            onChange={e => {
+              const raw = e.target.value;
+              setCurrentRateRaw(raw);
+              setRateLogged(false);
+              const n = Number(raw);
+              setCurrentRate(n > 0 ? n : null);
             }}
-          >
-            Calculate My Rate
-          </button>
-
-          {/* Reset — clears results and returns inputs to defaults */}
-          {results && (
-            <button
-              onClick={() => {
-                setResults(null);
-                setInputs({
-                  discipline:    "Cinematographer / DP",
-                  experience:    "Mid",
-                  location:      "Mid Market",
-                  takeHome:      60000,
-                  billableDays:  DEFAULT_BILLABLE_DAYS,
-                  hasKit:        false,
-                  includeProfit: true,
-                });
-                router.replace("/", { scroll: false });
-              }}
-              style={{
-                padding:        "1rem 1.25rem",
-                background:     "none",
-                border:         "1px solid var(--border)",
-                color:          "var(--text-dim)",
-                fontFamily:     "var(--mono)",
-                fontSize:       "0.72rem",
-                letterSpacing:  "0.15em",
-                textTransform:  "uppercase",
-                cursor:         "pointer",
-                whiteSpace:     "nowrap",
-              }}
-            >
-              Reset
-            </button>
-          )}
+            onBlur={handleCurrentRateBlur}
+            style={{
+              background:  "var(--surface)",
+              border:      "1px solid var(--border)",
+              color:       "var(--text)",
+              fontFamily:  "var(--mono)",
+              fontSize:    "1rem",
+              padding:     "0.65rem 1rem",
+              width:       "180px",
+            }}
+          />
+          <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "0.8rem" }}>/day</span>
+        </div>
+        <div style={{ fontSize: "0.7rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
+          Optional — updates the market range above and helps us build community averages.
         </div>
       </div>
 
-      {results && <Results results={results} inputs={inputs} />}
+      {/* ── STEP 3: Income calculator — collapsible ── */}
+      <div style={{ marginTop: "2.5rem", borderTop: "1px solid var(--border)", paddingTop: "1.75rem" }}>
+
+        {/* Toggle */}
+        <button
+          onClick={() => setShowIncomeCalc(v => !v)}
+          style={{
+            background:    "none",
+            border:        "none",
+            cursor:        "pointer",
+            display:       "flex",
+            alignItems:    "center",
+            gap:           "0.6rem",
+            padding:       0,
+            fontFamily:    "var(--mono)",
+            fontSize:      "0.75rem",
+            letterSpacing: "0.15em",
+            textTransform: "uppercase",
+            color:         "var(--accent)",
+          }}
+        >
+          <span style={{ fontSize: "1rem", lineHeight: 1, transform: showIncomeCalc ? "rotate(90deg)" : "none", transition: "transform 0.2s", display: "inline-block" }}>›</span>
+          {showIncomeCalc ? "Hide income calculator" : "Calculate from income goal"}
+        </button>
+
+        {showIncomeCalc && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "1.75rem" }}>
+
+            <div>
+              <Label>Desired annual take-home</Label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>$</span>
+                <input
+                  type="number"
+                  value={inputs.takeHome}
+                  onChange={(e) => set("takeHome", Number(e.target.value))}
+                  min={0}
+                  style={{
+                    background: "var(--surface)",
+                    border:     "1px solid var(--border)",
+                    color:      "var(--text)",
+                    fontFamily: "var(--mono)",
+                    fontSize:   "0.95rem",
+                    padding:    "0.65rem 1rem 0.65rem 2rem",
+                    width:      "100%",
+                  }}
+                />
+              </div>
+              <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
+                What you want in your pocket after taxes and expenses.
+              </div>
+            </div>
+
+            <div>
+              <Label>Estimated billable days / year — <span style={{ color: "var(--text)" }}>{inputs.billableDays} days</span></Label>
+              <input
+                type="range"
+                min={50} max={220} step={5}
+                value={inputs.billableDays}
+                onChange={(e) => set("billableDays", Number(e.target.value))}
+                style={{ width: "100%", accentColor: "var(--accent)", cursor: "pointer" }}
+              />
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.65rem", color: "var(--text-dim)", marginTop: "0.25rem" }}>
+                <span>50 days</span><span>220 days</span>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+              {([
+                { key: "hasKit" as const, label: "I carry a kit (+$300/day)" },
+                { key: "includeProfit" as const, label: "Include profit margin (20%)" },
+              ]).map(({ key, label }) => (
+                <label key={key} style={{ display: "flex", alignItems: "center", gap: "0.6rem", cursor: "pointer", fontSize: "0.8rem", color: "var(--text-dim)" }}>
+                  <input
+                    type="checkbox"
+                    checked={inputs[key]}
+                    onChange={(e) => set(key, e.target.checked)}
+                    style={{ accentColor: "var(--accent)", width: "1rem", height: "1rem", cursor: "pointer" }}
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+
+            {/* Calculate + Reset buttons */}
+            <div style={{ display: "flex", gap: "0.75rem" }}>
+              <button
+                onClick={async () => {
+                  const r = calculate(inputs);
+                  setResults(r);
+
+                  track("calculate", {
+                    discipline: inputs.discipline,
+                    experience: inputs.experience,
+                    location:   inputs.location,
+                  });
+
+                  try {
+                    const supabase = createClient();
+                    await supabase.from("calc_events").insert({
+                      discipline:    inputs.discipline,
+                      experience:    inputs.experience,
+                      location:      inputs.location,
+                      day_rate:      Math.round(r.dayRate),
+                      below_floor:   r.belowFloor,
+                      has_kit:       inputs.hasKit,
+                      billable_days: inputs.billableDays,
+                    });
+                  } catch (_) { /* silent */ }
+                }}
+                style={{
+                  flex:          1,
+                  padding:       "1rem",
+                  background:    "var(--accent)",
+                  color:         "#000",
+                  fontFamily:    "var(--mono)",
+                  fontSize:      "0.85rem",
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  border:        "none",
+                  cursor:        "pointer",
+                  fontWeight:    "bold",
+                }}
+              >
+                Calculate My Rate
+              </button>
+
+              {results && (
+                <button
+                  onClick={() => {
+                    setResults(null);
+                    setCurrentRate(null);
+                    setCurrentRateRaw("");
+                    setInputs({
+                      discipline:    "Cinematographer / DP",
+                      experience:    "Mid",
+                      location:      "Mid Market",
+                      takeHome:      60000,
+                      billableDays:  DEFAULT_BILLABLE_DAYS,
+                      hasKit:        false,
+                      includeProfit: true,
+                    });
+                    router.replace("/", { scroll: false });
+                  }}
+                  style={{
+                    padding:        "1rem 1.25rem",
+                    background:     "none",
+                    border:         "1px solid var(--border)",
+                    color:          "var(--text-dim)",
+                    fontFamily:     "var(--mono)",
+                    fontSize:       "0.72rem",
+                    letterSpacing:  "0.15em",
+                    textTransform:  "uppercase",
+                    cursor:         "pointer",
+                    whiteSpace:     "nowrap",
+                  }}
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+
+          </div>
+        )}
+      </div>
+
+      {results && <Results results={results} inputs={inputs} currentRate={currentRate} />}
     </div>
   );
 }
