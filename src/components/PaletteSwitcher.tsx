@@ -77,6 +77,78 @@ const PALETTES: Record<string, Record<string, string>> = {
     "--accent-2":     "#2a3e52",   // ink navy
     "--danger":       "#e05c48",
   },
+
+  // ── Out-of-the-box options ──────────────────────────────────────
+
+  "6 · Dark Academia": {
+    // Deep burgundy-wine secondary against the warm dark —
+    // feels like a rare book dealer's website or a literary journal
+    "--bg":           "#17120f",
+    "--surface":      "#221a15",
+    "--border":       "#352820",
+    "--text":         "#f0e8df",
+    "--text-dim":     "#9a8f82",
+    "--accent":       "#d4920a",
+    "--accent-dim":   "#a87010",
+    "--accent-2":     "#7a2e3a",   // deep burgundy/wine
+    "--danger":       "#e05c4a",
+  },
+
+  "7 · Pitch & Violet": {
+    // True near-black base with a muted violet secondary —
+    // unexpected for a financial tool, signals premium creative work
+    "--bg":           "#13100d",
+    "--surface":      "#1d1916",
+    "--border":       "#2e2820",
+    "--text":         "#f0ece4",
+    "--text-dim":     "#9a8f82",
+    "--accent":       "#d4920a",
+    "--accent-dim":   "#a87010",
+    "--accent-2":     "#5c4a7a",   // muted violet-plum
+    "--danger":       "#e05c4a",
+  },
+
+  "8 · Carbon & Flame": {
+    // Almost neutral dark carbon base — lets the amber read as pure fire.
+    // Cooler and more modern, like a high-end gear review site
+    "--bg":           "#141414",
+    "--surface":      "#1e1c1a",
+    "--border":       "#2e2b28",
+    "--text":         "#f0ece4",
+    "--text-dim":     "#888480",
+    "--accent":       "#e8960a",   // slightly hotter amber
+    "--accent-dim":   "#b87808",
+    "--accent-2":     "#3a3632",   // warm charcoal — depth through tone, not hue
+    "--danger":       "#e05c4a",
+  },
+
+  "9 · Verdigris": {
+    // Flips the script — patina green becomes the primary, amber secondary.
+    // Evokes aged copper, old maps, and serious craft
+    "--bg":           "#0f1512",
+    "--surface":      "#18211b",
+    "--border":       "#25352c",
+    "--text":         "#e8ede9",
+    "--text-dim":     "#849186",
+    "--accent":       "#4a9e72",   // verdigris / patina green
+    "--accent-dim":   "#367a57",
+    "--accent-2":     "#c99a12",   // amber becomes the secondary
+    "--danger":       "#e05c4a",
+  },
+
+  "10 · Noir Cinema": {
+    // True near-black with a single warm cream and amber —
+    // like a 1940s film title card. Maximum contrast, zero noise
+    "--bg":           "#0d0c0a",
+    "--surface":      "#181614",
+    "--border":       "#252320",
+    "--text":         "#f5f0e8",
+    "--text-dim":     "#7a7570",
+    "--accent":       "#d4920a",
+    "--accent-dim":   "#a87010",
+    "--accent-2":     "#3d3830",   // near-neutral warm gray
+    "--danger":       "#c84a38",
+  },
 };
 
 const PALETTE_NAMES = Object.keys(PALETTES);
