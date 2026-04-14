@@ -31,3 +31,13 @@ body {
   line-height: 1.65;
   min-height:  100vh;
 }
+
+/* Global focus states — amber glow ring on all form controls */
+input:focus,
+select:focus,
+textarea:focus {
+  outline:      none;
+  border-color: var(--accent) !important;
+  box-shadow:   0 0 0 3px rgba(212, 146, 10, 0.12);
+  transition:   border-color 0.15s, box-shadow 0.15s;
+}

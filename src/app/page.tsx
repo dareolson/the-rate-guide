@@ -74,14 +74,14 @@ function RadioGroup<T extends string>({
           key={opt}
           onClick={() => onChange(opt)}
           style={{
-            background: value === opt ? "var(--accent)" : "transparent",
-            color: value === opt ? "#000" : "var(--text-dim)",
-            border: `1px solid ${value === opt ? "var(--accent)" : "var(--border)"}`,
+            background: value === opt ? "rgba(212,146,10,0.12)" : "transparent",
+            color:      value === opt ? "var(--accent)" : "var(--text-dim)",
+            border:     `1px solid ${value === opt ? "var(--accent)" : "var(--border)"}`,
             fontFamily: "var(--mono)",
-            fontSize: "0.72rem",
+            fontSize:   "0.72rem",
             letterSpacing: "0.1em",
-            padding: "0.45rem 0.9rem",
-            cursor: "pointer",
+            padding:    "0.45rem 0.9rem",
+            cursor:     "pointer",
             transition: "all 0.15s",
           }}
         >
@@ -347,7 +347,7 @@ function RealityCheck({
   return (
     <div style={{ marginTop: "3rem", borderTop: "2px solid var(--border)", paddingTop: "2rem" }}>
       <div style={{ fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
-        Reality Check
+        Monthly Breakdown
       </div>
       <h2 style={{ fontSize: "1.4rem", fontFamily: "var(--mono)", marginBottom: "0.75rem", lineHeight: 1.2 }}>
         What does this actually buy you?
@@ -368,14 +368,15 @@ function RealityCheck({
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
           {FAMILY_SIZES.map((f) => (
             <button key={f} onClick={() => onFamilySizeChange(f)} style={{
-              background:    familySize === f ? "var(--accent)" : "transparent",
-              color:         familySize === f ? "#000" : "var(--text-dim)",
+              background:    familySize === f ? "rgba(212,146,10,0.12)" : "transparent",
+              color:         familySize === f ? "var(--accent)" : "var(--text-dim)",
               border:        `1px solid ${familySize === f ? "var(--accent)" : "var(--border)"}`,
               fontFamily:    "var(--mono)",
               fontSize:      "0.7rem",
               letterSpacing: "0.08em",
-              padding:       "0.4rem 0.8rem",
+              padding:       "0.45rem 0.9rem",
               cursor:        "pointer",
+              transition:    "all 0.15s",
             }}>
               {f}
             </button>
@@ -597,8 +598,8 @@ function Survey({ inputs }: { inputs: CalcInputs }) {
   };
 
   const btnStyle = (active: boolean) => ({
-    background:    active ? "var(--accent)" : "var(--surface)",
-    color:         active ? "#000" : "var(--text-dim)",
+    background:    active ? "rgba(212,146,10,0.12)" : "transparent",
+    color:         active ? "var(--accent)" : "var(--text-dim)",
     border:        `1px solid ${active ? "var(--accent)" : "var(--border)"}`,
     fontFamily:    "var(--sans)",
     fontSize:      "0.82rem",
@@ -696,7 +697,7 @@ function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcIn
   return (
     <div style={{ marginTop: "2.5rem", paddingTop: "2rem", borderTop: "1px solid var(--border)" }}>
       <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.75rem" }}>
-        Reality Check
+        Gap Analysis
       </div>
       <div style={{ fontSize: "0.9rem", color: "var(--text)", marginBottom: "1rem", lineHeight: 1.5 }}>
         What are you currently charging?{" "}
@@ -783,6 +784,30 @@ function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs
   return (
     <div style={{ marginTop: "3rem" }}>
 
+      {/* Sticky rate bar — stays visible as user scrolls through the breakdown */}
+      <div style={{
+        position:        "sticky",
+        top:             0,
+        zIndex:          10,
+        background:      "var(--bg)",
+        borderBottom:    "1px solid var(--border)",
+        padding:         "0.6rem 0",
+        marginBottom:    "2rem",
+        display:         "flex",
+        alignItems:      "baseline",
+        gap:             "0.75rem",
+      }}>
+        <span style={{ fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", fontFamily: "var(--mono)" }}>
+          Your Rate
+        </span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: "1.4rem", color: "var(--accent)", fontWeight: "bold" }}>
+          {fmt(results.dayRate)}/day
+        </span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", color: "var(--text-dim)" }}>
+          {fmt(results.halfDayRate)} half · {fmt(results.hourlyRate)}/hr
+        </span>
+      </div>
+
       {/* Main rate */}
       <div style={{ borderTop: "2px solid var(--accent)", paddingTop: "2rem", marginBottom: "2rem" }}>
         <div style={{ fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.5rem" }}>
@@ -852,13 +877,13 @@ function Results({ results, inputs }: { results: CalcResults; inputs: CalcInputs
         ))}
       </div>
 
-      {/* Rate card */}
+      {/* Rate card — auto-fit grid reflows naturally on mobile */}
       <div style={{
         marginTop: "2rem",
         padding: "1.5rem",
         background: "var(--surface)",
         display: "grid",
-        gridTemplateColumns: "1fr 1fr",
+        gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
         gap: "1.25rem 2rem",
       }}>
         {[
