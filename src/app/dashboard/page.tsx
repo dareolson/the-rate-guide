@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -209,7 +210,7 @@ function RateHistory({ history, onAdd }: {
   const [rate, setRate] = useState("");
   const [note, setNote] = useState("");
 
-  const submit = (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!rate) return;
     onAdd(Number(rate), note);
@@ -273,7 +274,7 @@ function RateHistory({ history, onAdd }: {
 // ==============================================
 // DASHBOARD PAGE
 // ==============================================
-export default function DashboardPage() {
+function DashboardPage() {
   const router   = useRouter();
   const supabase = createClient();
 
@@ -450,3 +451,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+export default dynamic(() => Promise.resolve(DashboardPage), { ssr: false });
