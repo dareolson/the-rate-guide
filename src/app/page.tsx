@@ -1337,6 +1337,7 @@ function Calculator() {
                   value={inputs.takeHome}
                   onChange={(e) => set("takeHome", Number(e.target.value))}
                   min={0}
+                  step={5000}
                   style={{
                     background: "var(--surface)",
                     border:     "1px solid var(--border)",
