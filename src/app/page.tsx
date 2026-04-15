@@ -1204,7 +1204,7 @@ function Calculator() {
     discipline:    urlInputs.discipline    ?? "Cinematographer / DP",
     experience:    urlInputs.experience    ?? "Mid",
     location:      urlInputs.location      ?? "Mid Market",
-    takeHome:      urlInputs.takeHome      ?? 60000,
+    takeHome:      urlInputs.takeHome      ?? 0,
     billableDays:  urlInputs.billableDays  ?? DEFAULT_BILLABLE_DAYS,
     hasKit:        urlInputs.hasKit        ?? false,
     includeProfit: urlInputs.includeProfit ?? true,
@@ -1214,7 +1214,7 @@ function Calculator() {
   const [currentRate,          setCurrentRate]          = useState<number | null>(null);
   const [currentRateRaw,       setCurrentRateRaw]       = useState("");
   const [currentBillableDays,  setCurrentBillableDays]  = useState(DEFAULT_BILLABLE_DAYS);
-  const [takeHomeRaw,          setTakeHomeRaw]          = useState(String(urlInputs.takeHome ?? 60000));
+  const [takeHomeRaw,          setTakeHomeRaw]          = useState(urlInputs.takeHome ? String(urlInputs.takeHome) : "");
   const [currentRateState,     setCurrentRateState]     = useState<USState | "">("");
   const [rateLogged,           setRateLogged]           = useState(false);
   // Income calculator starts collapsed; auto-expands when URL has params (shared link)
@@ -1225,13 +1225,6 @@ function Calculator() {
     const params = inputsToParams(inputs);
     router.replace(`?${params.toString()}`, { scroll: false });
   }, [inputs, router]);
-
-  // Live recalculate whenever inputs change — but only if results already exist
-  // This makes kit, profit, and billable days feel instant after the first calculate
-  useEffect(() => {
-    if (results) setResults(calculate(inputs));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputs]);
 
   // Auto-calculate and expand income section if URL had params on load
   useEffect(() => {
@@ -1628,11 +1621,12 @@ function Calculator() {
                     setResults(null);
                     setCurrentRate(null);
                     setCurrentRateRaw("");
+                    setTakeHomeRaw("");
                     setInputs({
                       discipline:    "Cinematographer / DP",
                       experience:    "Mid",
                       location:      "Mid Market",
-                      takeHome:      60000,
+                      takeHome:      0,
                       billableDays:  DEFAULT_BILLABLE_DAYS,
                       hasKit:        false,
                       includeProfit: true,
