@@ -52,7 +52,7 @@ function Select<T extends string>({ value, onChange, options }: {
     <select
       value={value ?? ""}
       onChange={(e) => onChange(e.target.value as T)}
-      style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--text)", fontFamily: "var(--mono)", fontSize: "0.85rem", padding: "0.6rem 0.9rem", width: "100%" }}
+      style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px", color: "var(--text)", fontFamily: "var(--mono)", fontSize: "0.85rem", padding: "0.6rem 0.9rem", width: "100%" }}
     >
       <option value="" disabled>Select...</option>
       {options.map((o) => <option key={o}>{o}</option>)}
@@ -232,15 +232,15 @@ function RateHistory({ history, onAdd }: {
           <input
             type="number" placeholder="Day rate" value={rate}
             onChange={(e) => setRate(e.target.value)} required
-            style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--text)", fontFamily: "var(--mono)", fontSize: "0.85rem", padding: "0.6rem 0.75rem 0.6rem 1.5rem", width: "100%" }}
+            style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px", color: "var(--text)", fontFamily: "var(--mono)", fontSize: "0.85rem", padding: "0.6rem 0.75rem 0.6rem 1.5rem", width: "100%" }}
           />
         </div>
         <input
           type="text" placeholder='Note (optional) — "Raised after Beyond Meat gig"'
           value={note} onChange={(e) => setNote(e.target.value)}
-          style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--text)", fontFamily: "var(--mono)", fontSize: "0.82rem", padding: "0.6rem 0.9rem", flex: 1, minWidth: "200px" }}
+          style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px", color: "var(--text)", fontFamily: "var(--mono)", fontSize: "0.82rem", padding: "0.6rem 0.9rem", flex: 1, minWidth: "200px" }}
         />
-        <button type="submit" style={{ background: "var(--accent)", color: "#000", border: "none", fontFamily: "var(--mono)", fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase", padding: "0.6rem 1.2rem", cursor: "pointer", fontWeight: "bold" }}>
+        <button type="submit" style={{ background: "var(--accent)", color: "#000", border: "none", borderRadius: "4px", fontFamily: "var(--mono)", fontSize: "0.75rem", letterSpacing: "0.15em", textTransform: "uppercase", padding: "0.6rem 1.2rem", cursor: "pointer", fontWeight: "bold" }}>
           Log
         </button>
       </form>
@@ -372,7 +372,7 @@ function DashboardPage() {
           <h1 style={{ fontFamily: "var(--mono)", fontSize: "1.8rem", marginTop: "0.5rem" }}>Your Dashboard</h1>
           <p style={{ color: "var(--text-dim)", fontSize: "0.78rem", marginTop: "0.25rem" }}>{profile.email}</p>
         </div>
-        <button onClick={signOut} style={{ background: "none", border: "1px solid var(--border)", color: "var(--text-dim)", fontFamily: "var(--mono)", fontSize: "0.7rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "0.5rem 1rem", cursor: "pointer" }}>
+        <button onClick={signOut} style={{ background: "none", border: "1px solid var(--border)", borderRadius: "4px", color: "var(--text-dim)", fontFamily: "var(--mono)", fontSize: "0.7rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "0.5rem 1rem", cursor: "pointer" }}>
           Sign Out
         </button>
       </div>
@@ -442,7 +442,7 @@ function DashboardPage() {
                     type="number" min={0}
                     value={profile[key] ?? ""}
                     onChange={(e) => setProfile((p) => p ? { ...p, [key]: e.target.value ? Number(e.target.value) : null } : p)}
-                    style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--text)", fontFamily: "var(--mono)", fontSize: "0.9rem", padding: "0.6rem 0.75rem 0.6rem 1.5rem", width: "100%" }}
+                    style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px", color: "var(--text)", fontFamily: "var(--mono)", fontSize: "0.9rem", padding: "0.6rem 0.75rem 0.6rem 1.5rem", width: "100%" }}
                   />
                 </div>
               </div>
@@ -462,7 +462,7 @@ function DashboardPage() {
 
           <button
             onClick={saveProfile} disabled={saving}
-            style={{ width: "100%", padding: "0.9rem", background: saved ? "transparent" : "var(--accent)", color: saved ? "var(--accent)" : "#000", border: saved ? "1px solid var(--accent)" : "none", fontFamily: "var(--mono)", fontSize: "0.8rem", letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer", fontWeight: "bold", transition: "all 0.2s" }}
+            style={{ width: "100%", padding: "0.9rem", background: saved ? "transparent" : "var(--accent)", color: saved ? "var(--accent)" : "#000", border: saved ? "1px solid var(--accent)" : "none", borderRadius: "4px", fontFamily: "var(--mono)", fontSize: "0.8rem", letterSpacing: "0.2em", textTransform: "uppercase", cursor: "pointer", fontWeight: "bold", transition: "all 0.2s" }}
           >
             {saving ? "Saving..." : saved ? "Saved ✓" : "Save Profile"}
           </button>

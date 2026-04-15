@@ -75,15 +75,16 @@ function RadioGroup<T extends string>({
           key={opt}
           onClick={() => onChange(opt)}
           style={{
-            background: value === opt ? "rgba(212,146,10,0.12)" : "transparent",
-            color:      value === opt ? "var(--accent)" : "var(--text-dim)",
-            border:     `1px solid ${value === opt ? "var(--accent)" : "var(--border)"}`,
-            fontFamily:    "var(--mono)",
-            fontSize:      "0.83rem",   // raised from 0.72 → 15px
-            letterSpacing: "0.04em",    // tightened from 0.1em
-            padding:       "0.45rem 0.9rem",
-            cursor:     "pointer",
-            transition: "all 0.15s",
+            background:   value === opt ? "rgba(212,146,10,0.12)" : "transparent",
+            color:        value === opt ? "var(--accent)" : "var(--text-dim)",
+            border:       `1px solid ${value === opt ? "var(--accent)" : "var(--border)"}`,
+            fontFamily:   "var(--mono)",
+            fontSize:     "0.83rem",
+            letterSpacing:"0.04em",
+            padding:      "0.45rem 0.9rem",
+            borderRadius: "4px",
+            cursor:       "pointer",
+            transition:   "all 0.15s",
           }}
         >
           {opt}
@@ -136,6 +137,7 @@ function ShareButton({ inputs, results }: { inputs: CalcInputs; results: CalcRes
     letterSpacing:  "0.15em",
     textTransform:  "uppercase" as const,
     padding:        "0.65rem 1.5rem",
+    borderRadius:   "4px",
     cursor:         "pointer",
     transition:     "color 0.2s, border-color 0.2s",
     flex:           1,
@@ -376,6 +378,7 @@ function RealityCheck({
               fontSize:      "0.7rem",
               letterSpacing: "0.08em",
               padding:       "0.45rem 0.9rem",
+              borderRadius:  "4px",
               cursor:        "pointer",
               transition:    "all 0.15s",
             }}>
@@ -417,7 +420,7 @@ function RealityCheck({
                   fontSize: "0.72rem", letterSpacing: "0.04em", textTransform: "uppercase",
                   background: "none", border: `1px solid var(--border)`,
                   color: "var(--text-dim)", fontFamily: "var(--mono)",
-                  padding: "0.15rem 0.5rem", cursor: "pointer",
+                  padding: "0.15rem 0.5rem", borderRadius: "4px", cursor: "pointer",
                 }}
               >
                 {includeChildcare ? "remove" : "add back"}
@@ -616,6 +619,7 @@ function Survey({ inputs }: { inputs: CalcInputs }) {
     fontFamily:    "var(--sans)",
     fontSize:      "0.82rem",
     padding:       "0.65rem 1rem",
+    borderRadius:  "4px",
     cursor:        "pointer",
     textAlign:     "left" as const,
     lineHeight:    1.4,
@@ -729,6 +733,7 @@ function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcIn
           style={{
             background:   "var(--surface)",
             border:       "1px solid var(--border)",
+            borderRadius: "4px",
             color:        "var(--text)",
             fontFamily:   "var(--mono)",
             fontSize:     "1.1rem",
@@ -743,10 +748,11 @@ function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcIn
       {/* Gap display — only shown once they've entered a valid number */}
       {valid && (
         <div style={{
-          background:  "var(--surface)",
-          border:      `1px solid ${overMin ? "var(--accent)" : "var(--danger)"}`,
-          padding:     "1.25rem 1.5rem",
-          lineHeight:  1.7,
+          background:   "var(--surface)",
+          border:       `1px solid ${overMin ? "var(--accent)" : "var(--danger)"}`,
+          borderRadius: "4px",
+          padding:      "1.25rem 1.5rem",
+          lineHeight:   1.7,
         }}>
           {overMin ? (
             // Charging at or above their minimum — positive reinforcement
@@ -847,13 +853,14 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           style={{
-            flex:       "1 1 200px",
-            background: "var(--bg)",
-            border:     "1px solid var(--border)",
-            color:      "var(--text)",
-            fontFamily: "var(--mono)",
-            fontSize:   "0.85rem",
-            padding:    "0.65rem 1rem",
+            flex:         "1 1 200px",
+            background:   "var(--bg)",
+            border:       "1px solid var(--border)",
+            borderRadius: "4px",
+            color:        "var(--text)",
+            fontFamily:   "var(--mono)",
+            fontSize:     "0.85rem",
+            padding:      "0.65rem 1rem",
           }}
         />
         <button
@@ -863,6 +870,7 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
             background:    "var(--accent)",
             color:         "#000",
             border:        "none",
+            borderRadius:  "4px",
             fontFamily:    "var(--mono)",
             fontSize:      "0.75rem",
             letterSpacing: "0.15em",
@@ -1274,14 +1282,15 @@ function Calculator() {
             value={inputs.discipline}
             onChange={(e) => set("discipline", e.target.value as Discipline)}
             style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              color: "var(--text)",
-              fontFamily: "var(--mono)",
-              fontSize: "0.85rem",
-              padding: "0.65rem 1rem",
-              width: "100%",
-              cursor: "pointer",
+              background:   "var(--surface)",
+              border:       "1px solid var(--border)",
+              borderRadius: "4px",
+              color:        "var(--text)",
+              fontFamily:   "var(--mono)",
+              fontSize:     "0.85rem",
+              padding:      "0.65rem 1rem",
+              width:        "100%",
+              cursor:       "pointer",
             }}
           >
             {DISCIPLINES.map((d) => <option key={d}>{d}</option>)}
@@ -1322,13 +1331,14 @@ function Calculator() {
             }}
             onBlur={handleCurrentRateBlur}
             style={{
-              background:  "var(--surface)",
-              border:      "1px solid var(--border)",
-              color:       "var(--text)",
-              fontFamily:  "var(--mono)",
-              fontSize:    "1rem",
-              padding:     "0.65rem 1rem",
-              width:       "180px",
+              background:   "var(--surface)",
+              border:       "1px solid var(--border)",
+              borderRadius: "4px",
+              color:        "var(--text)",
+              fontFamily:   "var(--mono)",
+              fontSize:     "1rem",
+              padding:      "0.65rem 1rem",
+              width:        "180px",
             }}
           />
           <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "0.8rem" }}>/day</span>
@@ -1377,13 +1387,14 @@ function Calculator() {
                   min={0}
                   step={5000}
                   style={{
-                    background: "var(--surface)",
-                    border:     "1px solid var(--border)",
-                    color:      "var(--text)",
-                    fontFamily: "var(--mono)",
-                    fontSize:   "0.95rem",
-                    padding:    "0.65rem 1rem 0.65rem 2rem",
-                    width:      "100%",
+                    background:   "var(--surface)",
+                    border:       "1px solid var(--border)",
+                    borderRadius: "4px",
+                    color:        "var(--text)",
+                    fontFamily:   "var(--mono)",
+                    fontSize:     "0.95rem",
+                    padding:      "0.65rem 1rem 0.65rem 2rem",
+                    width:        "100%",
                   }}
                 />
               </div>
@@ -1422,6 +1433,7 @@ function Calculator() {
                     fontSize:      "0.83rem",
                     letterSpacing: "0.04em",
                     padding:       "0.45rem 0.9rem",
+                    borderRadius:  "4px",
                     cursor:        "pointer",
                     transition:    "all 0.15s",
                   }}
@@ -1467,6 +1479,7 @@ function Calculator() {
                   letterSpacing: "0.2em",
                   textTransform: "uppercase",
                   border:        "none",
+                  borderRadius:  "4px",
                   cursor:        "pointer",
                   fontWeight:    "bold",
                 }}
@@ -1495,6 +1508,7 @@ function Calculator() {
                     padding:        "1rem 1.25rem",
                     background:     "none",
                     border:         "1px solid var(--border)",
+                    borderRadius:   "4px",
                     color:          "var(--text-dim)",
                     fontFamily:     "var(--mono)",
                     fontSize:       "0.72rem",

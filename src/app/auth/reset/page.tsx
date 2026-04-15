@@ -10,13 +10,14 @@ import { createClient } from "@/lib/supabase/client";
 // is now in a temporary session and just needs to set a new password.
 
 const inputStyle: React.CSSProperties = {
-  background: "var(--surface)",
-  border:     "1px solid var(--border)",
-  color:      "var(--text)",
-  fontFamily: "var(--mono)",
-  fontSize:   "0.9rem",
-  padding:    "0.75rem 1rem",
-  width:      "100%",
+  background:   "var(--surface)",
+  border:       "1px solid var(--border)",
+  borderRadius: "4px",
+  color:        "var(--text)",
+  fontFamily:   "var(--mono)",
+  fontSize:     "0.9rem",
+  padding:      "0.75rem 1rem",
+  width:        "100%",
 };
 
 function ResetPage() {
@@ -120,6 +121,7 @@ function ResetPage() {
             letterSpacing: "0.2em",
             textTransform: "uppercase",
             border:        "none",
+            borderRadius:  "4px",
             cursor:        "pointer",
             fontWeight:    "bold",
             opacity:       loading ? 0.6 : 1,

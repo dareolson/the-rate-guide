@@ -7,27 +7,29 @@ import { createClient } from "@/lib/supabase/client";
 
 // Shared input style
 const inputStyle = {
-  background: "var(--surface)",
-  border: "1px solid var(--border)",
-  color: "var(--text)",
-  fontFamily: "var(--mono)",
-  fontSize: "0.9rem",
-  padding: "0.75rem 1rem",
-  width: "100%",
+  background:   "var(--surface)",
+  border:       "1px solid var(--border)",
+  borderRadius: "4px",
+  color:        "var(--text)",
+  fontFamily:   "var(--mono)",
+  fontSize:     "0.9rem",
+  padding:      "0.75rem 1rem",
+  width:        "100%",
 };
 
 const btnStyle = {
-  width: "100%",
-  padding: "0.9rem",
-  background: "var(--accent)",
-  color: "#000",
-  fontFamily: "var(--mono)",
-  fontSize: "0.8rem",
+  width:         "100%",
+  padding:       "0.9rem",
+  background:    "var(--accent)",
+  color:         "#000",
+  fontFamily:    "var(--mono)",
+  fontSize:      "0.8rem",
   letterSpacing: "0.2em",
   textTransform: "uppercase" as const,
-  border: "none",
-  cursor: "pointer",
-  fontWeight: "bold",
+  border:        "none",
+  borderRadius:  "4px",
+  cursor:        "pointer",
+  fontWeight:    "bold",
 };
 
 function LoginForm() {
