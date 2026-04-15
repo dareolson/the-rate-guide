@@ -10,6 +10,16 @@ export const DISCIPLINES = [
   "Colorist",
   "Motion Designer",
   "Producer",
+  "Associate Producer",
+  "1st AD",
+  "2nd AD",
+  "Key Grip",
+  "Best Boy Grip",
+  "Grip",
+  "Gaffer",
+  "Sound Mixer",
+  "Production Assistant",
+  "Key PA",
 ] as const;
 
 export type Discipline = (typeof DISCIPLINES)[number];
@@ -29,6 +39,16 @@ export const RATE_FLOORS: Record<Discipline, Record<ExperienceLevel, number>> = 
   "Colorist":              { Emerging: 400, Mid: 600, Senior: 900,  Expert: 1200 },
   "Motion Designer":       { Emerging: 350, Mid: 600, Senior: 850,  Expert: 1100 },
   "Producer":              { Emerging: 400, Mid: 650, Senior: 900,  Expert: 1200 },
+  "Associate Producer":    { Emerging: 300, Mid: 500, Senior: 750,  Expert: 1000 },
+  "1st AD":                { Emerging: 450, Mid: 700, Senior: 1000, Expert: 1400 },
+  "2nd AD":                { Emerging: 300, Mid: 450, Senior: 650,  Expert: 900  },
+  "Key Grip":              { Emerging: 400, Mid: 600, Senior: 850,  Expert: 1100 },
+  "Best Boy Grip":         { Emerging: 300, Mid: 450, Senior: 650,  Expert: 850  },
+  "Grip":                  { Emerging: 250, Mid: 375, Senior: 500,  Expert: 650  },
+  "Gaffer":                { Emerging: 400, Mid: 650, Senior: 950,  Expert: 1300 },
+  "Sound Mixer":           { Emerging: 400, Mid: 650, Senior: 950,  Expert: 1300 },
+  "Production Assistant":  { Emerging: 150, Mid: 200, Senior: 275,  Expert: 350  },
+  "Key PA":                { Emerging: 200, Mid: 300, Senior: 400,  Expert: 500  },
 };
 
 // Typical rate ceilings by discipline + experience ($/day)
@@ -42,6 +62,16 @@ export const RATE_CEILINGS: Record<Discipline, Record<ExperienceLevel, number>> 
   "Colorist":              { Emerging: 650,  Mid: 1000, Senior: 1600, Expert: 2500 },
   "Motion Designer":       { Emerging: 600,  Mid: 1000, Senior: 1500, Expert: 2200 },
   "Producer":              { Emerging: 650,  Mid: 1100, Senior: 1600, Expert: 2500 },
+  "Associate Producer":    { Emerging: 500,  Mid: 800,  Senior: 1200, Expert: 1600 },
+  "1st AD":                { Emerging: 700,  Mid: 1100, Senior: 1600, Expert: 2200 },
+  "2nd AD":                { Emerging: 500,  Mid: 750,  Senior: 1100, Expert: 1500 },
+  "Key Grip":              { Emerging: 650,  Mid: 1000, Senior: 1400, Expert: 1800 },
+  "Best Boy Grip":         { Emerging: 500,  Mid: 750,  Senior: 1050, Expert: 1350 },
+  "Grip":                  { Emerging: 400,  Mid: 600,  Senior: 800,  Expert: 1000 },
+  "Gaffer":                { Emerging: 650,  Mid: 1050, Senior: 1500, Expert: 2000 },
+  "Sound Mixer":           { Emerging: 650,  Mid: 1050, Senior: 1500, Expert: 2000 },
+  "Production Assistant":  { Emerging: 250,  Mid: 350,  Senior: 450,  Expert: 600  },
+  "Key PA":                { Emerging: 350,  Mid: 500,  Senior: 650,  Expert: 850  },
 };
 
 // Returns the market range (floor → ceiling) adjusted for location

@@ -403,4 +403,499 @@ export const STRATEGIES: Record<StrategyKey, StrategySection[]> = {
       ],
     },
   ],
+
+  // ============================================================
+  "Associate Producer__Emerging": [
+    {
+      category: "Foundations",
+      items: [
+        "Learn the full production pipeline — you need to see every department",
+        "Master the tools: budgeting software, scheduling apps, call sheet formats",
+        "Be the person who solves problems before they reach the producer",
+        "Understand clearances, releases, and basic contract language",
+      ],
+    },
+  ],
+  "Associate Producer__Mid": [
+    {
+      category: "Ownership",
+      items: [
+        "Run segments or secondary shoots without supervision",
+        "Develop vendor relationships the producer can rely on through you",
+        "Understand post-production well enough to coordinate it",
+        "Build a reputation for being organized under pressure",
+      ],
+    },
+  ],
+  "Associate Producer__Senior": [
+    {
+      category: "Path to Producer",
+      items: [
+        "Step up as line producer when the opportunity comes — take the risk",
+        "Build direct relationships with clients and brands",
+        "Develop a specialization: commercial, doc, branded content",
+        "Mentor coordinators and PAs below you",
+      ],
+    },
+  ],
+  "Associate Producer__Expert": [
+    {
+      category: "Authority",
+      items: [
+        "You should be producing, not associating — push for the title and rate",
+        "Use your AP credits as a launching pad for EP conversations",
+        "Build a roster of clients who ask for you specifically",
+      ],
+    },
+  ],
+
+  // ============================================================
+  "1st AD__Emerging": [
+    {
+      category: "Set Control",
+      items: [
+        "The set runs on your voice — learn to project authority without aggression",
+        "Master the shot list and schedule before the crew arrives",
+        "Learn to read a director and translate their vision into a workable day",
+        "Know every department head's job well enough to anticipate their needs",
+      ],
+    },
+    {
+      category: "Logistics",
+      items: [
+        "Build bulletproof call sheets — every detail, no ambiguity",
+        "Learn to compress a schedule without losing the director's trust",
+        "Develop a system for tracking scene coverage in real time",
+        "Study union rules and turnaround requirements — violations are your fault",
+      ],
+    },
+  ],
+  "1st AD__Mid": [
+    {
+      category: "Department Leadership",
+      items: [
+        "Train your 2nd AD and Key PA — their mistakes reflect on you",
+        "Develop a reputation for protecting the schedule without killing morale",
+        "Build relationships with DPs who like working with you — it books jobs",
+        "Get comfortable with large crews: 50+ people looking to you for answers",
+      ],
+    },
+  ],
+  "1st AD__Senior": [
+    {
+      category: "Feature & Episodic Work",
+      items: [
+        "Push for feature or long-form episodic credits",
+        "Join the DGA if your market and ambitions support it",
+        "Develop a reputation with specific directors who request you by name",
+        "Build relationships with UPMs — they hire ADs, not the other way around",
+      ],
+    },
+  ],
+  "1st AD__Expert": [
+    {
+      category: "Elite",
+      items: [
+        "Major studio or streaming credits with recognizable titles",
+        "DGA membership and standing in your market",
+        "Directors who won't shoot without you",
+        "Mentorship of emerging ADs as a reputation multiplier",
+      ],
+    },
+  ],
+
+  // ============================================================
+  "2nd AD__Emerging": [
+    {
+      category: "Foundations",
+      items: [
+        "Master paperwork: production reports, exhibit Gs, movement orders",
+        "Learn to manage talent — pickups, holding, turnaround",
+        "Be the 1st AD's right hand before they ask",
+        "Know the call sheet inside out — you often build it",
+      ],
+    },
+  ],
+  "2nd AD__Mid": [
+    {
+      category: "Set Skills",
+      items: [
+        "Develop talent wrangling skills: calm, firm, professional",
+        "Build a reputation for clean paperwork — it gets you rehired",
+        "Learn to anticipate scheduling changes before the 1st AD calls them",
+        "Study 1st AD work — your path runs through them",
+      ],
+    },
+  ],
+  "2nd AD__Senior": [
+    {
+      category: "Transition",
+      items: [
+        "Step up to 1st AD on smaller projects to build the credit",
+        "Develop a specialization: commercial, reality, narrative",
+        "Build direct relationships with producers and UPMs",
+        "Mentor 2nd 2nds and PAs — your reputation travels with your team",
+      ],
+    },
+  ],
+  "2nd AD__Expert": [
+    {
+      category: "Authority",
+      items: [
+        "You should be a 1st AD by now — use the title and rate accordingly",
+        "Major credits in your discipline",
+        "Known in your market as someone who makes the set run",
+      ],
+    },
+  ],
+
+  // ============================================================
+  "Key Grip__Emerging": [
+    {
+      category: "Foundations",
+      items: [
+        "Know every piece of grip equipment by name and function — no hesitation on set",
+        "Understand the relationship between grip and electric — they work in parallel",
+        "Learn rigging: speed rails, scaffolding, camera mounts",
+        "Study the physics of lighting support — safe, fast, invisible",
+      ],
+    },
+    {
+      category: "Set Etiquette",
+      items: [
+        "Be the fastest person to build and strike your department",
+        "Develop a relationship with the DP — grip makes the DP's vision possible",
+        "Build a reliable team of grips you can bring to any project",
+        "Show up with a full kit — your tools are your rate justification",
+      ],
+    },
+  ],
+  "Key Grip__Mid": [
+    {
+      category: "Technical Expansion",
+      items: [
+        "Add specialty rigging: car mounts, crane operation, underwater support",
+        "Develop dolly operation skills — smooth is a craft",
+        "Learn to design a full grip package for a commercial shoot",
+        "Build vendor relationships for equipment you don't own",
+      ],
+    },
+  ],
+  "Key Grip__Senior": [
+    {
+      category: "Department Command",
+      items: [
+        "Run a full grip department on a feature or episodic",
+        "Mentor your Best Boy and grips — department quality is your responsibility",
+        "Build DP relationships that follow you project to project",
+        "Know union rates and rules if your market supports it (IATSE Local 80)",
+      ],
+    },
+  ],
+  "Key Grip__Expert": [
+    {
+      category: "Elite",
+      items: [
+        "Major feature or streaming credits with recognizable DPs",
+        "IATSE standing in your market",
+        "DPs who request you by name",
+        "Your department runs without you micromanaging it",
+      ],
+    },
+  ],
+
+  // ============================================================
+  "Best Boy Grip__Emerging": [
+    {
+      category: "Foundations",
+      items: [
+        "Know the full grip inventory — every piece, every function",
+        "Learn to run the truck: organization, inventory, maintenance",
+        "Be the Key Grip's operational right hand",
+        "Build relationships with equipment houses and vendors",
+      ],
+    },
+  ],
+  "Best Boy Grip__Mid": [
+    {
+      category: "Operations",
+      items: [
+        "Own the equipment budget — track expendables, rentals, damage",
+        "Manage the grip crew day-to-day so the Key can focus on the DP",
+        "Develop hiring relationships — you'll build the crew for the Key",
+        "Step up as Key on smaller projects to build the credit",
+      ],
+    },
+  ],
+  "Best Boy Grip__Senior": [
+    {
+      category: "Transition",
+      items: [
+        "Push for Key Grip credits on the right projects",
+        "Build a reputation for running a clean, fast department",
+        "Develop relationships with UPMs and production coordinators who hire crew",
+      ],
+    },
+  ],
+  "Best Boy Grip__Expert": [
+    {
+      category: "Authority",
+      items: [
+        "You should be a Key Grip — use that title and rate",
+        "Major credits and a reliable crew network",
+        "Known as someone who makes the department run regardless of conditions",
+      ],
+    },
+  ],
+
+  // ============================================================
+  "Grip__Emerging": [
+    {
+      category: "Foundations",
+      items: [
+        "Learn every piece of grip equipment — sandbags to speed rails to dollies",
+        "Be fast, quiet, and safe — those are the three rules on set",
+        "Study what the Key and Best Boy are doing — that's your path",
+        "Show up with your own basic tools: gloves, multi-tool, black wrap",
+      ],
+    },
+  ],
+  "Grip__Mid": [
+    {
+      category: "Specialization",
+      items: [
+        "Develop a specialty: dolly, rigging, or crane operation",
+        "Build relationships with Key Grips who rehire reliable people",
+        "Expand your kit — the more you bring, the more you're worth",
+        "Study the Best Boy role — that's your next step",
+      ],
+    },
+  ],
+  "Grip__Senior": [
+    {
+      category: "Path Up",
+      items: [
+        "Step up to Best Boy on smaller projects",
+        "Build a reputation for speed, safety, and reliability",
+        "Develop vendor and equipment house relationships",
+      ],
+    },
+  ],
+  "Grip__Expert": [
+    {
+      category: "Authority",
+      items: [
+        "At this level you should be Key Grip or Best Boy",
+        "Major credits and a crew network that follows you",
+        "Specialty skills that justify your rate above all others",
+      ],
+    },
+  ],
+
+  // ============================================================
+  "Gaffer__Emerging": [
+    {
+      category: "Electrical Foundations",
+      items: [
+        "Know your load calculations — electrical safety is non-negotiable",
+        "Be fluent in every fixture type: tungsten, HMI, LED, practical",
+        "Understand the DP's language and translate it into a lighting plan",
+        "Learn to work fast with minimal gear — efficiency is a craft",
+      ],
+    },
+    {
+      category: "Set Skills",
+      items: [
+        "Build a relationship with the Key Grip — you work as one department",
+        "Learn power distribution inside out: distro boxes, generators, tie-ins",
+        "Develop a reliable Best Boy Electric — your department runs through them",
+        "Build your kit: the more you own, the more you earn",
+      ],
+    },
+  ],
+  "Gaffer__Mid": [
+    {
+      category: "Technical Expansion",
+      items: [
+        "Add LED and wireless DMX control to your expertise",
+        "Develop a lighting design sense, not just execution",
+        "Build generator and location power expertise",
+        "Get comfortable designing lighting packages for full commercial shoots",
+      ],
+    },
+  ],
+  "Gaffer__Senior": [
+    {
+      category: "Department Command",
+      items: [
+        "Run a full electric department on a feature or episodic",
+        "Develop DP relationships that follow you across projects",
+        "Know IATSE Local 728 rules if your market supports union work",
+        "Mentor your Best Boy Electric — department quality is yours to own",
+      ],
+    },
+  ],
+  "Gaffer__Expert": [
+    {
+      category: "Elite",
+      items: [
+        "Major feature or streaming credits with recognizable DPs",
+        "IATSE standing in your market",
+        "DPs who request you by name regardless of budget",
+        "Your lighting designs are referenced by other gaffers",
+      ],
+    },
+  ],
+
+  // ============================================================
+  "Sound Mixer__Emerging": [
+    {
+      category: "Technical Foundations",
+      items: [
+        "Know your recording chain cold: mic, preamp, recorder, monitoring",
+        "Master lav placement — invisible and clean is the goal",
+        "Understand boom technique: angle, proximity, rejection",
+        "Learn to work quietly and invisibly — sound is often the last priority until it's the first problem",
+      ],
+    },
+    {
+      category: "Kit",
+      items: [
+        "Build a professional kit: recorder, boom, lavs, wireless systems",
+        "Know your gear's limitations before the shoot, not during",
+        "Develop relationships with sound rental houses",
+        "Your kit is your rate — invest in it strategically",
+      ],
+    },
+  ],
+  "Sound Mixer__Mid": [
+    {
+      category: "Expansion",
+      items: [
+        "Add more wireless channels — complex shoots demand it",
+        "Develop production sound report discipline — post will thank you",
+        "Build relationships with post sound supervisors who can refer you",
+        "Learn to manage a boom operator and utility — your department grows",
+      ],
+    },
+  ],
+  "Sound Mixer__Senior": [
+    {
+      category: "Department Leadership",
+      items: [
+        "Run sound on full feature or episodic productions",
+        "CAS membership if your market and credits support it",
+        "Build DP and director relationships — good sound starts in pre-production",
+        "Develop a reputation for clean production audio that post doesn't need to fix",
+      ],
+    },
+  ],
+  "Sound Mixer__Expert": [
+    {
+      category: "Elite",
+      items: [
+        "Major feature or streaming credits",
+        "CAS membership and standing",
+        "Directors and producers who won't shoot without you",
+        "Your production audio requires minimal post intervention",
+      ],
+    },
+  ],
+
+  // ============================================================
+  "Production Assistant__Emerging": [
+    {
+      category: "Foundations",
+      items: [
+        "Be the most reliable person on set — that's your entire job description",
+        "Learn every department name and what they do before your first day",
+        "Master set walkie etiquette — how you sound on the radio matters",
+        "Anticipate needs: if someone might want water, coffee, or a copy, have it ready",
+      ],
+    },
+    {
+      category: "Getting Ahead",
+      items: [
+        "Identify which department you want to move into and study it",
+        "Build relationships with the 2nd AD — they do the hiring",
+        "Never complain, never disappear, never be on your phone",
+        "Volunteer for the hardest tasks — that's how you get remembered",
+      ],
+    },
+  ],
+  "Production Assistant__Mid": [
+    {
+      category: "Moving Up",
+      items: [
+        "Target a department and start showing up as that person",
+        "Build a reputation with specific 1st ADs and coordinators who rehire you",
+        "Learn the paperwork of your target department",
+        "Ask to observe — most department heads will let a reliable PA watch",
+      ],
+    },
+  ],
+  "Production Assistant__Senior": [
+    {
+      category: "Transition",
+      items: [
+        "You should be moving into a department by now — PA is a stepping stone",
+        "Use your set relationships to get into your target discipline",
+        "Build a reputation as someone who makes the set run",
+      ],
+    },
+  ],
+  "Production Assistant__Expert": [
+    {
+      category: "Authority",
+      items: [
+        "At Expert level you should be Key PA or in a department role",
+        "If you're still a general PA, specialize or step into coordination",
+        "Your value is your reliability, speed, and knowledge of the set",
+      ],
+    },
+  ],
+
+  // ============================================================
+  "Key PA__Emerging": [
+    {
+      category: "Foundations",
+      items: [
+        "You manage the PA department — know every PA's assignment at all times",
+        "Be the 2nd AD's operational right hand on set",
+        "Build reliable communication between ADs and all departments",
+        "Know base camp, holding, and set logistics cold",
+      ],
+    },
+  ],
+  "Key PA__Mid": [
+    {
+      category: "Set Leadership",
+      items: [
+        "Train and manage your PA team — their mistakes are yours to fix",
+        "Develop a reputation for running a tight, fast base camp",
+        "Build relationships with 1st and 2nd ADs who request you",
+        "Study 2nd AD work — that's your path",
+      ],
+    },
+  ],
+  "Key PA__Senior": [
+    {
+      category: "Path to AD",
+      items: [
+        "Step up to 2nd AD on the right project — take the risk",
+        "Build direct relationships with UPMs and production coordinators",
+        "Develop a specialization: commercial, narrative, reality",
+      ],
+    },
+  ],
+  "Key PA__Expert": [
+    {
+      category: "Authority",
+      items: [
+        "You should be a 2nd AD — push for the title and rate",
+        "Major credits across disciplines",
+        "Known as someone who makes the AD department run",
+      ],
+    },
+  ],
 };
