@@ -346,7 +346,7 @@ function RealityCheck({
   );
 
   return (
-    <div style={{ marginTop: "2rem", background: "var(--surface)", border: "1px solid var(--border)", padding: "1.75rem 2rem" }}>
+    <div style={{ marginTop: "1.5rem", background: "var(--surface)", border: "1px solid var(--border)", padding: "1.75rem 2rem", borderRadius: "4px" }}>
       <div style={{ fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
         Monthly Breakdown
       </div>
@@ -503,7 +503,7 @@ function MarketRangePanel({
   const config = mr ? POSITION_CONFIG[mr.position] : null;
 
   return (
-    <div style={{ marginTop: "2rem", background: "var(--surface)", border: "1px solid var(--border)", padding: "1.5rem 1.75rem", borderTop: topBorder ? "2px solid var(--accent-2)" : "1px solid var(--border)" }}>
+    <div style={{ marginTop: "1.5rem", background: "var(--surface)", border: "1px solid var(--border)", padding: "1.75rem 2rem", borderRadius: "4px", borderTop: topBorder ? "2px solid var(--accent-2)" : "1px solid var(--border)" }}>
       <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.4rem" }}>
         Market Context
       </div>
@@ -623,7 +623,7 @@ function Survey({ inputs }: { inputs: CalcInputs }) {
   });
 
   return (
-    <div style={{ marginTop: "2rem", background: "var(--surface)", border: "1px solid var(--border)", padding: "1.75rem 2rem" }}>
+    <div style={{ marginTop: "1.5rem", background: "var(--surface)", border: "1px solid var(--border)", padding: "1.75rem 2rem", borderRadius: "4px" }}>
       <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.5rem" }}>
         Quick question
       </div>
@@ -990,7 +990,7 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
       )}
 
       {/* Line-by-line breakdown */}
-      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: "1.5rem 1.75rem" }}>
+      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: "1.75rem 2rem", borderRadius: "4px" }}>
         {[
           {
             label: "Take-Home Goal",
@@ -1041,10 +1041,11 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
 
       {/* Rate card — auto-fit grid reflows naturally on mobile */}
       <div style={{
-        marginTop: "1rem",
-        padding: "1.5rem",
+        marginTop: "1.5rem",
+        padding: "1.75rem 2rem",
         background: "var(--surface)",
         border: "1px solid var(--border)",
+        borderRadius: "4px",
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
         gap: "1.25rem 2rem",
@@ -1097,7 +1098,7 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
         const gapYr  = gap * results.billableDays;
         const over   = gap <= 0;
         return (
-          <div style={{ marginTop: "2rem", padding: "1rem 1.25rem", background: "var(--surface)", border: `1px solid ${over ? "var(--accent)" : "var(--danger)"}` }}>
+          <div style={{ marginTop: "1.5rem", padding: "1.75rem 2rem", background: "var(--surface)", border: `1px solid ${over ? "var(--accent)" : "var(--danger)"}`, borderRadius: "4px" }}>
             <span style={{ fontFamily: "var(--mono)", fontSize: "0.85rem", color: over ? "var(--accent)" : "var(--danger)" }}>
               {over
                 ? `You're ${fmt(Math.abs(gap))}/day above your minimum — ${fmt(Math.abs(gapYr))}/year of cushion.`

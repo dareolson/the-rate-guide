@@ -266,10 +266,12 @@ function BookCard({ product }: { product: Book }) {
     <div style={{
       background:    "var(--surface)",
       border:        "1px solid var(--border)",
+      borderRadius:  "4px",
       display:       "flex",
       flexDirection: "column",
       position:      "relative",
       transition:    "border-color 0.2s",
+      overflow:      "hidden",
     }}>
       {product.badge && (
         <div style={{
@@ -304,7 +306,7 @@ function BookCard({ product }: { product: Book }) {
       />
 
       {/* Content */}
-      <div style={{ padding: "1.25rem", display: "flex", flexDirection: "column", gap: "0.6rem", flex: 1 }}>
+      <div style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", gap: "0.6rem", flex: 1 }}>
         <div>
           <div style={{ fontFamily: "var(--sans)", fontWeight: 700, fontSize: "0.95rem", color: "var(--text)", lineHeight: 1.3, marginBottom: "0.2rem" }}>
             {product.name}
@@ -356,7 +358,8 @@ function ServiceCard({ product }: { product: Service }) {
     <div style={{
       background:    "var(--surface)",
       border:        "1px solid var(--border)",
-      padding:       "1.5rem",
+      borderRadius:  "4px",
+      padding:       "1.75rem 2rem",
       display:       "flex",
       gap:           "1.25rem",
       alignItems:    "flex-start",
