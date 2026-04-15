@@ -1204,6 +1204,7 @@ function Calculator() {
   const [currentRate,          setCurrentRate]          = useState<number | null>(null);
   const [currentRateRaw,       setCurrentRateRaw]       = useState("");
   const [currentBillableDays,  setCurrentBillableDays]  = useState(DEFAULT_BILLABLE_DAYS);
+  const [takeHomeRaw,          setTakeHomeRaw]          = useState(String(urlInputs.takeHome ?? 60000));
   const [rateLogged,           setRateLogged]           = useState(false);
   // Income calculator starts collapsed; auto-expands when URL has params (shared link)
   const [showIncomeCalc, setShowIncomeCalc] = useState(false);
@@ -1438,11 +1439,17 @@ function Calculator() {
               <div style={{ position: "relative" }}>
                 <span style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>$</span>
                 <input
-                  type="number"
-                  value={inputs.takeHome}
-                  onChange={(e) => set("takeHome", Number(e.target.value))}
-                  min={0}
-                  step={5000}
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={takeHomeRaw}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/[^0-9]/g, "");
+                    setTakeHomeRaw(raw);
+                    const n = Number(raw);
+                    if (n > 0) set("takeHome", n);
+                  }}
+                  onBlur={() => setTakeHomeRaw(String(inputs.takeHome))}
                   style={{
                     background:   "var(--surface)",
                     border:       "1px solid var(--border)",
