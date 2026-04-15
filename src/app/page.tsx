@@ -1119,6 +1119,16 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
       {/* Market range — now shows where the CALCULATED minimum falls */}
       <MarketRangePanel inputs={inputs} dayRate={results.dayRate} rateLabel="Your minimum" topBorder={false} />
 
+      {/* Rate strategy note */}
+      <div style={{ marginTop: "2rem", padding: "1.5rem 1.75rem", borderLeft: "3px solid var(--accent-2)", background: "var(--surface)" }}>
+        <p style={{ fontFamily: "var(--serif)", fontSize: "0.85rem", color: "var(--text-dim)", lineHeight: 1.75, margin: 0 }}>
+          A lot of things factor into the rate you actually charge — including what the market will bear.
+          If you plan to work below your minimum, consider making that explicit to your client.
+          Tell them your standard rate, and name the discount you&apos;re offering. That way, you do the project,
+          and they understand they&apos;re getting more than they paid for — which is exactly the kind of thing people remember.
+        </p>
+      </div>
+
       <RealityCheck
         rc={rc}
         location={inputs.location}
