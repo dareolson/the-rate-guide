@@ -1449,9 +1449,12 @@ function Calculator() {
                 const covers  = surplus >= 0;
                 return (
                   <div style={{ borderTop: "1px solid var(--border)", paddingTop: "0.85rem", marginTop: "0.5rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--mono)", fontSize: "0.85rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontFamily: "var(--mono)", fontSize: "0.85rem" }}>
                       <span style={{ color: "var(--text-dim)" }}>Avg. cost of living in {currentRateState}</span>
-                      <span style={{ color: "var(--text-dim)" }}>{fmt(col)}/yr</span>
+                      <span style={{ color: "var(--text-dim)", textAlign: "right" }}>
+                        {fmt(col)}/yr
+                        <span style={{ fontSize: "0.65rem", opacity: 0.6, marginLeft: "0.5rem" }}>MIT Living Wage</span>
+                      </span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--mono)", fontSize: "0.85rem", marginTop: "0.4rem" }}>
                       <span style={{ color: "var(--text-dim)" }}>{covers ? "Surplus after expenses" : "Shortfall vs. expenses"}</span>
@@ -1459,8 +1462,8 @@ function Calculator() {
                         {covers ? "+" : "−"}{fmt(Math.abs(surplus))}/yr
                       </span>
                     </div>
-                    <div style={{ fontSize: "0.68rem", color: "var(--text-dim)", marginTop: "0.5rem", lineHeight: 1.5 }}>
-                      Based on MIT Living Wage Calculator data (single adult, no children).
+                    <div style={{ fontSize: "0.68rem", color: "var(--text-dim)", marginTop: "0.5rem", lineHeight: 1.5, opacity: 0.7 }}>
+                      Single adult, no children. livewage.mit.edu
                     </div>
                   </div>
                 );
