@@ -780,6 +780,117 @@ function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcIn
 // ==============================================
 // RESULTS PANEL
 // ==============================================
+// ==============================================
+// EMAIL CAPTURE
+// Shown after the rate card. Offer: "save your results."
+// Captures email + rate data to Supabase for follow-up.
+// ==============================================
+function EmailCapture({ results, inputs }: { results: CalcResults; inputs: CalcInputs }) {
+  const [email,     setEmail]     = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading,   setLoading]   = useState(false);
+  const [error,     setError]     = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    setError(null);
+
+    try {
+      const supabase = createClient();
+      const { error: dbError } = await supabase.from("email_captures").insert({
+        email,
+        discipline: inputs.discipline,
+        experience: inputs.experience,
+        location:   inputs.location,
+        day_rate:   Math.round(results.dayRate + results.kitFee),
+      });
+      if (dbError) throw dbError;
+      track("email_capture", { discipline: inputs.discipline, experience: inputs.experience });
+      setSubmitted(true);
+    } catch {
+      setError("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <div style={{ marginTop: "2rem", padding: "1.25rem 1.5rem", background: "var(--surface)", borderLeft: "3px solid var(--accent)" }}>
+        <div style={{ fontFamily: "var(--mono)", fontSize: "0.85rem", color: "var(--accent)", marginBottom: "0.25rem" }}>
+          Got it.
+        </div>
+        <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", lineHeight: 1.6 }}>
+          We&apos;ll be in touch at <strong style={{ color: "var(--text)" }}>{email}</strong>.
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ marginTop: "2rem", padding: "1.25rem 1.5rem", background: "var(--surface)" }}>
+      <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.25rem" }}>
+        Save your results
+      </div>
+      <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", lineHeight: 1.6, marginBottom: "1rem" }}>
+        Enter your email and we&apos;ll send you your rate breakdown to keep.
+      </div>
+
+      <form onSubmit={handleSubmit} style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+        <input
+          type="email"
+          required
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{
+            flex:       "1 1 200px",
+            background: "var(--bg)",
+            border:     "1px solid var(--border)",
+            color:      "var(--text)",
+            fontFamily: "var(--mono)",
+            fontSize:   "0.85rem",
+            padding:    "0.65rem 1rem",
+          }}
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            background:    "var(--accent)",
+            color:         "#000",
+            border:        "none",
+            fontFamily:    "var(--mono)",
+            fontSize:      "0.75rem",
+            letterSpacing: "0.15em",
+            textTransform: "uppercase",
+            padding:       "0.65rem 1.25rem",
+            cursor:        "pointer",
+            fontWeight:    "bold",
+            opacity:       loading ? 0.6 : 1,
+            whiteSpace:    "nowrap",
+          }}
+        >
+          {loading ? "..." : "Send It"}
+        </button>
+      </form>
+
+      {error && (
+        <div style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "var(--danger)" }}>{error}</div>
+      )}
+
+      <div style={{ marginTop: "0.6rem", fontSize: "0.65rem", color: "var(--text-dim)", lineHeight: 1.5 }}>
+        No spam. Unsubscribe any time.
+      </div>
+    </div>
+  );
+}
+
+// ==============================================
+// RESULTS
+// ==============================================
 function Results({ results, inputs, currentRate }: { results: CalcResults; inputs: CalcInputs; currentRate: number | null }) {
   // Family size lives in Results — independent of the rate calculation
   const [familySize, setFamilySize] = useState<FamilySize>("Single");
@@ -943,6 +1054,8 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
       </div>
 
       <ShareButton inputs={inputs} results={results} />
+
+      <EmailCapture results={results} inputs={inputs} />
 
       {/* ── RHYTHM BREAK ───────────────────────────────────────────── */}
       {/* Minimal pause between dense breakdown and market context.    */}

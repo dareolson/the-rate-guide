@@ -109,6 +109,26 @@ create policy "Anyone can submit a survey response"
 create policy "Authenticated users can read survey responses"
   on public.survey_responses for select using (auth.role() = 'authenticated');
 
+-- Email captures — "save your results" prompt after calculating
+-- Stores email + their calculated rate for follow-up marketing
+create table public.email_captures (
+  id           uuid default gen_random_uuid() primary key,
+  created_at   timestamptz default now(),
+  email        text not null,
+  discipline   text,
+  experience   text,
+  location     text,
+  day_rate     numeric
+);
+
+alter table public.email_captures enable row level security;
+
+create policy "Anyone can submit an email capture"
+  on public.email_captures for insert with check (true);
+
+create policy "Authenticated users can read email captures"
+  on public.email_captures for select using (auth.role() = 'authenticated');
+
 -- Auto-create a profile row when a new user signs up
 create or replace function public.handle_new_user()
 returns trigger as $$
