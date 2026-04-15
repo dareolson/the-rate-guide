@@ -1007,6 +1007,16 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
             amount: `${fmt(results.seTax)}/yr`,
             note: "When you work for a company, they cover half your Social Security and Medicare taxes. When you're freelance, you pay both sides. That's an extra 15.3% on top of your income tax.",
           },
+          {
+            label: `+ Federal Income Tax (est. ${Math.round(results.federalTaxRate * 100)}%)`,
+            amount: `${fmt(results.federalTax)}/yr`,
+            note: `Estimated after your health insurance deduction, the ½ SE tax deduction, and ~$10k in business write-offs. Your actual rate depends on filing status and total deductions.`,
+          },
+          {
+            label: `+ State & Local Tax (est. ${Math.round(results.stateTaxRate * 100)}%)`,
+            amount: `${fmt(results.stateTax)}/yr`,
+            note: "Median effective rate for your market tier. Major markets (LA, NY, Chicago) skew high — states like TX and FL have no income tax. This is an estimate, not a guarantee.",
+          },
           ...(results.profit > 0 ? [{
             label: "+ Profit Margin (20%)",
             amount: `${fmt(results.profit)}/yr`,

@@ -87,6 +87,36 @@ export const PROFIT_RATE             = 0.20;
 export const KIT_FEE_DEFAULT         = 300;
 export const DEFAULT_BILLABLE_DAYS   = 150;
 
+// Estimated annual business write-offs for a working creative freelancer.
+// Covers: home office, equipment depreciation, software subs, professional
+// development, vehicle use, business meals. Conservative estimate.
+export const FREELANCE_WRITEOFFS = 10000;
+
+// Federal effective income tax rates by taxable income bracket.
+// Applied AFTER subtracting: health insurance, ½ SE tax, and write-offs —
+// so these are rates on already-reduced taxable income, not gross revenue.
+// Source: 2026 IRS brackets, single filer, standard deduction $15,000.
+export function federalEffectiveRate(taxableIncome: number): number {
+  if (taxableIncome < 15000)  return 0.04;
+  if (taxableIncome < 30000)  return 0.08;
+  if (taxableIncome < 50000)  return 0.11;
+  if (taxableIncome < 75000)  return 0.14;
+  if (taxableIncome < 100000) return 0.17;
+  if (taxableIncome < 140000) return 0.20;
+  if (taxableIncome < 200000) return 0.23;
+  return 0.26;
+}
+
+// Median state + local effective income tax rate by location tier.
+// Major Market skews toward high-tax states (CA, NY, IL, MA).
+// Mid Market reflects median US state (~4%).
+// Small Market includes many no-tax or low-tax states (TX, FL, TN, etc.).
+export const STATE_TAX_RATE: Record<LocationTier, number> = {
+  "Major Market": 0.065,
+  "Mid Market":   0.040,
+  "Small Market": 0.025,
+};
+
 export interface CalcInputs {
   discipline:    Discipline;
   experience:    ExperienceLevel;
@@ -101,6 +131,10 @@ export interface CalcResults {
   takeHome:          number;
   healthInsurance:   number;
   seTax:             number;
+  federalTax:        number;
+  stateTax:          number;
+  federalTaxRate:    number; // effective rate applied, for display
+  stateTaxRate:      number; // effective rate applied, for display
   profit:            number;
   totalGrossNeeded:  number;
   billableDays:      number;
@@ -122,27 +156,44 @@ export function calculate(inputs: CalcInputs): CalcResults {
   // Step 3 — self-employment tax (both sides)
   const seTax = subtotal1 * SE_TAX_RATE;
 
-  // Step 4 — profit margin (optional)
-  const subtotal2 = subtotal1 + seTax;
+  // Step 4 — estimate income taxes
+  // Taxable income = take-home minus the three key self-employed deductions:
+  //   • health insurance premium (100% deductible for self-employed)
+  //   • half of SE tax (~7.65% of gross, mandatory deduction)
+  //   • estimated business write-offs ($10k typical for working creatives)
+  // Health insurance is already subtracted from take-home conceptually (it's
+  // a pre-tax cost), so we reduce by ½ SE tax and write-offs only.
+  const taxableIncome = Math.max(0, takeHome - (seTax * 0.5) - FREELANCE_WRITEOFFS);
+  const federalTaxRate = federalEffectiveRate(taxableIncome);
+  const stateTaxRate   = STATE_TAX_RATE[location];
+  const federalTax     = taxableIncome * federalTaxRate;
+  const stateTax       = taxableIncome * stateTaxRate;
+
+  // Step 5 — profit margin (optional)
+  const subtotal2 = subtotal1 + seTax + federalTax + stateTax;
   const profit = includeProfit ? subtotal2 * PROFIT_RATE : 0;
   const totalGrossNeeded = subtotal2 + profit;
 
-  // Step 5 — divide by billable days
+  // Step 6 — divide by billable days
   const dayRate     = totalGrossNeeded / billableDays;
   const halfDayRate = dayRate * 0.60;
   const hourlyRate  = dayRate / 10;
 
-  // Step 6 — kit fee (listed separately)
+  // Step 7 — kit fee (listed separately)
   const kitFee = hasKit ? KIT_FEE_DEFAULT : 0;
 
   // Floor check — apply location multiplier
-  const rateFloor = RATE_FLOORS[discipline][experience] * LOCATION_MULTIPLIERS[location];
+  const rateFloor  = RATE_FLOORS[discipline][experience] * LOCATION_MULTIPLIERS[location];
   const belowFloor = dayRate < rateFloor;
 
   return {
     takeHome,
     healthInsurance: HEALTH_INSURANCE_ANNUAL,
     seTax,
+    federalTax,
+    stateTax,
+    federalTaxRate,
+    stateTaxRate,
     profit,
     totalGrossNeeded,
     billableDays,
