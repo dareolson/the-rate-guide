@@ -283,20 +283,27 @@ function DashboardPage() {
   const [saving,  setSaving]    = useState(false);
   const [saved,   setSaved]     = useState(false);
   const [loading, setLoading]   = useState(true);
+  const [error,   setError]     = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.push("/login"); return; }
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { router.push("/login"); return; }
 
-      const [{ data: profileData }, { data: historyData }] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", user.id).single(),
-        supabase.from("rate_history").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
-      ]);
+        const [profileRes, historyRes] = await Promise.all([
+          supabase.from("profiles").select("*").eq("id", user.id).single(),
+          supabase.from("rate_history").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+        ]);
 
-      if (profileData) setProfile(profileData as Profile);
-      if (historyData) setHistory(historyData as RateEntry[]);
-      setLoading(false);
+        if (profileRes.error) throw new Error(`Profile load failed: ${profileRes.error.message}`);
+        if (profileRes.data) setProfile(profileRes.data as Profile);
+        if (historyRes.data) setHistory(historyRes.data as RateEntry[]);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load your profile. Please refresh.");
+      } finally {
+        setLoading(false);
+      }
     };
     load();
   }, [supabase, router]);
@@ -304,7 +311,8 @@ function DashboardPage() {
   const saveProfile = async () => {
     if (!profile) return;
     setSaving(true);
-    await supabase.from("profiles").update({
+    setError(null);
+    const { error: saveError } = await supabase.from("profiles").update({
       discipline:   profile.discipline,
       experience:   profile.experience,
       location:     profile.location,
@@ -313,18 +321,25 @@ function DashboardPage() {
       has_kit:      profile.has_kit,
     }).eq("id", profile.id);
     setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    if (saveError) {
+      setError(`Couldn't save your profile: ${saveError.message}`);
+    } else {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }
   };
 
   const logRate = async (rate: number, note: string) => {
     if (!profile) return;
-    const { data } = await supabase
+    setError(null);
+    const { data, error: logError } = await supabase
       .from("rate_history")
       .insert({ user_id: profile.id, rate, note: note || null })
       .select()
       .single();
-    if (data) {
+    if (logError) {
+      setError(`Couldn't log rate: ${logError.message}`);
+    } else if (data) {
       setHistory((prev) => [data as RateEntry, ...prev]);
       setProfile((prev) => prev ? { ...prev, current_rate: rate } : prev);
     }
@@ -381,6 +396,14 @@ function DashboardPage() {
               </span>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Error banner — shown when any DB operation fails */}
+      {error && (
+        <div style={{ marginBottom: "1.5rem", padding: "0.85rem 1.25rem", border: "1px solid var(--danger)", color: "var(--danger)", fontSize: "0.78rem", lineHeight: 1.6, display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem" }}>
+          {error}
+          <button onClick={() => setError(null)} style={{ background: "none", border: "none", color: "var(--danger)", cursor: "pointer", fontFamily: "var(--mono)", fontSize: "0.9rem", padding: 0, flexShrink: 0 }}>✕</button>
         </div>
       )}
 
