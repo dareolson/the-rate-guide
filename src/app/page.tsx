@@ -6,11 +6,11 @@ import { Suspense } from "react";
 import { track } from "@vercel/analytics";          // custom event tracking
 import { createClient } from "@/lib/supabase/client"; // anonymous DB logging
 import {
-  DISCIPLINES, EXPERIENCE_LEVELS, LOCATION_TIERS, FAMILY_SIZES,
+  DISCIPLINES, EXPERIENCE_LEVELS, LOCATION_TIERS, FAMILY_SIZES, US_STATES,
   DEFAULT_BILLABLE_DAYS, calculate, currentEarnings, realityCheck, marketRange, fmt,
   INFLATION_BASE_YEAR, RATE_FLOORS, RATE_CEILINGS, LOCATION_MULTIPLIERS,
   HEALTH_INSURANCE_ANNUAL, SE_TAX_RATE, PROFIT_RATE,
-  type Discipline, type ExperienceLevel, type LocationTier, type FamilySize,
+  type Discipline, type ExperienceLevel, type LocationTier, type FamilySize, type USState,
   type CalcInputs, type CalcResults, type RealityCheckResult,
 } from "@/lib/calculator";
 
@@ -1215,6 +1215,7 @@ function Calculator() {
   const [currentRateRaw,       setCurrentRateRaw]       = useState("");
   const [currentBillableDays,  setCurrentBillableDays]  = useState(DEFAULT_BILLABLE_DAYS);
   const [takeHomeRaw,          setTakeHomeRaw]          = useState(String(urlInputs.takeHome ?? 60000));
+  const [currentRateState,     setCurrentRateState]     = useState<USState | "">("");
   const [rateLogged,           setRateLogged]           = useState(false);
   // Income calculator starts collapsed; auto-expands when URL has params (shared link)
   const [showIncomeCalc, setShowIncomeCalc] = useState(false);
@@ -1241,19 +1242,28 @@ function Calculator() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Log current rate to Supabase on blur (anonymous market data)
-  const handleCurrentRateBlur = async () => {
-    if (!currentRate || rateLogged) return;
+  // Log current rate to Supabase (anonymous market data)
+  // Fires on rate blur and again on state selection so we capture both fields.
+  const logCurrentRate = async (rate: number, state: USState | "") => {
+    if (!rate || rateLogged) return;
     try {
       const supabase = createClient();
       await supabase.from("current_rate_reports").insert({
         discipline:   inputs.discipline,
         experience:   inputs.experience,
         location:     inputs.location,
-        current_rate: currentRate,
+        current_rate: rate,
+        ...(state ? { state } : {}),
       });
       setRateLogged(true);
     } catch (_) { /* silent */ }
+  };
+
+  const handleCurrentRateBlur = () => logCurrentRate(currentRate ?? 0, currentRateState);
+  const handleStateChange = (state: USState | "") => {
+    setCurrentRateState(state);
+    setRateLogged(false); // re-log with state included
+    if (currentRate) logCurrentRate(currentRate, state);
   };
 
   const set = <K extends keyof CalcInputs>(key: K, value: CalcInputs[K]) =>
@@ -1354,6 +1364,26 @@ function Calculator() {
             }}
           />
           <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "0.8rem" }}>/day</span>
+        </div>
+        <div style={{ marginTop: "0.75rem" }}>
+          <select
+            value={currentRateState}
+            onChange={e => handleStateChange(e.target.value as USState | "")}
+            style={{
+              background:   "var(--surface)",
+              border:       "1px solid var(--border)",
+              borderRadius: "4px",
+              color:        currentRateState ? "var(--text)" : "var(--text-dim)",
+              fontFamily:   "var(--mono)",
+              fontSize:     "0.85rem",
+              padding:      "0.55rem 1rem",
+              width:        "220px",
+              cursor:       "pointer",
+            }}
+          >
+            <option value="">State (optional)</option>
+            {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
         </div>
         <div style={{ fontSize: "0.7rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
           Optional — updates the market range above and helps us build community averages.
