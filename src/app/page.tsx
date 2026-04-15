@@ -1406,7 +1406,11 @@ function Calculator() {
                 type="range" min={50} max={220} step={5}
                 value={currentBillableDays}
                 onChange={e => setCurrentBillableDays(Number(e.target.value))}
-                style={{ width: "100%", accentColor: "var(--accent)", cursor: "pointer" }}
+                className="gold-slider"
+                style={{
+                  width:      "100%",
+                  background: `linear-gradient(to right, var(--accent) ${((currentBillableDays - 50) / (220 - 50)) * 100}%, var(--border) ${((currentBillableDays - 50) / (220 - 50)) * 100}%)`,
+                }}
               />
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "var(--text-dim)", marginTop: "0.25rem" }}>
                 <span>50 days</span><span>220 days</span>

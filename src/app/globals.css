@@ -68,6 +68,49 @@ p {
 .fade-in-stagger > *:nth-child(4) { animation-delay: 0.26s; }
 .fade-in-stagger > *:nth-child(5) { animation-delay: 0.33s; }
 
+/* Gold-fill range slider — used on billable days slider in reality check */
+input[type="range"].gold-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 4px;
+  border-radius: 4px;
+  outline: none;
+}
+input[type="range"].gold-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width:  18px;
+  height: 18px;
+  border-radius: 50%;
+  background:  var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--accent);
+  margin-top: -7px;
+}
+input[type="range"].gold-slider::-moz-range-thumb {
+  width:  14px;
+  height: 14px;
+  border-radius: 50%;
+  background:  var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+input[type="range"].gold-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 4px;
+}
+input[type="range"].gold-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 4px;
+  background: var(--border);
+}
+input[type="range"].gold-slider::-moz-range-progress {
+  height: 4px;
+  border-radius: 4px;
+  background: var(--accent);
+}
+
 /* Global focus states — amber glow ring on all form controls */
 input:focus,
 select:focus,
