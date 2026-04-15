@@ -27,6 +27,9 @@ import {
   LOCATION_MULTIPLIERS,
   INFLATION_SINCE_2019,
   INFLATION_BASE_YEAR,
+  FREELANCE_WRITEOFFS,
+  STATE_TAX_RATE,
+  federalEffectiveRate,
 } from "@/lib/calculator";
 
 // ==============================================
@@ -124,7 +127,7 @@ export default function MethodologyPage() {
           The correct formula starts with your take-home goal and works forward — adding every cost you absorb as a freelancer that a salaried employee never sees on their pay stub.
         </P>
         <Callout>
-          Day Rate = (Take-Home Goal + Health Insurance + Self-Employment Tax + Profit Margin) ÷ Billable Days
+          Day Rate = (Take-Home Goal + Health Insurance + SE Tax + Federal Income Tax + State Tax + Profit Margin) ÷ Billable Days
         </Callout>
         <P>
           Each of those inputs is explained below with its source. None of them are arbitrary.
@@ -148,8 +151,60 @@ export default function MethodologyPage() {
         <Source>IRS Publication 334 (Tax Guide for Small Business); IRS Schedule SE; Social Security Administration wage base 2024</Source>
       </Section>
 
+      {/* Income Tax */}
+      <Section id="income-tax" label="Factor 02" title="Federal and state income tax — estimated">
+        <P>
+          Most rate calculators stop at self-employment tax and call it done. That is incorrect. SE tax covers Social Security and Medicare, but you still owe federal and state income tax on your earnings — and those are separate, often larger, obligations.
+        </P>
+        <P>
+          Because income tax depends on your specific situation, this calculator uses estimated effective rates — the actual percentage of taxable income paid after deductions, not the marginal rate on the last dollar earned.
+        </P>
+
+        <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+          How taxable income is calculated
+        </div>
+        <P>
+          The calculator does not apply income tax to your gross revenue. It first subtracts the three deductions a self-employed person is legally entitled to:
+        </P>
+        <DataRow label="Health insurance premium"   value="100% deductible" note="IRS Publication 535 — self-employed health insurance deduction" />
+        <DataRow label="½ of self-employment tax"   value="~7.65% of gross"  note="IRS Schedule SE — reduces adjusted gross income" />
+        <DataRow label="Estimated business write-offs" value={`$${FREELANCE_WRITEOFFS.toLocaleString("en-US")}/yr`} note="home office, equipment depreciation, software, professional development" />
+        <P>
+          What remains after those deductions is your estimated taxable income, and that is what the federal and state rates are applied to.
+        </P>
+
+        <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+          Federal effective rate
+        </div>
+        <P>
+          Federal income tax is progressive. The effective rate — the blended average across all brackets — is lower than the marginal rate on your top dollar of income. The calculator uses a bracket lookup based on your estimated taxable income:
+        </P>
+        <DataRow label="Taxable income under $30k"    value={`${Math.round(federalEffectiveRate(25000)  * 100)}%`} />
+        <DataRow label="$30k–$50k"                    value={`${Math.round(federalEffectiveRate(40000)  * 100)}%`} />
+        <DataRow label="$50k–$75k"                    value={`${Math.round(federalEffectiveRate(60000)  * 100)}%`} />
+        <DataRow label="$75k–$100k"                   value={`${Math.round(federalEffectiveRate(85000)  * 100)}%`} />
+        <DataRow label="$100k–$140k"                  value={`${Math.round(federalEffectiveRate(120000) * 100)}%`} />
+        <DataRow label="$140k–$200k"                  value={`${Math.round(federalEffectiveRate(160000) * 100)}%`} />
+        <DataRow label="Over $200k"                   value={`${Math.round(federalEffectiveRate(250000) * 100)}%`} />
+
+        <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+          State and local rate
+        </div>
+        <P>
+          State income tax varies enormously — from 0% in Texas and Florida to over 13% at the top bracket in California. The calculator uses a median effective rate based on your market tier, since we don&apos;t collect state-level data:
+        </P>
+        <DataRow label="Major Market (LA, NYC, Chicago…)" value={`${Math.round(STATE_TAX_RATE["Major Market"] * 100)}%`} note="weighted toward high-tax states" />
+        <DataRow label="Mid Market"                       value={`${Math.round(STATE_TAX_RATE["Mid Market"]   * 100)}%`} note="median U.S. state effective rate" />
+        <DataRow label="Small Market"                     value={`${Math.round(STATE_TAX_RATE["Small Market"] * 100)}%`} note="many no-tax or low-tax states" />
+
+        <Callout>
+          These are estimates. Your actual tax liability depends on your filing status, total deductions, state of residence, and income level. If you are in a no-income-tax state (TX, FL, WA, NV, etc.), your required rate will be lower than shown. If you are a high earner in California or New York, it may be higher. The calculator gives you a realistic working estimate — your accountant gives you the exact number.
+        </Callout>
+        <Source>IRS Publication 535 (Business Expenses); IRS Rev. Proc. 2025-28 (2026 tax brackets); Tax Foundation State Individual Income Tax Rates 2025</Source>
+      </Section>
+
       {/* Health Insurance */}
-      <Section id="health" label="Factor 02" title={`Health insurance — $${HEALTH_INSURANCE_ANNUAL.toLocaleString("en-US")}/year`}>
+      <Section id="health" label="Factor 03" title={`Health insurance — $${HEALTH_INSURANCE_ANNUAL.toLocaleString("en-US")}/year`}>
         <P>
           Salaried employees typically receive employer-subsidized health coverage. Freelancers buy their own. The ${HEALTH_INSURANCE_ANNUAL.toLocaleString("en-US")} figure represents the average annual premium for an individual ACA marketplace plan in 2026, before subsidies.
         </P>
@@ -165,7 +220,7 @@ export default function MethodologyPage() {
       </Section>
 
       {/* Profit Margin */}
-      <Section id="profit" label="Factor 03" title={`Profit margin — ${profitPct}% (optional)`}>
+      <Section id="profit" label="Factor 04" title={`Profit margin — ${profitPct}% (optional)`}>
         <P>
           A rate that exactly covers your expenses leaves no margin for error. Equipment fails. Projects fall through. Clients go silent. The {profitPct}% profit buffer is included as an optional line item — you can toggle it off in the calculator — but it represents the difference between a sustainable business and one that collapses when anything goes wrong.
         </P>
@@ -179,7 +234,7 @@ export default function MethodologyPage() {
       </Section>
 
       {/* Billable Days */}
-      <Section id="billable-days" label="Factor 04" title={`Billable days — ${DEFAULT_BILLABLE_DAYS} per year`}>
+      <Section id="billable-days" label="Factor 05" title={`Billable days — ${DEFAULT_BILLABLE_DAYS} per year`}>
         <P>
           A full-time salaried employee works roughly 260 days a year. A freelancer does not bill 260 days. The difference is absorbed by unpaid gaps between projects, time spent on business development, invoicing, admin, equipment maintenance, and the weeks between gigs that nobody tells you about before you go independent.
         </P>
