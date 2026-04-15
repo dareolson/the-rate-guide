@@ -1120,6 +1120,34 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
 
       <Survey inputs={inputs} />
 
+      {/* Store CTA — negotiation books and resources */}
+      <div style={{ marginTop: "3.5rem", borderTop: "2px solid var(--accent-2)", paddingTop: "2rem", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+        <div style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)" }}>
+          Now that you know your number
+        </div>
+        <p style={{ fontFamily: "var(--serif)", fontSize: "0.9rem", color: "var(--text-dim)", lineHeight: 1.75, margin: 0 }}>
+          Knowing what to charge is only half the battle. These are the books that help you actually say it — and hold the line when someone pushes back.
+        </p>
+        <a
+          href="/store"
+          style={{
+            display:        "inline-block",
+            marginTop:      "0.5rem",
+            fontFamily:     "var(--mono)",
+            fontSize:       "0.72rem",
+            letterSpacing:  "0.15em",
+            textTransform:  "uppercase",
+            color:          "var(--accent)",
+            textDecoration: "none",
+            borderBottom:   "1px solid var(--accent)",
+            paddingBottom:  "2px",
+            alignSelf:      "flex-start",
+          }}
+        >
+          Browse negotiation resources →
+        </a>
+      </div>
+
       {/* Start Over — clears all URL params and results */}
       <div style={{ marginTop: "3rem", textAlign: "center" }}>
         <a href="/" style={{
