@@ -27,7 +27,8 @@ interface Book {
   description: string;
   price:       string;
   url:         string;
-  isbn:        string;   // used to fetch cover from Open Library
+  isbn:        string;    // used to fetch cover from Open Library by ISBN
+  coverId?:    number;    // Open Library cover ID — used when ISBN lookup has no cover
   badge?:      string;
 }
 
@@ -87,6 +88,7 @@ const CATEGORIES: Category[] = [
         price:       "~$15",
         url:         "https://amzn.to/4dTQtY5",
         isbn:        "9780761168720",
+        coverId:     8174867,
       },
     ],
   },
@@ -112,6 +114,7 @@ const CATEGORIES: Category[] = [
         price:       "~$14",
         url:         "https://amzn.to/4myd8LR",
         isbn:        "9780735223974",
+        coverId:     13240492,
       },
       {
         type:        "service",
@@ -236,9 +239,11 @@ const CATEGORIES: Category[] = [
 // Portrait card with Open Library cover art
 // ==============================================
 function BookCard({ product }: { product: Book }) {
-  // Open Library cover API — free, no key required
-  // Falls back gracefully if cover not found (returns 1x1 transparent gif)
-  const coverUrl = `https://covers.openlibrary.org/b/isbn/${product.isbn}-L.jpg`;
+  // Open Library cover API — free, no key required.
+  // Prefer coverId (b/id lookup) when provided — more reliable than ISBN lookup.
+  const coverUrl = product.coverId
+    ? `https://covers.openlibrary.org/b/id/${product.coverId}-L.jpg`
+    : `https://covers.openlibrary.org/b/isbn/${product.isbn}-L.jpg`;
 
   return (
     <div style={{
