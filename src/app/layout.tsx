@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"; // page view + event tracking
 import { JetBrains_Mono, Lora, Inter } from "next/font/google";
+import NavAuthLink from "@/components/NavAuthLink";
 
 // Load fonts via next/font — self-hosted, zero layout shift, no external requests
 const jetbrainsMono = JetBrains_Mono({
@@ -128,8 +129,7 @@ function Nav() {
       <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
         {[
           { label: "Methodology", href: "/methodology" },
-          { label: "The Store", href: "/store" },
-          { label: "Sign In", href: "/login" },
+          { label: "The Store",   href: "/store" },
         ].map(({ label, href }) => (
           <a key={label} href={href} style={{
             fontFamily:     "var(--mono)",
@@ -142,6 +142,7 @@ function Nav() {
             {label}
           </a>
         ))}
+        <NavAuthLink />
       </div>
     </nav>
   );
