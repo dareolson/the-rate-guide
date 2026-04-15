@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { track } from "@vercel/analytics";          // custom event tracking
 import { createClient } from "@/lib/supabase/client"; // anonymous DB logging
 import {
-  DISCIPLINES, EXPERIENCE_LEVELS, LOCATION_TIERS, FAMILY_SIZES, US_STATES,
+  DISCIPLINES, EXPERIENCE_LEVELS, LOCATION_TIERS, FAMILY_SIZES, US_STATES, STATE_ANNUAL_COL,
   DEFAULT_BILLABLE_DAYS, calculate, currentEarnings, realityCheck, marketRange, fmt,
   INFLATION_BASE_YEAR, RATE_FLOORS, RATE_CEILINGS, LOCATION_MULTIPLIERS,
   HEALTH_INSURANCE_ANNUAL, SE_TAX_RATE, PROFIT_RATE,
@@ -1441,6 +1441,30 @@ function Calculator() {
                   {fmt(earnings.netTakeHome / 12)}/month
                 </div>
               </div>
+
+              {/* State cost of living comparison */}
+              {currentRateState && (() => {
+                const col     = STATE_ANNUAL_COL[currentRateState];
+                const surplus = earnings.netTakeHome - col;
+                const covers  = surplus >= 0;
+                return (
+                  <div style={{ borderTop: "1px solid var(--border)", paddingTop: "0.85rem", marginTop: "0.5rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--mono)", fontSize: "0.85rem" }}>
+                      <span style={{ color: "var(--text-dim)" }}>Avg. cost of living in {currentRateState}</span>
+                      <span style={{ color: "var(--text-dim)" }}>{fmt(col)}/yr</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--mono)", fontSize: "0.85rem", marginTop: "0.4rem" }}>
+                      <span style={{ color: "var(--text-dim)" }}>{covers ? "Surplus after expenses" : "Shortfall vs. expenses"}</span>
+                      <span style={{ color: covers ? "var(--accent)" : "var(--danger)", fontWeight: "bold" }}>
+                        {covers ? "+" : "−"}{fmt(Math.abs(surplus))}/yr
+                      </span>
+                    </div>
+                    <div style={{ fontSize: "0.68rem", color: "var(--text-dim)", marginTop: "0.5rem", lineHeight: 1.5 }}>
+                      Based on MIT Living Wage Calculator data (single adult, no children).
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         );

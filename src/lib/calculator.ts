@@ -252,6 +252,67 @@ export function calculate(inputs: CalcInputs): CalcResults {
 }
 
 // ==============================================
+// STATE-LEVEL COST OF LIVING
+// Annual living expenses for a single adult, no children.
+// Source: MIT Living Wage Calculator (2023-2024 data), state-level averages.
+// These cover housing, food, transportation, healthcare, and basic necessities.
+// ==============================================
+
+export const STATE_ANNUAL_COL: Record<USState, number> = {
+  "Alabama":              32000,
+  "Alaska":               43000,
+  "Arizona":              40000,
+  "Arkansas":             30000,
+  "California":           51000,
+  "Colorado":             47000,
+  "Connecticut":          47000,
+  "Delaware":             40000,
+  "Florida":              41000,
+  "Georgia":              38000,
+  "Hawaii":               57000,
+  "Idaho":                40000,
+  "Illinois":             42000,
+  "Indiana":              35000,
+  "Iowa":                 35000,
+  "Kansas":               36000,
+  "Kentucky":             33000,
+  "Louisiana":            34000,
+  "Maine":                40000,
+  "Maryland":             48000,
+  "Massachusetts":        52000,
+  "Michigan":             37000,
+  "Minnesota":            43000,
+  "Mississippi":          29000,
+  "Missouri":             35000,
+  "Montana":              40000,
+  "Nebraska":             37000,
+  "Nevada":               42000,
+  "New Hampshire":        44000,
+  "New Jersey":           50000,
+  "New Mexico":           36000,
+  "New York":             53000,
+  "North Carolina":       38000,
+  "North Dakota":         37000,
+  "Ohio":                 36000,
+  "Oklahoma":             34000,
+  "Oregon":               46000,
+  "Pennsylvania":         41000,
+  "Rhode Island":         45000,
+  "South Carolina":       36000,
+  "South Dakota":         36000,
+  "Tennessee":            35000,
+  "Texas":                40000,
+  "Utah":                 43000,
+  "Vermont":              43000,
+  "Virginia":             44000,
+  "Washington":           48000,
+  "West Virginia":        32000,
+  "Wisconsin":            38000,
+  "Wyoming":              38000,
+  "District of Columbia": 62000,
+};
+
+// ==============================================
 // CURRENT EARNINGS REALITY CHECK
 // Given a known day rate + estimated billable days,
 // show what the freelancer actually takes home after
