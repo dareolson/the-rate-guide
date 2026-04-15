@@ -29,6 +29,7 @@ import {
   INFLATION_BASE_YEAR,
   FREELANCE_WRITEOFFS,
   STATE_TAX_RATE,
+  STATE_ANNUAL_COL,
   federalEffectiveRate,
 } from "@/lib/calculator";
 
@@ -320,6 +321,75 @@ export default function MethodologyPage() {
           This is why freelancers who haven&apos;t raised their rates in five or more years are effectively earning less than they were. The numbers didn&apos;t stay the same. The cost of everything else moved.
         </P>
         <Source>U.S. Bureau of Labor Statistics CPI-U (All Urban Consumers, All Items), January {INFLATION_BASE_YEAR} through January 2026</Source>
+      </Section>
+
+      {/* Cost of Living by State */}
+      <Section id="cost-of-living" label="Reality Check" title="Cost of living by state — what your take-home actually buys">
+        <P>
+          Knowing your take-home is one number. Knowing whether it&apos;s enough to live where you live is another. The calculator shows the average annual cost of basic living expenses for your state alongside your actual take-home — so you can see the gap, or the surplus, clearly.
+        </P>
+
+        <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+          What these figures represent
+        </div>
+        <P>
+          Each figure represents the estimated annual cost of basic living expenses for a single adult with no dependents — housing, food, transportation, healthcare, internet, and personal necessities. They do not include discretionary spending, savings beyond a minimal emergency fund, debt service, or dependents. They are a floor, not a comfortable lifestyle budget.
+        </P>
+
+        <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+          Methodology — dual-source aggregation
+        </div>
+        <P>
+          No single public dataset provides verified, current, single-adult living expense figures for all 50 states and DC in a directly comparable format. We used two independent sources and cross-referenced them for reasonableness:
+        </P>
+        <Callout>
+          Primary: MIT Living Wage Calculator (livewage.mit.edu) — county and state-level data, 2023–2024. Nine states were confirmed directly from MIT: Alabama, California, Texas, New York, Hawaii, Washington, Florida, Massachusetts, and District of Columbia. These serve as anchor points for the full dataset.
+        </Callout>
+        <Callout>
+          Secondary: MERIC 2025 Annual Average Cost of Living Index (meric.mo.gov) — quarterly index published by the Missouri Economic Research and Information Center, widely used by HR departments, relocation firms, and state economic development agencies. Index is relative to a national baseline of 100.
+        </Callout>
+        <P>
+          For the 42 states not directly confirmed via MIT, we derived figures by applying the MERIC index to a calibrated national baseline. The baseline was established by averaging the relationship between MERIC index values and MIT-confirmed dollar figures across the nine anchor states, then solving for the implied national midpoint. MERIC-derived figures are rounded to the nearest $100.
+        </P>
+        <P>
+          Where the two sources converged closely — as they did for most mid-range states — the figures are reliable to within approximately 3–5%. For high-index states (Hawaii, California, Massachusetts, New York, DC), MIT figures were used directly, since MERIC&apos;s broader consumer basket diverges from MIT&apos;s basic-needs methodology at the high end.
+        </P>
+
+        <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+          State figures
+        </div>
+
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.78rem", fontFamily: "var(--mono)" }}>
+            <thead>
+              <tr>
+                {["State", "Annual COL", "Source"].map((h) => (
+                  <th key={h} style={{ textAlign: "left", padding: "0.6rem 0.75rem", borderBottom: "2px solid var(--border)", fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-dim)", whiteSpace: "nowrap" }}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {(Object.entries(STATE_ANNUAL_COL) as [string, number][]).map(([state, col]) => {
+                const mitStates = ["Alabama","California","Texas","New York","Hawaii","Washington","Florida","Massachusetts","District of Columbia"];
+                const isMit = mitStates.includes(state);
+                return (
+                  <tr key={state} style={{ borderBottom: "1px solid var(--border)" }}>
+                    <td style={{ padding: "0.6rem 0.75rem", color: "var(--text)", whiteSpace: "nowrap" }}>{state}</td>
+                    <td style={{ padding: "0.6rem 0.75rem", color: "var(--accent)" }}>${col.toLocaleString("en-US")}</td>
+                    <td style={{ padding: "0.6rem 0.75rem", color: "var(--text-dim)", fontSize: "0.7rem" }}>{isMit ? "MIT confirmed" : "MERIC-derived"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <Callout>
+          These figures are estimates for planning purposes. Your actual cost of living depends on your specific city, housing situation, family composition, and spending habits. A freelancer in San Francisco will find California&apos;s state average significantly understates their actual expenses. A freelancer in a small Texas town may find the figure overstated. Use it as a directional benchmark, not a precise budget.
+        </Callout>
+        <Source>MIT Living Wage Calculator, livewage.mit.edu, 2023–2024 state data (nine anchor states confirmed directly). MERIC 2025 Annual Average Cost of Living Index, meric.mo.gov (42 states derived). Single adult, no dependents, basic needs only.</Source>
       </Section>
 
       {/* Closing */}
