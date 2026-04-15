@@ -30,6 +30,7 @@ interface Book {
   isbn:        string;    // used to fetch cover from Open Library by ISBN
   coverId?:    number;    // Open Library cover ID — used when ISBN lookup has no cover
   badge?:      string;
+  affiliate:   boolean;   // hide if false — don't advertise for free
 }
 
 interface Service {
@@ -42,6 +43,7 @@ interface Service {
   initial:     string;   // letter shown in brand icon
   color:       string;   // accent color for the icon border
   badge?:      string;
+  affiliate:   boolean;   // hide if false — don't advertise for free
 }
 
 type Product = Book | Service;
@@ -70,6 +72,7 @@ const CATEGORIES: Category[] = [
         price:       "~$16",
         url:         "https://amzn.to/3Q1VFiG",
         isbn:        "9780062407801",
+        affiliate:   true,
       },
       {
         type:        "book",
@@ -79,6 +82,7 @@ const CATEGORIES: Category[] = [
         price:       "~$14",
         url:         "https://amzn.to/4sz4Y7a",
         isbn:        "9780735214149",
+        affiliate:   true,
       },
       {
         type:        "book",
@@ -89,6 +93,7 @@ const CATEGORIES: Category[] = [
         url:         "https://amzn.to/4dTQtY5",
         isbn:        "9780761168720",
         coverId:     8174867,
+        affiliate:   true,
       },
     ],
   },
@@ -105,6 +110,7 @@ const CATEGORIES: Category[] = [
         price:       "~$13",
         url:         "https://amzn.to/4tIFQf5",
         isbn:        "9781936891023",
+        affiliate:   true,
       },
       {
         type:        "book",
@@ -115,6 +121,7 @@ const CATEGORIES: Category[] = [
         url:         "https://amzn.to/4myd8LR",
         isbn:        "9780735223974",
         coverId:     13240492,
+        affiliate:   true,
       },
       {
         type:        "service",
@@ -126,6 +133,7 @@ const CATEGORIES: Category[] = [
         initial:     "M",
         color:       "#c99a12",
         badge:       "25% commission",
+        affiliate:   false,
       },
     ],
   },
@@ -144,6 +152,7 @@ const CATEGORIES: Category[] = [
         initial:     "F",
         color:       "#1a9b5b",
         badge:       "Up to $200/referral",
+        affiliate:   false,
       },
       {
         type:        "service",
@@ -155,6 +164,7 @@ const CATEGORIES: Category[] = [
         initial:     "S",
         color:       "#888888",
         badge:       "$100–200 per signup",
+        affiliate:   false,
       },
       {
         type:        "service",
@@ -165,6 +175,7 @@ const CATEGORIES: Category[] = [
         url:         "https://www.skillshare.com/",
         initial:     "Sk",
         color:       "#00c4a0",
+        affiliate:   false,
       },
     ],
   },
@@ -183,6 +194,7 @@ const CATEGORIES: Category[] = [
         initial:     "Ai",
         color:       "#ff0000",
         badge:       "85% of first month",
+        affiliate:   false,
       },
       {
         type:        "service",
@@ -193,6 +205,7 @@ const CATEGORIES: Category[] = [
         url:         "https://amzn.to/48NVE8h",
         initial:     "Bm",
         color:       "#e8c84a",
+        affiliate:   true,
       },
       {
         type:        "service",
@@ -203,6 +216,7 @@ const CATEGORIES: Category[] = [
         url:         "https://frame.io/",
         initial:     "Fr",
         color:       "#666eff",
+        affiliate:   false,
       },
     ],
   },
@@ -220,6 +234,7 @@ const CATEGORIES: Category[] = [
         url:         "https://www.bhphotovideo.com/",
         initial:     "B&H",
         color:       "#eb0000",
+        affiliate:   false,
       },
       {
         type:        "service",
@@ -230,6 +245,7 @@ const CATEGORIES: Category[] = [
         url:         "https://www.adorama.com/",
         initial:     "Ad",
         color:       "#0077cc",
+        affiliate:   false,
       },
     ],
   },
@@ -444,8 +460,12 @@ export default function StorePage() {
       {/* Categories */}
       <div style={{ display: "flex", flexDirection: "column", gap: "4.5rem" }}>
         {CATEGORIES.map((cat) => {
-          const books    = cat.products.filter((p): p is Book    => p.type === "book");
-          const services = cat.products.filter((p): p is Service => p.type === "service");
+          // Only show products with confirmed affiliate links
+          const books    = cat.products.filter((p): p is Book    => p.type === "book"    && p.affiliate);
+          const services = cat.products.filter((p): p is Service => p.type === "service" && p.affiliate);
+
+          // Hide entire category if nothing is live yet
+          if (books.length === 0 && services.length === 0) return null;
 
           return (
             <section key={cat.id}>
