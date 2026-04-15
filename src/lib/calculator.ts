@@ -166,10 +166,11 @@ export interface CalcInputs {
   discipline:    Discipline;
   experience:    ExperienceLevel;
   location:      LocationTier;
-  takeHome:      number;
-  billableDays:  number;
-  hasKit:        boolean;
-  includeProfit: boolean;
+  takeHome:         number;
+  billableDays:     number;
+  hasKit:           boolean;
+  includeProfit:    boolean;
+  healthInsurance?: number; // override static default when ZIP-based data is available
 }
 
 export interface CalcResults {
@@ -193,10 +194,11 @@ export interface CalcResults {
 
 export function calculate(inputs: CalcInputs): CalcResults {
   const { takeHome, billableDays, hasKit, includeProfit, discipline, experience, location } = inputs;
+  const healthInsurance = inputs.healthInsurance ?? HEALTH_INSURANCE_ANNUAL;
 
   // Step 1 — take-home goal
-  // Step 2 — add health insurance
-  const subtotal1 = takeHome + HEALTH_INSURANCE_ANNUAL;
+  // Step 2 — add health insurance (ZIP-based if available, else national average)
+  const subtotal1 = takeHome + healthInsurance;
 
   // Step 3 — self-employment tax (both sides)
   const seTax = subtotal1 * SE_TAX_RATE;
@@ -233,7 +235,7 @@ export function calculate(inputs: CalcInputs): CalcResults {
 
   return {
     takeHome,
-    healthInsurance: HEALTH_INSURANCE_ANNUAL,
+    healthInsurance,
     seTax,
     federalTax,
     stateTax,

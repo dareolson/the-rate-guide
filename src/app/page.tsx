@@ -900,7 +900,7 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
 // ==============================================
 // RESULTS
 // ==============================================
-function Results({ results, inputs, currentRate }: { results: CalcResults; inputs: CalcInputs; currentRate: number | null }) {
+function Results({ results, inputs, currentRate, zipCounty }: { results: CalcResults; inputs: CalcInputs; currentRate: number | null; zipCounty: string | null }) {
   // Family size lives in Results — independent of the rate calculation
   const [familySize, setFamilySize] = useState<FamilySize>("Single");
   const rc = realityCheck(inputs.takeHome, inputs.location, familySize);
@@ -1008,7 +1008,9 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
           {
             label: "+ Health Insurance",
             amount: `${fmt(results.healthInsurance)}/yr`,
-            note: "Salaried employees get this as a benefit. You pay for it yourself. Most freelancers forget to factor this in — don't be most freelancers.",
+            note: zipCounty
+              ? `Avg Silver plan premium for ${zipCounty}. Salaried employees get this as a benefit. You pay for it yourself.`
+              : "Salaried employees get this as a benefit. You pay for it yourself. Most freelancers forget to factor this in — don't be most freelancers.",
           },
           {
             label: "+ Self-Employment Tax",
@@ -1219,6 +1221,34 @@ function Calculator() {
   const [rateLogged,           setRateLogged]           = useState(false);
   // Income calculator starts collapsed; auto-expands when URL has params (shared link)
   const [showIncomeCalc, setShowIncomeCalc] = useState(false);
+
+  // Health insurance — ZIP lookup
+  const [zipRaw,           setZipRaw]           = useState("");
+  const [zipLookupStatus,  setZipLookupStatus]  = useState<"idle" | "loading" | "ok" | "error">("idle");
+  const [zipPremiumData,   setZipPremiumData]   = useState<{
+    avgMonthlyPremium: number;
+    avgAnnualPremium:  number;
+    county:            string;
+    state:             string;
+    planCount:         number;
+  } | null>(null);
+
+  const fetchHealthPremium = async (zip: string) => {
+    setZipLookupStatus("loading");
+    try {
+      const res  = await fetch(`/api/health-insurance?zip=${zip}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setZipPremiumData(data);
+      setZipLookupStatus("ok");
+    } catch {
+      setZipPremiumData(null);
+      setZipLookupStatus("error");
+    }
+  };
+
+  // The health insurance figure used in the calculation — live if ZIP resolved, else static default
+  const healthInsuranceAnnual = zipPremiumData?.avgAnnualPremium ?? HEALTH_INSURANCE_ANNUAL;
 
   // Sync inputs to URL whenever they change
   useEffect(() => {
@@ -1531,6 +1561,56 @@ function Calculator() {
               </div>
             </div>
 
+            {/* ZIP code — fetches real ACA Silver plan premium for their area */}
+            <div>
+              <Label>Your ZIP code <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, color: "var(--text-dim)" }}>(optional — for accurate health insurance cost)</span></Label>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={5}
+                  placeholder="e.g. 90210"
+                  value={zipRaw}
+                  onChange={e => {
+                    const v = e.target.value.replace(/[^0-9]/g, "");
+                    setZipRaw(v);
+                    if (zipLookupStatus !== "idle") setZipLookupStatus("idle");
+                    if (v.length < 5) setZipPremiumData(null);
+                  }}
+                  onBlur={() => {
+                    if (zipRaw.length === 5) fetchHealthPremium(zipRaw);
+                  }}
+                  style={{
+                    background:   "var(--surface)",
+                    border:       `1px solid ${zipLookupStatus === "error" ? "var(--danger)" : zipLookupStatus === "ok" ? "var(--accent)" : "var(--border)"}`,
+                    borderRadius: "4px",
+                    color:        "var(--text)",
+                    fontFamily:   "var(--mono)",
+                    fontSize:     "0.95rem",
+                    padding:      "0.65rem 1rem",
+                    width:        "140px",
+                  }}
+                />
+                {zipLookupStatus === "loading" && (
+                  <span style={{ fontFamily: "var(--mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>Looking up…</span>
+                )}
+                {zipLookupStatus === "ok" && zipPremiumData && (
+                  <span style={{ fontFamily: "var(--mono)", fontSize: "0.78rem", color: "var(--accent)" }}>
+                    {zipPremiumData.county}, {zipPremiumData.state} — avg Silver plan ${zipPremiumData.avgMonthlyPremium}/mo
+                  </span>
+                )}
+                {zipLookupStatus === "error" && (
+                  <span style={{ fontFamily: "var(--mono)", fontSize: "0.75rem", color: "var(--danger)" }}>ZIP not found — using national average</span>
+                )}
+              </div>
+              {zipLookupStatus !== "ok" && (
+                <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
+                  Without a ZIP we use the national average of ${HEALTH_INSURANCE_ANNUAL.toLocaleString()}/yr. Your actual cost may vary significantly.
+                </div>
+              )}
+            </div>
+
             <div>
               <Label>Estimated billable days / year — <span style={{ color: "var(--text)" }}>{inputs.billableDays} days</span></Label>
               <input
@@ -1575,7 +1655,7 @@ function Calculator() {
             <div style={{ display: "flex", gap: "0.75rem" }}>
               <button
                 onClick={async () => {
-                  const r = calculate(inputs);
+                  const r = calculate({ ...inputs, healthInsurance: healthInsuranceAnnual });
                   setResults(r);
 
                   track("calculate", {
@@ -1656,7 +1736,7 @@ function Calculator() {
         )}
       </div>
 
-      {results && <Results results={results} inputs={inputs} currentRate={currentRate} />}
+      {results && <Results results={results} inputs={inputs} currentRate={currentRate} zipCounty={zipPremiumData ? `${zipPremiumData.county}, ${zipPremiumData.state}` : null} />}
     </div>
   );
 }
