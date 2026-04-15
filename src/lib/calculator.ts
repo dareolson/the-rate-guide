@@ -236,6 +236,62 @@ export function calculate(inputs: CalcInputs): CalcResults {
   };
 }
 
+// ==============================================
+// CURRENT EARNINGS REALITY CHECK
+// Given a known day rate + estimated billable days,
+// show what the freelancer actually takes home after
+// all taxes and health insurance.
+// ==============================================
+
+export interface CurrentEarningsResult {
+  grossAnnual:     number;
+  seTax:           number;
+  healthInsurance: number;
+  federalTax:      number;
+  stateTax:        number;
+  federalTaxRate:  number;
+  stateTaxRate:    number;
+  writeoffs:       number;
+  netTakeHome:     number;
+}
+
+export function currentEarnings(
+  dayRate:      number,
+  billableDays: number,
+  location:     LocationTier,
+): CurrentEarningsResult {
+  const grossAnnual     = dayRate * billableDays;
+  const seTax           = grossAnnual * SE_TAX_RATE;
+  const healthInsurance = HEALTH_INSURANCE_ANNUAL;
+
+  // Taxable income = gross minus the three main self-employed deductions
+  const taxableIncome = Math.max(
+    0,
+    grossAnnual - (seTax * 0.5) - healthInsurance - FREELANCE_WRITEOFFS,
+  );
+  const federalTaxRate = federalEffectiveRate(taxableIncome);
+  const stateTaxRate   = STATE_TAX_RATE[location];
+  const federalTax     = taxableIncome * federalTaxRate;
+  const stateTax       = taxableIncome * stateTaxRate;
+
+  const netTakeHome = Math.max(
+    0,
+    grossAnnual - seTax - healthInsurance - federalTax - stateTax,
+  );
+
+  return {
+    grossAnnual,
+    seTax,
+    healthInsurance,
+    federalTax,
+    stateTax,
+    federalTaxRate,
+    stateTaxRate,
+    writeoffs: FREELANCE_WRITEOFFS,
+    netTakeHome,
+  };
+}
+
 // Format a number as USD with no cents
 export function fmt(n: number): string {
   return "$" + Math.round(n).toLocaleString("en-US");

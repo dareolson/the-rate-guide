@@ -7,7 +7,7 @@ import { track } from "@vercel/analytics";          // custom event tracking
 import { createClient } from "@/lib/supabase/client"; // anonymous DB logging
 import {
   DISCIPLINES, EXPERIENCE_LEVELS, LOCATION_TIERS, FAMILY_SIZES,
-  DEFAULT_BILLABLE_DAYS, calculate, realityCheck, marketRange, fmt,
+  DEFAULT_BILLABLE_DAYS, calculate, currentEarnings, realityCheck, marketRange, fmt,
   INFLATION_BASE_YEAR, RATE_FLOORS, RATE_CEILINGS, LOCATION_MULTIPLIERS,
   HEALTH_INSURANCE_ANNUAL, SE_TAX_RATE, PROFIT_RATE,
   type Discipline, type ExperienceLevel, type LocationTier, type FamilySize,
@@ -1200,10 +1200,11 @@ function Calculator() {
     includeProfit: urlInputs.includeProfit ?? true,
   });
 
-  const [results,        setResults]        = useState<CalcResults | null>(null);
-  const [currentRate,    setCurrentRate]    = useState<number | null>(null);
-  const [currentRateRaw, setCurrentRateRaw] = useState("");
-  const [rateLogged,     setRateLogged]     = useState(false);
+  const [results,              setResults]              = useState<CalcResults | null>(null);
+  const [currentRate,          setCurrentRate]          = useState<number | null>(null);
+  const [currentRateRaw,       setCurrentRateRaw]       = useState("");
+  const [currentBillableDays,  setCurrentBillableDays]  = useState(DEFAULT_BILLABLE_DAYS);
+  const [rateLogged,           setRateLogged]           = useState(false);
   // Income calculator starts collapsed; auto-expands when URL has params (shared link)
   const [showIncomeCalc, setShowIncomeCalc] = useState(false);
 
@@ -1348,6 +1349,62 @@ function Calculator() {
         </div>
       </div>
 
+      {/* ── Reality check: what your current rate actually earns ── */}
+      {currentRate !== null && currentRate > 0 && (() => {
+        const earnings = currentEarnings(currentRate, currentBillableDays, inputs.location);
+        return (
+          <div style={{ marginTop: "2rem", padding: "1.75rem 2rem", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px" }}>
+            <div style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "1.5rem" }}>
+              At {fmt(currentRate)}/day — what you actually take home
+            </div>
+
+            {/* Billable days slider */}
+            <div style={{ marginBottom: "1.75rem" }}>
+              <Label>How many days do you realistically bill per year? — <span style={{ color: "var(--text)" }}>{currentBillableDays} days</span></Label>
+              <input
+                type="range" min={50} max={220} step={5}
+                value={currentBillableDays}
+                onChange={e => setCurrentBillableDays(Number(e.target.value))}
+                style={{ width: "100%", accentColor: "var(--accent)", cursor: "pointer" }}
+              />
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "var(--text-dim)", marginTop: "0.25rem" }}>
+                <span>50 days</span><span>220 days</span>
+              </div>
+            </div>
+
+            {/* Deduction breakdown */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+              {([
+                { label: "Gross annual",                                                          value: earnings.grossAnnual,     dim: false, minus: false },
+                { label: `SE tax (${(SE_TAX_RATE * 100).toFixed(1)}%)`,                          value: earnings.seTax,           dim: true,  minus: true  },
+                { label: "Health insurance",                                                      value: earnings.healthInsurance, dim: true,  minus: true  },
+                { label: `Federal income tax (~${Math.round(earnings.federalTaxRate * 100)}%)`,   value: earnings.federalTax,      dim: true,  minus: true  },
+                { label: `State income tax (~${Math.round(earnings.stateTaxRate * 100)}%)`,       value: earnings.stateTax,        dim: true,  minus: true  },
+              ] as { label: string; value: number; dim: boolean; minus: boolean }[]).map(({ label, value, dim, minus }) => (
+                <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontFamily: "var(--mono)", fontSize: "0.85rem" }}>
+                  <span style={{ color: "var(--text-dim)" }}>{label}</span>
+                  <span style={{ color: dim ? "var(--danger)" : "var(--text)" }}>
+                    {minus ? `−${fmt(value)}` : fmt(value)}
+                  </span>
+                </div>
+              ))}
+
+              <div style={{ borderTop: "1px solid var(--border)", paddingTop: "0.85rem", marginTop: "0.35rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--mono)", fontSize: "1.05rem", fontWeight: "bold" }}>
+                  <span style={{ color: "var(--text)" }}>Actual take-home</span>
+                  <span style={{ color: earnings.netTakeHome < 45000 ? "var(--danger)" : "var(--accent)" }}>
+                    {fmt(earnings.netTakeHome)}/yr
+                  </span>
+                </div>
+                <div style={{ textAlign: "right", fontFamily: "var(--mono)", fontSize: "0.75rem", color: "var(--text-dim)", marginTop: "0.3rem" }}>
+                  {fmt(earnings.netTakeHome / 12)}/month
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* ── STEP 3: Income calculator — collapsible ── */}
       <div style={{ marginTop: "3rem", borderTop: "1px solid var(--accent-2)", paddingTop: "2rem" }}>
 
@@ -1370,7 +1427,7 @@ function Calculator() {
           }}
         >
           <span style={{ fontSize: "1rem", lineHeight: 1, transform: showIncomeCalc ? "rotate(90deg)" : "none", transition: "transform 0.2s", display: "inline-block" }}>›</span>
-          {showIncomeCalc ? "Hide income calculator" : "Calculate from income goal"}
+          {showIncomeCalc ? "Hide income goal calculator" : "What should I charge to hit a goal?"}
         </button>
 
         {showIncomeCalc && (
