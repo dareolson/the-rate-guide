@@ -118,7 +118,8 @@ create table public.email_captures (
   discipline   text,
   experience   text,
   location     text,
-  day_rate     numeric
+  day_rate     numeric,     -- their calculated minimum
+  current_rate numeric      -- what they said they're currently charging (optional)
 );
 
 alter table public.email_captures enable row level security;

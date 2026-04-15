@@ -785,7 +785,7 @@ function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcIn
 // Shown after the rate card. Offer: "save your results."
 // Captures email + rate data to Supabase for follow-up.
 // ==============================================
-function EmailCapture({ results, inputs }: { results: CalcResults; inputs: CalcInputs }) {
+function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; inputs: CalcInputs; currentRate: number | null }) {
   const [email,     setEmail]     = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading,   setLoading]   = useState(false);
@@ -804,7 +804,8 @@ function EmailCapture({ results, inputs }: { results: CalcResults; inputs: CalcI
         discipline: inputs.discipline,
         experience: inputs.experience,
         location:   inputs.location,
-        day_rate:   Math.round(results.dayRate + results.kitFee),
+        day_rate:      Math.round(results.dayRate + results.kitFee),
+        current_rate:  currentRate ?? null,
       });
       if (dbError) throw dbError;
       track("email_capture", { discipline: inputs.discipline, experience: inputs.experience });
@@ -1055,7 +1056,7 @@ function Results({ results, inputs, currentRate }: { results: CalcResults; input
 
       <ShareButton inputs={inputs} results={results} />
 
-      <EmailCapture results={results} inputs={inputs} />
+      <EmailCapture results={results} inputs={inputs} currentRate={currentRate} />
 
       {/* ── RHYTHM BREAK ───────────────────────────────────────────── */}
       {/* Minimal pause between dense breakdown and market context.    */}
