@@ -258,58 +258,66 @@ export function calculate(inputs: CalcInputs): CalcResults {
 // These cover housing, food, transportation, healthcare, and basic necessities.
 // ==============================================
 
+// Methodology: 9 states confirmed directly from MIT Living Wage Calculator
+// (AL, CA, TX, NY, HI, WA, FL, MA, DC). Remaining states derived from MERIC
+// 2025 Annual Average Cost of Living Index, calibrated to MIT scale using
+// confirmed anchor states (MERIC index ÷ 100 × $40,958 national baseline).
+// High-index states (≥115) use MIT directly where confirmed, or conservative
+// estimates where not — MIT basic-needs figures diverge from MERIC's broader
+// consumer basket at the high end.
+// MIT confirmed states marked with [MIT].
 export const STATE_ANNUAL_COL: Record<USState, number> = {
-  "Alabama":              32000,
-  "Alaska":               43000,
-  "Arizona":              40000,
-  "Arkansas":             30000,
-  "California":           51000,
-  "Colorado":             47000,
-  "Connecticut":          47000,
-  "Delaware":             40000,
-  "Florida":              41000,
-  "Georgia":              38000,
-  "Hawaii":               57000,
-  "Idaho":                40000,
-  "Illinois":             42000,
-  "Indiana":              35000,
-  "Iowa":                 35000,
-  "Kansas":               36000,
-  "Kentucky":             33000,
-  "Louisiana":            34000,
-  "Maine":                40000,
-  "Maryland":             48000,
-  "Massachusetts":        52000,
-  "Michigan":             37000,
-  "Minnesota":            43000,
-  "Mississippi":          29000,
-  "Missouri":             35000,
-  "Montana":              40000,
-  "Nebraska":             37000,
-  "Nevada":               42000,
-  "New Hampshire":        44000,
-  "New Jersey":           50000,
-  "New Mexico":           36000,
-  "New York":             53000,
-  "North Carolina":       38000,
-  "North Dakota":         37000,
-  "Ohio":                 36000,
-  "Oklahoma":             34000,
-  "Oregon":               46000,
-  "Pennsylvania":         41000,
-  "Rhode Island":         45000,
-  "South Carolina":       36000,
-  "South Dakota":         36000,
-  "Tennessee":            35000,
-  "Texas":                40000,
-  "Utah":                 43000,
-  "Vermont":              43000,
-  "Virginia":             44000,
-  "Washington":           48000,
-  "West Virginia":        32000,
-  "Wisconsin":            38000,
-  "Wyoming":              38000,
-  "District of Columbia": 62000,
+  "Alabama":              36100,  // [MIT] $36,084
+  "Alaska":               47000,  // estimated — MERIC 126.7, no MIT confirmation
+  "Arizona":              45200,  // MERIC 110.3
+  "Arkansas":             36900,  // MERIC 90.1
+  "California":           51400,  // [MIT] $51,416
+  "Colorado":             42200,  // MERIC 103.1
+  "Connecticut":          46700,  // MERIC 114.0
+  "Delaware":             42200,  // MERIC 103.1
+  "Florida":              42700,  // [MIT] $42,711
+  "Georgia":              37800,  // MERIC 92.2
+  "Hawaii":               50800,  // [MIT] $50,771
+  "Idaho":                40700,  // MERIC 99.3
+  "Illinois":             38900,  // MERIC 95.0
+  "Indiana":              37100,  // MERIC 90.7
+  "Iowa":                 36800,  // MERIC 89.8
+  "Kansas":               36200,  // MERIC 88.4
+  "Kentucky":             37500,  // MERIC 91.5
+  "Louisiana":            38100,  // MERIC 92.9
+  "Maine":                46700,  // MERIC 114.0
+  "Maryland":             48100,  // MERIC 117.4
+  "Massachusetts":        50700,  // [MIT] $50,697
+  "Michigan":             37600,  // MERIC 91.9
+  "Minnesota":            38300,  // MERIC 93.6
+  "Mississippi":          35200,  // MERIC 86.0
+  "Missouri":             36400,  // MERIC 88.9
+  "Montana":              39600,  // MERIC 96.8
+  "Nebraska":             37600,  // MERIC 91.8
+  "Nevada":               40800,  // MERIC 99.7
+  "New Hampshire":        45300,  // MERIC 110.5
+  "New Jersey":           47200,  // MERIC 115.3
+  "New Mexico":           38400,  // MERIC 93.7
+  "New York":             49900,  // [MIT] $49,855
+  "North Carolina":       40100,  // MERIC 97.9
+  "North Dakota":         37300,  // MERIC 91.1
+  "Ohio":                 38700,  // MERIC 94.6
+  "Oklahoma":             34700,  // MERIC 84.7
+  "Oregon":               46200,  // MERIC 112.8
+  "Pennsylvania":         39800,  // MERIC 97.1
+  "Rhode Island":         45300,  // MERIC 110.7
+  "South Carolina":       38000,  // MERIC 92.7
+  "South Dakota":         37600,  // MERIC 91.8
+  "Tennessee":            36900,  // MERIC 90.1
+  "Texas":                38800,  // [MIT] $38,842
+  "Utah":                 40800,  // MERIC 99.5
+  "Vermont":              46500,  // MERIC 113.5
+  "Virginia":             41900,  // MERIC 102.2
+  "Washington":           46900,  // [MIT] $46,879
+  "West Virginia":        36000,  // MERIC 88.0
+  "Wisconsin":            40300,  // MERIC 98.5
+  "Wyoming":              38700,  // MERIC 94.6
+  "District of Columbia": 45200,  // [MIT] $45,173
 };
 
 // ==============================================
