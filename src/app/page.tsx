@@ -1417,6 +1417,9 @@ function Calculator() {
         <div>
           <Label>Market</Label>
           <RadioGroup options={LOCATION_TIERS} value={inputs.location} onChange={(v) => set("location", v)} />
+          <div style={{ fontSize: "0.7rem", color: "var(--text-dim)", marginTop: "0.5rem", lineHeight: 1.6 }}>
+            Major (LA, NYC, Chicago, Miami) · Mid (Austin, Denver, Atlanta, Seattle) · Small (regional cities, rural)
+          </div>
         </div>
 
       </div>
@@ -1426,6 +1429,9 @@ function Calculator() {
 
       {/* Current rate input — primary CTA */}
       <div style={{ marginTop: "1.75rem" }}>
+        <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", lineHeight: 1.7, marginBottom: "1.25rem", fontFamily: "var(--serif)" }}>
+          Enter your current rate to see where you stand — or skip ahead and set an income goal to find out what you should be charging.
+        </div>
         <Label>What are you currently charging?</Label>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)" }}>$</span>
