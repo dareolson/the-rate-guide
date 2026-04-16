@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { track } from "@vercel/analytics";          // custom event tracking
@@ -90,6 +90,85 @@ function RadioGroup<T extends string>({
           {opt}
         </button>
       ))}
+    </div>
+  );
+}
+
+// ==============================================
+// ANIMATED RATE — count-up reveal on calculate
+// Runs from 0 → target in 700ms with ease-out cubic
+// ==============================================
+function AnimatedRate({ value }: { value: number }) {
+  const [display, setDisplay] = useState(0);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    const duration = 700;
+    const start = performance.now();
+
+    const animate = (now: number) => {
+      const elapsed  = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased    = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      setDisplay(Math.round(value * eased));
+      if (progress < 1) rafRef.current = requestAnimationFrame(animate);
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [value]);
+
+  return <>{fmt(display)}</>;
+}
+
+// ==============================================
+// STICKY HEADER — fixed nav that appears on scroll
+// Backdrop blur + dark bg for premium depth feel
+// ==============================================
+function StickyHeader() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div style={{
+      position:       "fixed",
+      top:            0,
+      left:           0,
+      right:          0,
+      zIndex:         100,
+      height:         "52px",
+      display:        "flex",
+      alignItems:     "center",
+      padding:        "0 1.5rem",
+      background:     scrolled ? "rgba(22,18,13,0.88)" : "transparent",
+      backdropFilter: scrolled ? "blur(12px)" : "none",
+      WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
+      borderBottom:   scrolled ? "1px solid var(--border)" : "none",
+      transition:     "background 0.25s ease, border-color 0.25s ease",
+      pointerEvents:  "auto",
+    }}>
+      <div style={{ maxWidth: "720px", width: "100%", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <a href="/" style={{ fontFamily: "var(--mono)", fontSize: "0.68rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>
+          The Rate Guide
+        </a>
+        <nav style={{ display: "flex", gap: "1.75rem", alignItems: "center" }}>
+          {([
+            ["Methodology", "/methodology"],
+            ["Store",       "/store"],
+            ["Dashboard",   "/dashboard"],
+          ] as [string, string][]).map(([label, href]) => (
+            <a key={href} href={href} style={{ fontFamily: "var(--mono)", fontSize: "0.68rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", textDecoration: "none" }}>
+              {label}
+            </a>
+          ))}
+        </nav>
+      </div>
     </div>
   );
 }
@@ -939,9 +1018,10 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
       </div>
 
       {/* Sticky rate bar — stays visible as user scrolls through the breakdown */}
+      {/* top: 52px accounts for the fixed StickyHeader above */}
       <div style={{
         position:        "sticky",
-        top:             0,
+        top:             52,
         zIndex:          10,
         background:      "var(--bg)",
         borderBottom:    "1px solid var(--border)",
@@ -963,20 +1043,20 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
         </span>
       </div>
 
-      {/* Main rate */}
-      <div style={{ borderTop: "2px solid var(--accent)", paddingTop: "2rem", marginBottom: "2rem" }}>
-        <div style={{ fontSize: "0.78rem", letterSpacing: "0.07em", textTransform: "uppercase", color: "var(--accent)", fontWeight: 600, marginBottom: "0.5rem" }}>
+      {/* Main rate — the hero moment */}
+      <div style={{ borderTop: "2px solid var(--accent)", paddingTop: "2.5rem", marginBottom: "2.5rem", textAlign: "center" }}>
+        <div style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", fontWeight: 600, marginBottom: "1rem", fontFamily: "var(--mono)" }}>
           Your Target Day Rate
         </div>
-        <div style={{ fontSize: "clamp(3rem, 8vw, 5rem)", fontFamily: "var(--mono)", lineHeight: 1, color: "var(--accent)" }}>
-          {fmt(results.dayRate + results.kitFee)}
+        <div style={{ fontSize: "clamp(3.5rem, 12vw, 6rem)", fontFamily: "var(--mono)", lineHeight: 1, color: "var(--accent)", fontWeight: "bold", letterSpacing: "-0.02em" }}>
+          <AnimatedRate value={results.dayRate + results.kitFee} />
         </div>
         {results.kitFee > 0 && (
-          <div style={{ fontSize: "0.75rem", fontFamily: "var(--mono)", color: "var(--text-dim)", marginTop: "0.5rem" }}>
+          <div style={{ fontSize: "0.75rem", fontFamily: "var(--mono)", color: "var(--text-dim)", marginTop: "0.75rem" }}>
             {fmt(results.dayRate)} day rate + {fmt(results.kitFee)} kit fee
           </div>
         )}
-        <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "0.5rem", letterSpacing: "0.08em" }}>
+        <div style={{ fontSize: "0.8rem", fontFamily: "var(--serif)", color: "var(--text-dim)", marginTop: "1rem", lineHeight: 1.6 }}>
           Here&apos;s exactly how we got there — and why every line matters.
         </div>
       </div>
@@ -997,8 +1077,8 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
         </div>
       )}
 
-      {/* Line-by-line breakdown */}
-      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: "1.75rem 2rem", borderRadius: "4px" }}>
+      {/* Line-by-line breakdown — each line staggers in so users read it, not skip it */}
+      <div className="fade-in-stagger card-hover" style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: "1.75rem 2rem", borderRadius: "4px" }}>
         {[
           {
             label: "Take-Home Goal",
@@ -1050,7 +1130,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
       </div>
 
       {/* Rate card — auto-fit grid reflows naturally on mobile */}
-      <div style={{
+      <div className="card-hover" style={{
         marginTop: "1.5rem",
         padding: "1.75rem 2rem",
         background: "var(--surface)",
@@ -1212,6 +1292,7 @@ function Calculator() {
     includeProfit: urlInputs.includeProfit ?? true,
   });
 
+  const [calcCount,            setCalcCount]            = useState<number | null>(null);
   const [results,              setResults]              = useState<CalcResults | null>(null);
   const [currentRate,          setCurrentRate]          = useState<number | null>(null);
   const [currentRateRaw,       setCurrentRateRaw]       = useState("");
@@ -1249,6 +1330,14 @@ function Calculator() {
 
   // The health insurance figure used in the calculation — live if ZIP resolved, else static default
   const healthInsuranceAnnual = zipPremiumData?.avgAnnualPremium ?? HEALTH_INSURANCE_ANNUAL;
+
+  // Fetch total calculation count for trust signal
+  useEffect(() => {
+    createClient()
+      .from("calc_events")
+      .select("*", { count: "exact", head: true })
+      .then(({ count }) => { if (count && count > 0) setCalcCount(count); });
+  }, []);
 
   // Sync inputs to URL whenever they change
   useEffect(() => {
@@ -1293,14 +1382,16 @@ function Calculator() {
     setInputs((prev) => ({ ...prev, [key]: value }));
 
   return (
-    <div style={{ maxWidth: "720px", margin: "0 auto", padding: "4rem 1.5rem 6rem" }}>
+    <>
+    <StickyHeader />
+    <div style={{ maxWidth: "720px", margin: "0 auto", padding: "5rem 1.5rem 6rem" }}>
 
       {/* Header */}
       <div className="fade-in" style={{ marginBottom: "4rem" }}>
         <div style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.75rem" }}>
           The Rate Guide
         </div>
-        <h1 style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", fontFamily: "var(--mono)", lineHeight: 1.1, marginBottom: "1rem" }}>
+        <h1 style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", fontFamily: "var(--serif)", fontWeight: 700, lineHeight: 1.1, marginBottom: "1rem" }}>
           Know your rate.<br />Stop undercharging.
         </h1>
         <p style={{ color: "var(--text-dim)", fontSize: "0.85rem", lineHeight: 1.7, marginBottom: "0.75rem" }}>
@@ -1309,6 +1400,15 @@ function Calculator() {
             How we calculate it →
           </a>
         </p>
+        {/* Trust signal — live count from calc_events */}
+        {calcCount !== null && calcCount > 50 && (
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem", padding: "0.35rem 0.85rem", border: "1px solid var(--border)", borderRadius: "4px", background: "rgba(212,146,10,0.05)" }}>
+            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--accent)", display: "inline-block", flexShrink: 0 }} />
+            <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", color: "var(--text-dim)", letterSpacing: "0.04em" }}>
+              {calcCount.toLocaleString()} rates calculated by DPs, editors, producers, and more
+            </span>
+          </div>
+        )}
         {/* Descriptive paragraph — crawlable by search engines, surfaces all disciplines and use cases */}
         <p style={{ color: "var(--text-dim)", fontSize: "0.78rem", lineHeight: 1.8, maxWidth: "540px", opacity: 0.7 }}>
           A free day rate calculator for cinematographers, DPs, video editors, colorists, motion designers,
@@ -1319,6 +1419,11 @@ function Calculator() {
       </div>
 
       {/* ── STEP 1: Profile ── */}
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
+        <span style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", fontWeight: 700, color: "var(--accent)", letterSpacing: "0.1em" }}>01</span>
+        <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
+        <span style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)" }}>Your Profile</span>
+      </div>
       <div className="fade-in-stagger" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
 
         <div>
@@ -1501,7 +1606,13 @@ function Calculator() {
       })()}
 
       {/* ── STEP 3: Income calculator — collapsible ── */}
-      <div style={{ marginTop: "3rem", borderTop: "1px solid var(--accent-2)", paddingTop: "2rem" }}>
+      <div style={{ marginTop: "3rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem", borderTop: "1px solid var(--accent-2)", paddingTop: "2rem" }}>
+          <span style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", fontWeight: 700, color: "var(--accent)", letterSpacing: "0.1em" }}>02</span>
+          <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
+          <span style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)" }}>Income Goal</span>
+        </div>
+
 
         {/* Toggle */}
         <button
@@ -1738,6 +1849,7 @@ function Calculator() {
 
       {results && <Results results={results} inputs={inputs} currentRate={currentRate} zipCounty={zipPremiumData ? `${zipPremiumData.county}, ${zipPremiumData.state}` : null} />}
     </div>
+    </>
   );
 }
 

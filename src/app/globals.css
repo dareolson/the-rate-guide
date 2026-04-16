@@ -8,7 +8,7 @@
   --text-dim:  #a8a097;   /* warm mid-gray for secondary text */
   --accent:    #d4920a;   /* rich amber gold */
   --accent-dim:#a87010;   /* deeper amber for hover/muted states */
-  --accent-2:  #4a535f;   /* gunmetal gray-blue — section dividers, nav border, callout stripes */
+  --accent-2:  #9c6030;   /* warm copper/bronze — section dividers, nav border, callout stripes */
   --danger:    #d85c46;   /* warm red */
   --mono:  var(--font-mono, 'JetBrains Mono', 'Courier New', monospace);
   --sans:  var(--font-sans, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif);
@@ -26,7 +26,7 @@ html {
 }
 
 body {
-  background:  var(--bg);
+  background:  radial-gradient(ellipse at 50% 0%, #1f1810 0%, #16120d 65%);
   color:       var(--text);
   font-family: var(--sans);   /* sans default; mono used explicitly for data */
   line-height: 1.65;
@@ -67,6 +67,9 @@ p {
 .fade-in-stagger > *:nth-child(3) { animation-delay: 0.19s; }
 .fade-in-stagger > *:nth-child(4) { animation-delay: 0.26s; }
 .fade-in-stagger > *:nth-child(5) { animation-delay: 0.33s; }
+.fade-in-stagger > *:nth-child(6) { animation-delay: 0.40s; }
+.fade-in-stagger > *:nth-child(7) { animation-delay: 0.47s; }
+.fade-in-stagger > *:nth-child(8) { animation-delay: 0.54s; }
 
 /* Gold-fill range slider — used on billable days slider in reality check */
 input[type="range"].gold-slider {
@@ -109,6 +112,23 @@ input[type="range"].gold-slider::-moz-range-progress {
   height: 4px;
   border-radius: 4px;
   background: var(--accent);
+}
+
+/* Button micro-interactions — press feedback signals quality */
+button {
+  transition: transform 0.1s ease, opacity 0.15s ease;
+}
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Card hover — subtle border brighten on hover for interactive cards */
+.card-hover {
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.card-hover:hover {
+  border-color: var(--accent-dim) !important;
+  box-shadow: 0 0 0 1px rgba(212, 146, 10, 0.08);
 }
 
 /* Global focus states — amber glow ring on all form controls */
