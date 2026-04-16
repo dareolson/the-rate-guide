@@ -123,57 +123,6 @@ function AnimatedRate({ value }: { value: number }) {
 }
 
 // ==============================================
-// STICKY HEADER — fixed nav that appears on scroll
-// Backdrop blur + dark bg for premium depth feel
-// ==============================================
-function StickyHeader() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <div style={{
-      position:       "fixed",
-      top:            0,
-      left:           0,
-      right:          0,
-      zIndex:         100,
-      height:         "52px",
-      display:        "flex",
-      alignItems:     "center",
-      padding:        "0 1.5rem",
-      background:     scrolled ? "rgba(22,18,13,0.88)" : "transparent",
-      backdropFilter: scrolled ? "blur(12px)" : "none",
-      WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
-      borderBottom:   scrolled ? "1px solid var(--border)" : "none",
-      transition:     "background 0.25s ease, border-color 0.25s ease",
-      pointerEvents:  "auto",
-    }}>
-      <div style={{ maxWidth: "720px", width: "100%", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <a href="/" style={{ fontFamily: "var(--mono)", fontSize: "0.68rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>
-          The Rate Guide
-        </a>
-        <nav style={{ display: "flex", gap: "1.75rem", alignItems: "center" }}>
-          {([
-            ["Methodology", "/methodology"],
-            ["Store",       "/store"],
-            ["Dashboard",   "/dashboard"],
-          ] as [string, string][]).map(([label, href]) => (
-            <a key={href} href={href} style={{ fontFamily: "var(--mono)", fontSize: "0.68rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-dim)", textDecoration: "none" }}>
-              {label}
-            </a>
-          ))}
-        </nav>
-      </div>
-    </div>
-  );
-}
-
-// ==============================================
 // SHARE BUTTONS
 // Two versions: personal (full inputs) and
 // client-safe (rate only, no income/days exposed)
@@ -1018,10 +967,9 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
       </div>
 
       {/* Sticky rate bar — stays visible as user scrolls through the breakdown */}
-      {/* top: 52px accounts for the fixed StickyHeader above */}
       <div style={{
         position:        "sticky",
-        top:             52,
+        top:             0,
         zIndex:          10,
         background:      "var(--bg)",
         borderBottom:    "1px solid var(--border)",
@@ -1382,9 +1330,7 @@ function Calculator() {
     setInputs((prev) => ({ ...prev, [key]: value }));
 
   return (
-    <>
-    <StickyHeader />
-    <div style={{ maxWidth: "720px", margin: "0 auto", padding: "5rem 1.5rem 6rem" }}>
+    <div style={{ maxWidth: "720px", margin: "0 auto", padding: "4rem 1.5rem 6rem" }}>
 
       {/* Header */}
       <div className="fade-in" style={{ marginBottom: "4rem" }}>
@@ -1849,7 +1795,6 @@ function Calculator() {
 
       {results && <Results results={results} inputs={inputs} currentRate={currentRate} zipCounty={zipPremiumData ? `${zipPremiumData.county}, ${zipPremiumData.state}` : null} />}
     </div>
-    </>
   );
 }
 

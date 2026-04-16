@@ -104,13 +104,19 @@ export const metadata: Metadata = {
 function Nav() {
   return (
     <nav style={{
-      borderBottom:   "1px solid var(--accent-2)",
+      position:       "sticky",
+      top:            0,
+      zIndex:         100,
+      borderBottom:   "1px solid var(--border)",
       padding:        "0.85rem 1.5rem",
       display:        "flex",
       justifyContent: "space-between",
       alignItems:     "center",
       gap:            "1rem",
       flexWrap:       "wrap",
+      background:     "rgba(22,18,13,0.88)",
+      backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
     }}>
       {/* Logo — links home, clears all URL params for a fresh start */}
       <a href="/" style={{
