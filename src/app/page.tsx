@@ -843,6 +843,21 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
       });
       if (dbError) throw dbError;
       track("email_capture", { discipline: inputs.discipline, experience: inputs.experience });
+
+      // Send rate breakdown email — fire and forget, never block on failure
+      fetch("/api/send-results", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          email,
+          discipline:  inputs.discipline,
+          experience:  inputs.experience,
+          location:    inputs.location,
+          dayRate:     Math.round(results.dayRate + results.kitFee),
+          currentRate: currentRate ?? null,
+        }),
+      }).catch(() => {}); // silent — email is best-effort
+
       setSubmitted(true);
     } catch {
       setError("Something went wrong. Try again.");
@@ -855,10 +870,10 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
     return (
       <div style={{ marginTop: "2rem", padding: "1.25rem 1.5rem", background: "var(--surface)", borderLeft: "3px solid var(--accent)" }}>
         <div style={{ fontFamily: "var(--mono)", fontSize: "0.85rem", color: "var(--accent)", marginBottom: "0.25rem" }}>
-          Got it.
+          Check your inbox.
         </div>
         <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", lineHeight: 1.6 }}>
-          We&apos;ll be in touch at <strong style={{ color: "var(--text)" }}>{email}</strong>.
+          Your rate breakdown is on its way to <strong style={{ color: "var(--text)" }}>{email}</strong>.
         </div>
       </div>
     );
