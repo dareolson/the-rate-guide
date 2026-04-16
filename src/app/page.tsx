@@ -254,7 +254,7 @@ function ClientView({ params }: { params: URLSearchParams }) {
         </h1>
         <p style={{ fontFamily: "var(--serif)", color: "var(--text-dim)", fontSize: "0.9rem", marginTop: "0.75rem", lineHeight: 1.75 }}>
           This document explains how a professional day rate is calculated for a creative freelancer.
-          Every line item reflects a real cost — not a preference.
+          Every line item is a real cost.
         </p>
       </div>
 
@@ -303,12 +303,12 @@ function ClientView({ params }: { params: URLSearchParams }) {
         {row(
           "Self-employment tax",
           `${seTaxPct}%`,
-          `Freelancers pay both the employer and employee sides of Social Security and Medicare — ${seTaxPct}% of gross income. A salaried employee's employer absorbs half this cost invisibly. Freelancers absorb it entirely.`
+          `Freelancers pay both the employer and employee sides of Social Security and Medicare — ${seTaxPct}% of gross income. A salaried employee's employer covers half this cost. Freelancers cover it entirely.`
         )}
         {row(
           "Health insurance",
           `~${fmt(HEALTH_INSURANCE_ANNUAL)}/yr`,
-          `Without employer-sponsored coverage, freelancers purchase individual health insurance on the open market. The 2026 ACA marketplace average for an individual is approximately ${fmt(HEALTH_INSURANCE_ANNUAL)} per year before subsidies.`
+          `Without employer-sponsored coverage, freelancers purchase individual health insurance on the open market. The 2026 ACA marketplace average for an individual is ${fmt(HEALTH_INSURANCE_ANNUAL)} per year before subsidies.`
         )}
         {row(
           "Operating margin",
@@ -318,7 +318,7 @@ function ClientView({ params }: { params: URLSearchParams }) {
         {row(
           "Billable days",
           "~150/yr",
-          `Freelancers do not bill 260 days a year. Time is lost to project sourcing, proposal writing, invoicing, travel, equipment prep, and the unavoidable gaps between engagements. 150 billable days is the realistic industry standard.`
+          `Freelancers do not bill 260 days a year. Project sourcing, proposal writing, invoicing, travel, equipment prep, and gaps between gigs eat the rest. 150 billable days is the industry standard.`
         )}
       </div>
 
@@ -381,7 +381,7 @@ function RealityCheck({
         Monthly Breakdown
       </div>
       <h2 style={{ fontSize: "1.4rem", fontFamily: "var(--mono)", marginBottom: "0.75rem", lineHeight: 1.2 }}>
-        What does this actually buy you?
+        What does this buy you?
       </h2>
 
       {/* Inflation context */}
@@ -477,10 +477,10 @@ function RealityCheck({
             {effectiveLeftOver < 0
               ? "This take-home goal doesn't cover your expenses. You need a higher rate."
               : effectiveLeftOver < 300
-              ? "This isn't a living wage. It's survival mode."
+              ? "Subsistence income. Survival mode."
               : effectiveLeftOver < 800
               ? "Almost no cushion. One bad month and you're in trouble."
-              : "Some breathing room — but not much margin for the unexpected."}
+              : "Some breathing room, but thin margin for the unexpected."}
           </div>
         </div>
         <div style={{ fontFamily: "var(--mono)", fontSize: "2rem", color: leftOverColor, whiteSpace: "nowrap" }}>
@@ -525,10 +525,10 @@ function MarketRangePanel({
   const barWidth = mr ? Math.min(Math.max(mr.percentile, 4), 96) : null;
 
   const POSITION_CONFIG = {
-    below: { label: "Below market",       color: "var(--danger)",   message: "This rate is below the floor for your discipline and market. This isn't humility — it's leaving money on the table." },
-    low:   { label: "Low end of market",  color: "#f5a623",         message: "You're in the market but on the lower end. There's meaningful room to grow without pricing yourself out." },
-    mid:   { label: "Mid market",         color: "var(--accent)",   message: "This rate is solid and defensible. You're where working professionals at your level typically land." },
-    high:  { label: "High end of market", color: "var(--accent)",   message: "You're commanding a strong rate. This is where well-positioned, in-demand professionals operate." },
+    below: { label: "Below market",       color: "var(--danger)",   message: "This rate is below the floor for your discipline and market. You're leaving money on the table." },
+    low:   { label: "Low end of market",  color: "#f5a623",         message: "You're in the market but on the lower end. There's room to grow without pricing yourself out." },
+    mid:   { label: "Mid market",         color: "var(--accent)",   message: "This rate is solid and defensible. You're where working professionals at your level land." },
+    high:  { label: "High end of market", color: "var(--accent)",   message: "You're commanding a strong rate, where well-positioned, in-demand professionals operate." },
     above: { label: "Above market",       color: "var(--text-dim)", message: "This rate is above the typical ceiling. Make sure your credits and reputation can support it." },
   };
   const config = mr ? POSITION_CONFIG[mr.position] : null;
@@ -664,7 +664,7 @@ function Survey({ inputs }: { inputs: CalcInputs }) {
       {submitted ? (
         <div>
           <p style={{ fontFamily: "var(--serif)", fontSize: "1rem", color: "var(--text)", lineHeight: 1.7 }}>
-            Thanks for sharing. Every response helps us show the world what freelancers are really worth.
+            Thanks for sharing. Every response helps build a clearer picture of what freelancers earn.
           </p>
         </div>
 
@@ -801,7 +801,7 @@ function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcIn
               <div style={{ fontSize: "0.82rem", color: "var(--text-dim)", lineHeight: 1.7 }}>
                 {fmt(current!)}/day vs. {fmt(results.dayRate)}/day minimum — a gap of {fmt(gapPerDay)}/day.
                 At {results.billableDays} billable days, that&apos;s <strong style={{ color: "var(--danger)" }}>{fmt(gapPerYear)}</strong> per year
-                you&apos;re effectively working for free.
+                you&apos;re working for free.
               </div>
             </div>
           )}
@@ -885,7 +885,7 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
         Save your results
       </div>
       <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", lineHeight: 1.6, marginBottom: "1rem" }}>
-        Enter your email and we&apos;ll send you your rate breakdown to keep.
+        We&apos;ll send your rate breakdown to keep.
       </div>
 
       <form onSubmit={handleSubmit} style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -1020,7 +1020,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
           </div>
         )}
         <div style={{ fontSize: "0.8rem", fontFamily: "var(--serif)", color: "var(--text-dim)", marginTop: "1rem", lineHeight: 1.6 }}>
-          Here&apos;s exactly how we got there — and why every line matters.
+          Every line below is a real cost.
         </div>
       </div>
 
@@ -1034,9 +1034,9 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
           lineHeight: 1.6,
           color: "var(--danger)",
         }}>
-          Hold on. Your calculated rate of {fmt(results.dayRate)}/day falls below the market floor
+          Your calculated rate of {fmt(results.dayRate)}/day falls below the market floor
           of {fmt(results.rateFloor)}/day for a {inputs.experience} {inputs.discipline} in a {inputs.location}.
-          Consider adjusting your inputs — or charge the floor rate. You earned it.
+          Adjust your inputs or charge the floor rate.
         </div>
       )}
 
@@ -1046,14 +1046,14 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
           {
             label: "Take-Home Goal",
             amount: `${fmt(results.takeHome)}/yr`,
-            note: "This is what you want in your pocket after everything. You deserve to name this number without apology.",
+            note: "What you want in your pocket after taxes and expenses.",
           },
           {
             label: "+ Health Insurance",
             amount: `${fmt(results.healthInsurance)}/yr`,
             note: zipCounty
               ? `Avg Silver plan premium for ${zipCounty}. Salaried employees get this as a benefit. You pay for it yourself.`
-              : "Salaried employees get this as a benefit. You pay for it yourself. Most freelancers forget to factor this in — don't be most freelancers.",
+              : "Salaried employees get this as a benefit. You pay for it yourself. Most freelancers don't factor it in.",
           },
           {
             label: "+ Self-Employment Tax",
@@ -1068,17 +1068,17 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
           {
             label: `+ State & Local Tax (est. ${Math.round(results.stateTaxRate * 100)}%)`,
             amount: `${fmt(results.stateTax)}/yr`,
-            note: "Median effective rate for your market tier. Major markets (LA, NY, Chicago) skew high — states like TX and FL have no income tax. This is an estimate, not a guarantee.",
+            note: "Median effective rate for your market tier. Major markets (LA, NY, Chicago) skew high. TX and FL have no income tax. An estimate.",
           },
           ...(results.profit > 0 ? [{
             label: "+ Profit Margin (20%)",
             amount: `${fmt(results.profit)}/yr`,
-            note: "This isn't greed. This is what covers your slow months, equipment repairs, continued education, and your ability to grow. No margin means one bad month wipes you out.",
+            note: "This covers slow months, equipment repairs, continued education, and your ability to grow. No margin means one bad month wipes you out.",
           }] : []),
           {
             label: `÷ ${results.billableDays} Billable Days`,
             amount: `${results.billableDays} days/yr`,
-            note: `${results.billableDays} days sounds like a lot. That's roughly ${(results.billableDays / 52).toFixed(1)} days per week on average — the rest is spent on unpaid admin, marketing, travel, chasing invoices, and the slow seasons every freelancer knows too well.`,
+            note: `${results.billableDays} days is roughly ${(results.billableDays / 52).toFixed(1)} billable days per week. The rest goes to admin, marketing, travel, chasing invoices, and the slow seasons.`,
             last: true,
           },
         ].map(({ label, amount, note, last }) => (
@@ -1167,10 +1167,9 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
       {/* Rate strategy note */}
       <div style={{ marginTop: "2rem", padding: "1.5rem 1.75rem", borderLeft: "3px solid var(--accent-2)", background: "var(--surface)" }}>
         <p style={{ fontFamily: "var(--serif)", fontSize: "0.85rem", color: "var(--text-dim)", lineHeight: 1.75, margin: 0 }}>
-          A lot of things factor into the rate you actually charge — including what the market will bear.
-          If you plan to work below your minimum, consider making that explicit to your client.
-          Tell them your standard rate, and name the discount you&apos;re offering. That way, you do the project,
-          and they understand they&apos;re getting more than they paid for — which is exactly the kind of thing people remember.
+          Your actual rate depends on what the market will bear.
+          If you work below your minimum, make it explicit. Tell them your standard rate and name the discount.
+          You do the project. They understand what they&apos;re getting. That&apos;s the kind of thing clients remember.
         </p>
       </div>
 
@@ -1189,7 +1188,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
           Now that you know your number
         </div>
         <p style={{ fontFamily: "var(--serif)", fontSize: "0.9rem", color: "var(--text-dim)", lineHeight: 1.75, margin: 0 }}>
-          Knowing what to charge is only half the battle. These are the books that help you actually say it — and hold the line when someone pushes back.
+          Knowing your number is one thing. Saying it and holding it when someone pushes back is another. These books help.
         </p>
         <a
           href="/store"
@@ -1357,7 +1356,7 @@ function Calculator() {
           Know your rate.<br />Stop undercharging.
         </h1>
         <p style={{ color: "var(--text-dim)", fontSize: "0.85rem", lineHeight: 1.7, marginBottom: "0.75rem" }}>
-          This calculator shows the math — every line, every reason. No guessing. No apology.{" "}
+          This calculator shows the math, every line, every reason. No guessing. No apology.{" "}
           <a href="/methodology" style={{ color: "var(--accent)", textDecoration: "none", borderBottom: "1px solid var(--accent)" }}>
             How we calculate it →
           </a>

@@ -139,8 +139,7 @@ function buildEmail({
           <tr>
             <td style="border-top:1px solid #413925;padding-top:24px;">
               <p style="margin:0 0 8px;font-size:12px;color:#a8a097;line-height:1.6;">
-                Not sure how to use this number? The methodology page explains every line —
-                where the rates come from, how taxes are estimated, and why billable days matter more than people think.
+                The methodology page explains every line: where the rates come from, how taxes are estimated, and why billable days matter.
               </p>
               <a href="https://therateguide.com/methodology" style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#d4920a;text-decoration:none;">
                 Read the methodology →
