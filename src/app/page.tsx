@@ -1352,9 +1352,12 @@ function Calculator() {
         <div style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.75rem" }}>
           The Rate Guide
         </div>
-        <h1 style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", fontFamily: "var(--serif)", fontWeight: 700, lineHeight: 1.1, marginBottom: "1rem" }}>
-          Know your rate.<br />Stop undercharging.
+        <h1 style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", fontFamily: "var(--serif)", fontWeight: 700, lineHeight: 1.1, marginBottom: "0.5rem" }}>
+          Know your rate.
         </h1>
+        <h2 style={{ fontSize: "0.85rem", fontFamily: "var(--mono)", fontWeight: 400, color: "var(--text-dim)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1rem" }}>
+          Freelance Day Rate Calculator
+        </h2>
         <p style={{ color: "var(--text-dim)", fontSize: "0.85rem", lineHeight: 1.7, marginBottom: "0.75rem" }}>
           This calculator shows the math, every line, every reason. No guessing. No apology.{" "}
           <a href="/methodology" style={{ color: "var(--accent)", textDecoration: "none", borderBottom: "1px solid var(--accent)" }}>
