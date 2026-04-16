@@ -8,12 +8,12 @@ import type { Metadata } from "next";
 
 // Page-specific metadata — inherits site name from layout title template
 export const metadata: Metadata = {
-  title:       "How We Calculate Freelance Day Rates",
-  description: "A fully sourced breakdown of the freelance rate formula — self-employment tax, health insurance, billable days, market floors, and inflation. Show your clients the math.",
+  title:       "Freelance Day Rate Formula — How We Calculate It",
+  description: "The complete methodology behind the freelance day rate calculator — self-employment tax, health insurance, federal and state income tax, billable days, and market rate floors. Every number sourced.",
   alternates:  { canonical: "/methodology" },
   openGraph: {
-    title:       "How We Calculate Freelance Day Rates — The Rate Guide",
-    description: "Every number sourced. SE tax from the IRS, health insurance from KFF, inflation from BLS CPI-U. Show this page to any client who questions your rate.",
+    title:       "Freelance Day Rate Formula — The Rate Guide",
+    description: "SE tax from the IRS, health insurance from KFF, inflation from BLS CPI-U. Every input sourced. Show this page to any client who questions your rate.",
     url:         "https://therateguide.com/methodology",
   },
 };
@@ -112,42 +112,67 @@ export default function MethodologyPage() {
           ← The Rate Guide
         </a>
         <h1 style={{ fontFamily: "var(--mono)", fontSize: "2rem", marginTop: "1.5rem", lineHeight: 1.1 }}>
-          How We Calculate Your Rate
+          Freelance Day Rate Formula — How We Calculate It
         </h1>
         <p style={{ color: "var(--text-dim)", fontSize: "1.05rem", marginTop: "0.75rem", lineHeight: 1.75, maxWidth: "560px", fontFamily: "var(--serif)" }}>
-          Every number in this calculator is derived from public data and industry standards — not guesswork. This page exists so you can show it to a client, a hiring manager, or yourself.
+          Every number comes from public data and industry standards. Show this page to a client who questions your rate, or to yourself when you need the reminder.
         </p>
       </div>
 
+      {/* Table of contents */}
+      <nav aria-label="Page contents" style={{ marginBottom: "3rem", padding: "1.25rem 1.5rem", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px" }}>
+        <div style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.75rem" }}>On this page</div>
+        <ol style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.45rem", margin: 0, padding: 0 }}>
+          {[
+            ["#formula",       "The formula"],
+            ["#se-tax",        "Self-employment tax (15.3%)"],
+            ["#income-tax",    "Federal and state income tax"],
+            ["#health",        "Health insurance"],
+            ["#profit",        "Profit margin"],
+            ["#billable-days", "Billable days"],
+            ["#rate-floors",   "Market rate floors by discipline"],
+            ["#location",      "Location multipliers"],
+            ["#inflation",     "Inflation adjustment"],
+            ["#cost-of-living","Cost of living by state"],
+          ].map(([href, label]) => (
+            <li key={href}>
+              <a href={href} style={{ fontFamily: "var(--mono)", fontSize: "0.8rem", color: "var(--accent)", textDecoration: "none", borderBottom: "1px solid transparent" }}>
+                {label}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
       {/* The Formula */}
-      <Section id="formula" label="The Core Formula" title="What a day rate actually has to cover">
+      <Section id="formula" label="The Core Formula" title="What a freelance day rate has to cover">
         <P>
-          Most people calculate their rate wrong. They take what they want to make, divide by some number of days, and call it done. That ignores a third of the real cost of being self-employed.
+          Most people calculate their rate wrong. They take what they want to make, divide by some number of days, and call it done. That misses most of the actual cost of being self-employed.
         </P>
         <P>
-          The correct formula starts with your take-home goal and works forward — adding every cost you absorb as a freelancer that a salaried employee never sees on their pay stub.
+          The formula starts with your take-home goal and adds every cost you carry as a freelancer that a salaried employee never sees on their pay stub.
         </P>
         <Callout>
           Day Rate = (Take-Home Goal + Health Insurance + SE Tax + Federal Income Tax + State Tax + Profit Margin) ÷ Billable Days
         </Callout>
         <P>
-          Each of those inputs is explained below with its source. None of them are arbitrary.
+          Each input below has a source. None are arbitrary.
         </P>
       </Section>
 
       {/* Self-Employment Tax */}
       <Section id="se-tax" label="Factor 01" title={`Self-employment tax — ${seTaxPct}%`}>
         <P>
-          When you work for an employer, they pay half of your Social Security and Medicare taxes. As a freelancer, you pay both halves — the employer side and the employee side.
+          When you work for an employer, they pay half your Social Security and Medicare taxes. As a freelancer, you pay both halves.
         </P>
         <DataRow label="Social Security"       value="12.4%" note="on first $168,600 of net earnings (2024)" />
         <DataRow label="Medicare"              value="2.9%"  note="on all net earnings" />
         <DataRow label="Total SE tax rate"     value={`${seTaxPct}%`} />
         <P>
-          This is not an estimate or a conservative assumption. It is the statutory rate in IRS Publication 334 and Schedule SE. A W-2 employee making the same gross income pays roughly half this amount — their employer absorbs the other half invisibly.
+          This is the statutory rate from IRS Publication 334 and Schedule SE. A W-2 employee at the same gross income pays half this amount. Their employer covers the rest.
         </P>
         <Callout>
-          A freelancer billing ${(60000 * (1 + SE_TAX_RATE)).toLocaleString("en-US", { maximumFractionDigits: 0 })} gross needs to cover ${Math.round(60000 * SE_TAX_RATE).toLocaleString("en-US")} in SE tax to keep $60,000 in take-home pay. That money has to come from somewhere — it comes from your rate.
+          A freelancer billing ${(60000 * (1 + SE_TAX_RATE)).toLocaleString("en-US", { maximumFractionDigits: 0 })} gross owes ${Math.round(60000 * SE_TAX_RATE).toLocaleString("en-US")} in SE tax to keep $60,000 in take-home pay. That money comes from your rate.
         </Callout>
         <Source>IRS Publication 334 (Tax Guide for Small Business); IRS Schedule SE; Social Security Administration wage base 2024</Source>
       </Section>
@@ -155,30 +180,30 @@ export default function MethodologyPage() {
       {/* Income Tax */}
       <Section id="income-tax" label="Factor 02" title="Federal and state income tax — estimated">
         <P>
-          Most rate calculators stop at self-employment tax and call it done. That is incorrect. SE tax covers Social Security and Medicare, but you still owe federal and state income tax on your earnings — and those are separate, often larger, obligations.
+          SE tax covers Social Security and Medicare. Federal and state income tax are separate obligations, often larger ones.
         </P>
         <P>
-          Because income tax depends on your specific situation, this calculator uses estimated effective rates — the actual percentage of taxable income paid after deductions, not the marginal rate on the last dollar earned.
+          Income tax depends on your situation, so the calculator uses estimated effective rates: the percentage of taxable income you pay after deductions, not the marginal rate on your top dollar.
         </P>
 
         <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginTop: "0.5rem", marginBottom: "0.5rem" }}>
           How taxable income is calculated
         </div>
         <P>
-          The calculator does not apply income tax to your gross revenue. It first subtracts the three deductions a self-employed person is legally entitled to:
+          Income tax applies to taxable income, not gross revenue. Three deductions reduce that number first:
         </P>
-        <DataRow label="Health insurance premium"   value="100% deductible" note="IRS Publication 535 — self-employed health insurance deduction" />
-        <DataRow label="½ of self-employment tax"   value="~7.65% of gross"  note="IRS Schedule SE — reduces adjusted gross income" />
+        <DataRow label="Health insurance premium"      value="100% deductible" note="IRS Publication 535 — self-employed health insurance deduction" />
+        <DataRow label="½ of self-employment tax"      value="~7.65% of gross"  note="IRS Schedule SE — reduces adjusted gross income" />
         <DataRow label="Estimated business write-offs" value={`$${FREELANCE_WRITEOFFS.toLocaleString("en-US")}/yr`} note="home office, equipment depreciation, software, professional development" />
         <P>
-          What remains after those deductions is your estimated taxable income, and that is what the federal and state rates are applied to.
+          What remains is your estimated taxable income. That&apos;s what federal and state rates hit.
         </P>
 
         <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginTop: "0.5rem", marginBottom: "0.5rem" }}>
           Federal effective rate
         </div>
         <P>
-          Federal income tax is progressive. The effective rate — the blended average across all brackets — is lower than the marginal rate on your top dollar of income. The calculator uses a bracket lookup based on your estimated taxable income:
+          Federal income tax is progressive. The effective rate, the blended average across brackets, runs lower than your top marginal rate. The calculator looks up your bracket based on estimated taxable income:
         </P>
         <DataRow label="Taxable income under $30k"    value={`${Math.round(federalEffectiveRate(25000)  * 100)}%`} />
         <DataRow label="$30k–$50k"                    value={`${Math.round(federalEffectiveRate(40000)  * 100)}%`} />
@@ -192,14 +217,14 @@ export default function MethodologyPage() {
           State and local rate
         </div>
         <P>
-          State income tax varies enormously — from 0% in Texas and Florida to over 13% at the top bracket in California. The calculator uses a median effective rate based on your market tier, since we don&apos;t collect state-level data:
+          State income tax ranges from 0% in Texas and Florida to over 13% at the top bracket in California. The calculator uses a median effective rate for your market tier:
         </P>
         <DataRow label="Major Market (LA, NYC, Chicago…)" value={`${Math.round(STATE_TAX_RATE["Major Market"] * 100)}%`} note="weighted toward high-tax states" />
         <DataRow label="Mid Market"                       value={`${Math.round(STATE_TAX_RATE["Mid Market"]   * 100)}%`} note="median U.S. state effective rate" />
         <DataRow label="Small Market"                     value={`${Math.round(STATE_TAX_RATE["Small Market"] * 100)}%`} note="many no-tax or low-tax states" />
 
         <Callout>
-          These are estimates. Your actual tax liability depends on your filing status, total deductions, state of residence, and income level. If you are in a no-income-tax state (TX, FL, WA, NV, etc.), your required rate will be lower than shown. If you are a high earner in California or New York, it may be higher. The calculator gives you a realistic working estimate — your accountant gives you the exact number.
+          These are estimates. Your actual liability depends on filing status, deductions, state, and income level. No-income-tax states (TX, FL, WA, NV) will run lower than shown. High earners in California or New York will run higher. Use this as a working estimate. Your accountant has the exact number.
         </Callout>
         <Source>IRS Publication 535 (Business Expenses); IRS Rev. Proc. 2025-28 (2026 tax brackets); Tax Foundation State Individual Income Tax Rates 2025</Source>
       </Section>
@@ -207,15 +232,15 @@ export default function MethodologyPage() {
       {/* Health Insurance */}
       <Section id="health" label="Factor 03" title={`Health insurance — $${HEALTH_INSURANCE_ANNUAL.toLocaleString("en-US")}/year`}>
         <P>
-          Salaried employees typically receive employer-subsidized health coverage. Freelancers buy their own. The ${HEALTH_INSURANCE_ANNUAL.toLocaleString("en-US")} figure represents the average annual premium for an individual ACA marketplace plan in 2026, before subsidies.
+          Salaried employees get employer-subsidized health coverage. Freelancers buy their own. The ${HEALTH_INSURANCE_ANNUAL.toLocaleString("en-US")} figure is the average annual premium for an individual ACA marketplace plan in 2026, before subsidies.
         </P>
         <DataRow label="Monthly premium (2026 avg)" value="$617/mo"  />
         <DataRow label="Annual total"               value={`$${HEALTH_INSURANCE_ANNUAL.toLocaleString("en-US")}`} />
         <P>
-          Subsidies exist on a sliding income scale and are not accounted for here because they phase out as income rises and vary significantly by state, plan selection, and age. This figure represents the unsubsidized baseline — what you need to budget before any assistance.
+          We don&apos;t factor in subsidies. They phase out as income rises and vary by state, plan selection, and age. This is the unsubsidized baseline, what you need to budget before any assistance applies.
         </P>
         <P>
-          If you currently have coverage through a spouse, union, or other means, you may exclude this from your calculation. For everyone else, it is a real line item.
+          If you have coverage through a spouse, union, or other means, skip this line. For everyone else, it is a real cost.
         </P>
         <Source>KFF Health Insurance Marketplace Calculator (2026); U.S. Department of Health &amp; Human Services ACA premium data</Source>
       </Section>
@@ -223,13 +248,13 @@ export default function MethodologyPage() {
       {/* Profit Margin */}
       <Section id="profit" label="Factor 04" title={`Profit margin — ${profitPct}% (optional)`}>
         <P>
-          A rate that exactly covers your expenses leaves no margin for error. Equipment fails. Projects fall through. Clients go silent. The {profitPct}% profit buffer is included as an optional line item — you can toggle it off in the calculator — but it represents the difference between a sustainable business and one that collapses when anything goes wrong.
+          A rate that exactly covers your expenses leaves no margin for error. Equipment fails. Projects fall through. Clients go silent. The {profitPct}% profit buffer is optional (toggle it off in the calculator), but it separates a sustainable business from one that collapses when anything goes wrong.
         </P>
         <Callout>
-          Profit is not greed. It is the financial equivalent of having a spare tire. A {profitPct}% margin on a $1,200/day rate is $240 — the cost of one round-trip flight to a client location, one day of equipment rental, or one bad invoice that never gets paid.
+          Profit is a buffer. A {profitPct}% margin on a $1,200/day rate is $240, the cost of a round-trip flight to a client or one day of equipment rental. That money covers the bad invoice that never gets paid.
         </Callout>
         <P>
-          Industry guidance from freelance business resources and the Freelancers Union commonly recommends 15–25% net profit targets for creative service businesses. We use {profitPct}% as a middle-ground default.
+          The Freelancers Union and SCORE both recommend 15–25% net profit targets for creative service businesses. We use {profitPct}% as the default.
         </P>
         <Source>Freelancers Union; SCORE (U.S. Small Business Administration); standard small business financial planning guidance</Source>
       </Section>
@@ -237,7 +262,7 @@ export default function MethodologyPage() {
       {/* Billable Days */}
       <Section id="billable-days" label="Factor 05" title={`Billable days — ${DEFAULT_BILLABLE_DAYS} per year`}>
         <P>
-          A full-time salaried employee works roughly 260 days a year. A freelancer does not bill 260 days. The difference is absorbed by unpaid gaps between projects, time spent on business development, invoicing, admin, equipment maintenance, and the weeks between gigs that nobody tells you about before you go independent.
+          A full-time salaried employee works 260 days a year. A freelancer does not bill 260 days. Unpaid gaps eat the rest: business development, invoicing, admin, equipment maintenance, the dry spells between projects nobody warns you about.
         </P>
         <DataRow label="Calendar work days (52 weeks × 5)"  value="260 days" />
         <DataRow label="Vacation / sick / holidays"          value="−20 days" />
@@ -245,7 +270,7 @@ export default function MethodologyPage() {
         <DataRow label="Project gaps & dry spells"           value="−55 days" note="realistic for most markets" />
         <DataRow label="Estimated billable days"             value={`${DEFAULT_BILLABLE_DAYS} days`} />
         <P>
-          {DEFAULT_BILLABLE_DAYS} days is not pessimistic. It is the number consistently cited in freelance surveys across creative disciplines. Experienced freelancers with full client rosters may bill 170–180 days. Newer freelancers may bill fewer. {DEFAULT_BILLABLE_DAYS} is a responsible baseline.
+          {DEFAULT_BILLABLE_DAYS} days is the number freelance surveys cite across creative disciplines. Experienced freelancers with full client rosters may bill 170–180 days. Newer freelancers bill fewer. {DEFAULT_BILLABLE_DAYS} is a responsible baseline.
         </P>
         <P>
           You can adjust this in the calculator. Increasing it lowers your required day rate; decreasing it raises it. The math is transparent.
@@ -256,10 +281,10 @@ export default function MethodologyPage() {
       {/* Rate Floors */}
       <Section id="rate-floors" label="Market Reference" title="Rate floors by discipline and experience">
         <P>
-          The calculator compares your computed rate against market floors — the minimum a working professional at each level typically commands in a mid-market environment. These are not aspirational targets. They are the low end of what the market has demonstrated it will pay.
+          The calculator compares your computed rate against market floors, the minimum a working professional at each level commands in a mid-market environment. These are the low end of what the market pays.
         </P>
         <P>
-          These figures are drawn from 2024–2025 data across production rate cards, union minimums, freelance platform surveys, and direct industry reporting. They represent what clients actually pay when they hire experienced professionals — not what they offer when lowballing.
+          These figures come from 2024–2025 data across production rate cards, union minimums, freelance platform surveys, and direct industry reporting. They reflect what clients pay when they hire experienced professionals.
         </P>
 
         <div style={{ overflowX: "auto" }}>
@@ -297,28 +322,28 @@ export default function MethodologyPage() {
       {/* Location Multipliers */}
       <Section id="location" label="Location Adjustment" title="Why your market changes your rate">
         <P>
-          The same day of work commands different rates in New York than in Tulsa — not because the work is different, but because the clients, budgets, and cost of living are different. Location multipliers adjust the rate floor to reflect what the local market will bear.
+          The same day of work commands different rates in New York than in Tulsa. The clients, budgets, and cost of living are different. Location multipliers adjust the rate floor to reflect what the local market will bear.
         </P>
         <DataRow label="Major Market (LA, NYC, Chicago, Miami)" value={`×${LOCATION_MULTIPLIERS["Major Market"]}`} note="+30% above baseline" />
         <DataRow label="Mid Market (Austin, Atlanta, Denver…)"  value={`×${LOCATION_MULTIPLIERS["Mid Market"]}`}   note="baseline" />
         <DataRow label="Small Market (regional cities, rural)"  value={`×${LOCATION_MULTIPLIERS["Small Market"]}`} note="−15% below baseline" />
         <P>
-          These multipliers are conservative. Major-market productions frequently pay significantly above these floors — particularly for senior and expert-level crew on commercial and streaming work. The floor is a floor, not a ceiling.
+          These multipliers are conservative. Major-market productions often pay well above these floors, especially for senior and expert-level crew on commercial and streaming work. The floor is a floor.
         </P>
       </Section>
 
       {/* Inflation */}
       <Section id="inflation" label="Purchasing Power" title={`Inflation — ${inflationPct}% since ${INFLATION_BASE_YEAR}`}>
         <P>
-          The reality check section of the calculator anchors your take-home goal to its {INFLATION_BASE_YEAR} purchasing power equivalent. This is not rhetorical — it is a factual adjustment for what a dollar is worth.
+          The reality check section anchors your take-home goal to its {INFLATION_BASE_YEAR} purchasing power equivalent. A dollar in {INFLATION_BASE_YEAR} bought more than a dollar today.
         </P>
         <DataRow label={`Cumulative CPI-U inflation (Jan ${INFLATION_BASE_YEAR} → Jan 2026)`} value={`+${inflationPct}%`} />
         <DataRow label="Inflation multiplier used"                                             value={`×${INFLATION_SINCE_2019}`} />
         <P>
-          If you were earning $80,000 in {INFLATION_BASE_YEAR}, you need approximately ${Math.round(80000 * INFLATION_SINCE_2019).toLocaleString("en-US")} today to have the same purchasing power. A rate that hasn&apos;t kept pace with inflation isn&apos;t the same rate — it&apos;s a pay cut.
+          If you were earning $80,000 in {INFLATION_BASE_YEAR}, you need ${Math.round(80000 * INFLATION_SINCE_2019).toLocaleString("en-US")} today to have the same purchasing power. A rate that hasn&apos;t kept pace with inflation is a pay cut.
         </P>
         <P>
-          This is why freelancers who haven&apos;t raised their rates in five or more years are effectively earning less than they were. The numbers didn&apos;t stay the same. The cost of everything else moved.
+          Freelancers who haven&apos;t raised their rates in five years earn less than they did. Prices moved. Rates didn&apos;t.
         </P>
         <Source>U.S. Bureau of Labor Statistics CPI-U (All Urban Consumers, All Items), January {INFLATION_BASE_YEAR} through January 2026</Source>
       </Section>
@@ -326,21 +351,21 @@ export default function MethodologyPage() {
       {/* Cost of Living by State */}
       <Section id="cost-of-living" label="Reality Check" title="Cost of living by state — what your take-home actually buys">
         <P>
-          Knowing your take-home is one number. Knowing whether it&apos;s enough to live where you live is another. The calculator shows the average annual cost of basic living expenses for your state alongside your actual take-home — so you can see the gap, or the surplus, clearly.
+          Your take-home and your cost of living are two different numbers. The calculator shows the average annual cost of basic living expenses for your state alongside your actual take-home, so you can see the gap or the surplus.
         </P>
 
         <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginTop: "0.5rem", marginBottom: "0.5rem" }}>
           What these figures represent
         </div>
         <P>
-          Each figure represents the estimated annual cost of basic living expenses for a single adult with no dependents — housing, food, transportation, healthcare, internet, and personal necessities. They do not include discretionary spending, savings beyond a minimal emergency fund, debt service, or dependents. They are a floor, not a comfortable lifestyle budget.
+          Each figure covers the estimated annual cost of basic living expenses for a single adult with no dependents: housing, food, transportation, healthcare, internet, and personal necessities. No discretionary spending, no debt service, no dependents. They are a floor.
         </P>
 
         <div style={{ fontSize: "0.75rem", letterSpacing: "0.07em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginTop: "0.5rem", marginBottom: "0.5rem" }}>
           Methodology — dual-source aggregation
         </div>
         <P>
-          No single public dataset provides verified, current, single-adult living expense figures for all 50 states and DC in a directly comparable format. We used two independent sources and cross-referenced them for reasonableness:
+          Two independent sources, cross-referenced:
         </P>
         <Callout>
           Primary: MIT Living Wage Calculator (livewage.mit.edu) — county and state-level data, 2023–2024. Nine states were confirmed directly from MIT: Alabama, California, Texas, New York, Hawaii, Washington, Florida, Massachusetts, and District of Columbia. These serve as anchor points for the full dataset.
@@ -395,10 +420,10 @@ export default function MethodologyPage() {
       {/* Closing */}
       <section style={{ borderTop: "2px solid var(--accent-2)", paddingTop: "2.5rem", marginTop: "3rem" }}>
         <h2 style={{ fontFamily: "var(--mono)", fontSize: "1.4rem", marginBottom: "1rem", lineHeight: 1.2 }}>
-          The rate isn&apos;t high. The conversation is overdue.
+          The conversation is overdue.
         </h2>
         <p style={{ fontSize: "1.05rem", color: "var(--text-dim)", lineHeight: 1.8, marginBottom: "2rem", fontFamily: "var(--serif)" }}>
-          Every number on this page is derived from public data. None of it is negotiable with math. What gets negotiated is your willingness to present it — and to hold to it.
+          Every number on this page comes from public data. None of it is negotiable with math. You negotiate your willingness to present it and hold to it.
         </p>
         <a href="/" style={{ display: "inline-block", background: "var(--accent)", color: "#000", fontFamily: "var(--mono)", fontSize: "0.78rem", letterSpacing: "0.18em", textTransform: "uppercase", padding: "0.85rem 1.75rem", textDecoration: "none", fontWeight: "bold" }}>
           Calculate Your Rate →
