@@ -15,8 +15,49 @@ import { NextRequest, NextResponse } from "next/server";
 
 const CMS_API_KEY = process.env.CMS_MARKETPLACE_API_KEY ?? "";
 const CMS_BASE    = "https://marketplace.api.healthcare.gov/api/v1";
-const PLAN_YEAR   = 2026;
 const DEFAULT_AGE = 35;
+
+// Try the current plan year, fall back to prior year if no plans are found.
+// CMS sometimes lags on publishing new year data, and the API returns an empty
+// plans array rather than an error when year data isn't available yet.
+const CURRENT_YEAR = new Date().getFullYear();
+const PLAN_YEARS   = [CURRENT_YEAR, CURRENT_YEAR - 1];
+
+async function fetchSilverPlans(
+  zip: string,
+  fips: string,
+  state: string,
+  year: number,
+): Promise<{ premium: number }[]> {
+  const res = await fetch(
+    `${CMS_BASE}/plans/search?apikey=${CMS_API_KEY}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        household: {
+          income: 50000, // required; doesn't affect unsubsidized premium
+          people: [{ age: DEFAULT_AGE, aptc_eligible: false, is_pregnant: false, uses_tobacco: false }],
+        },
+        market: "Individual",
+        place:  { countyfips: fips, state, zipcode: zip },
+        year,
+      }),
+      next: { revalidate: 86400 },
+    },
+  );
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Plans API ${res.status}: ${body.slice(0, 200)}`);
+  }
+
+  const data = await res.json();
+  const plans: { metal_level: string; premium: number }[] = data.plans ?? [];
+
+  // Case-insensitive match — the CMS API has returned both "Silver" and "silver"
+  return plans.filter(p => p.metal_level?.toLowerCase() === "silver");
+}
 
 export async function GET(request: NextRequest) {
   const zip = request.nextUrl.searchParams.get("zip")?.trim();
@@ -25,6 +66,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid ZIP" }, { status: 400 });
   }
 
+  // Return a specific code so the UI can distinguish "not configured" from
+  // "ZIP not found" and show a more helpful message
   if (!CMS_API_KEY) {
     return NextResponse.json({ error: "API key not configured" }, { status: 503 });
   }
@@ -33,66 +76,62 @@ export async function GET(request: NextRequest) {
     // Step 1 — resolve ZIP to county FIPS
     const countyRes = await fetch(
       `${CMS_BASE}/counties/by/zip/${zip}?apikey=${CMS_API_KEY}`,
-      { next: { revalidate: 86400 } }, // cache 24h — county→ZIP mapping doesn't change
+      { next: { revalidate: 86400 } },
     );
-    if (!countyRes.ok) throw new Error(`County lookup failed: ${countyRes.status}`);
-    const countyData = await countyRes.json();
 
+    if (!countyRes.ok) {
+      const body = await countyRes.text().catch(() => "");
+      throw new Error(`County API ${countyRes.status}: ${body.slice(0, 200)}`);
+    }
+
+    const countyData = await countyRes.json();
     const counties: { fips: string; name: string; state: string }[] = countyData.counties ?? [];
     if (counties.length === 0) throw new Error("No county found for ZIP");
 
-    // Use the first county (most ZIPs map to one; multi-county ZIPs are rare)
-    const fips  = counties[0].fips;
-    const state = counties[0].state;
+    const { fips, state, name: countyName } = counties[0];
 
-    // Step 2 — fetch plans for this location
-    const plansRes = await fetch(
-      `${CMS_BASE}/plans/search?apikey=${CMS_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          household: {
-            income:            50000, // required field; doesn't affect premium, only subsidy
-            people: [{ age: DEFAULT_AGE, aptc_eligible: false, is_pregnant: false, uses_tobacco: false }],
-          },
-          market:   "Individual",
-          place: {
-            countyfips: fips,
-            state,
-            zipcode: zip,
-          },
-          year: PLAN_YEAR,
-        }),
-        next: { revalidate: 86400 },
-      },
-    );
+    // Step 2 — fetch Silver plans, trying current year then prior year
+    let silverPlans: { premium: number }[] = [];
+    let resolvedYear = PLAN_YEARS[0];
 
-    if (!plansRes.ok) throw new Error(`Plans fetch failed: ${plansRes.status}`);
-    const plansData = await plansRes.json();
+    for (const year of PLAN_YEARS) {
+      try {
+        silverPlans = await fetchSilverPlans(zip, fips, state, year);
+        if (silverPlans.length > 0) {
+          resolvedYear = year;
+          break;
+        }
+      } catch (err) {
+        if (process.env.NODE_ENV === "development") {
+          console.warn(`[health-insurance] year ${year} failed:`, err);
+        }
+        // Continue to next year
+      }
+    }
 
-    const plans: { metal_level: string; premium: number }[] = plansData.plans ?? [];
+    if (silverPlans.length === 0) {
+      // State-run exchanges (CA, NY, WA, etc.) don't appear in the CMS API
+      throw new Error("No Silver plans found — may be a state-run exchange state");
+    }
 
-    // Filter to Silver plans only
-    const silverPlans = plans.filter(p => p.metal_level === "Silver");
-    if (silverPlans.length === 0) throw new Error("No Silver plans found");
-
-    // Average monthly premium across all Silver plans
     const avgMonthly = silverPlans.reduce((sum, p) => sum + p.premium, 0) / silverPlans.length;
     const avgAnnual  = Math.round(avgMonthly * 12);
 
     return NextResponse.json({
       zip,
       state,
-      county:        counties[0].name,
+      county:            countyName,
       avgMonthlyPremium: Math.round(avgMonthly),
       avgAnnualPremium:  avgAnnual,
-      planCount:     silverPlans.length,
-      year:          PLAN_YEAR,
+      planCount:         silverPlans.length,
+      year:              resolvedYear,
     });
 
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
+    if (process.env.NODE_ENV === "development") {
+      console.error("[health-insurance] lookup failed:", message);
+    }
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

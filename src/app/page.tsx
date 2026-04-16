@@ -1253,7 +1253,7 @@ function Calculator() {
 
   // Health insurance — ZIP lookup
   const [zipRaw,           setZipRaw]           = useState("");
-  const [zipLookupStatus,  setZipLookupStatus]  = useState<"idle" | "loading" | "ok" | "error">("idle");
+  const [zipLookupStatus,  setZipLookupStatus]  = useState<"idle" | "loading" | "ok" | "error" | "no-key">("idle");
   const [zipPremiumData,   setZipPremiumData]   = useState<{
     avgMonthlyPremium: number;
     avgAnnualPremium:  number;
@@ -1267,6 +1267,7 @@ function Calculator() {
     try {
       const res  = await fetch(`/api/health-insurance?zip=${zip}`);
       const data = await res.json();
+      if (res.status === 503) { setZipLookupStatus("no-key"); return; }
       if (!res.ok) throw new Error(data.error);
       setZipPremiumData(data);
       setZipLookupStatus("ok");
@@ -1633,14 +1634,14 @@ function Calculator() {
                     const v = e.target.value.replace(/[^0-9]/g, "");
                     setZipRaw(v);
                     if (zipLookupStatus !== "idle") setZipLookupStatus("idle");
-                    if (v.length < 5) setZipPremiumData(null);
+                    setZipPremiumData(null);
                   }}
                   onBlur={() => {
                     if (zipRaw.length === 5) fetchHealthPremium(zipRaw);
                   }}
                   style={{
                     background:   "var(--surface)",
-                    border:       `1px solid ${zipLookupStatus === "error" ? "var(--danger)" : zipLookupStatus === "ok" ? "var(--accent)" : "var(--border)"}`,
+                    border:       `1px solid ${zipLookupStatus === "error" ? "var(--danger)" : zipLookupStatus === "ok" ? "var(--accent)" : zipLookupStatus === "no-key" ? "var(--border)" : "var(--border)"}`,
                     borderRadius: "4px",
                     color:        "var(--text)",
                     fontFamily:   "var(--mono)",
@@ -1658,7 +1659,10 @@ function Calculator() {
                   </span>
                 )}
                 {zipLookupStatus === "error" && (
-                  <span style={{ fontFamily: "var(--mono)", fontSize: "0.75rem", color: "var(--danger)" }}>ZIP not found — using national average</span>
+                  <span style={{ fontFamily: "var(--mono)", fontSize: "0.75rem", color: "var(--danger)" }}>No plans found for this ZIP — using national average</span>
+                )}
+                {zipLookupStatus === "no-key" && (
+                  <span style={{ fontFamily: "var(--mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>ZIP lookup coming soon — using national average for now</span>
                 )}
               </div>
               {zipLookupStatus !== "ok" && (
