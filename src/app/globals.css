@@ -29,14 +29,14 @@ body {
   background:  radial-gradient(ellipse at 50% 0%, #1f1810 0%, #16120d 65%);
   color:       var(--text);
   font-family: var(--sans);   /* sans default; mono used explicitly for data */
-  line-height: 1.65;
+  line-height: 1.75;
   min-height:  100vh;
 }
 
 /* Constrain prose line length to ~65 characters — optimal for reading */
 p {
   max-width: 65ch;
-  line-height: 1.65;
+  line-height: 1.75;
 }
 
 /* Tabular figures — numbers stay fixed-width in mono contexts (rate display, tables) */
@@ -139,4 +139,44 @@ textarea:focus {
   border-color: var(--accent) !important;
   box-shadow:   0 0 0 3px rgba(212, 146, 10, 0.12);
   transition:   border-color 0.15s, box-shadow 0.15s;
+}
+
+/* Mobile overrides
+   ─────────────────────────────────────────────────────────────────────
+   Drop base font from 18px → 16px: every rem scales up automatically,
+   and inputs clear the 16px iOS auto-zoom threshold.
+
+   Touch targets: Apple HIG requires 44px minimum. Inline styles can't
+   use media queries, so we enforce min-height here with !important.
+
+   Letter spacing: wide tracking (0.15em–0.25em) looks refined on desktop
+   at large sizes. On mobile at 12–14px it spaces letters so far apart
+   words stop reading as words. The .eyebrow class is added to every
+   decorative label that uses 0.15em+ tracking — override to 0.06em on
+   small screens. Same rule applies to all buttons. */
+@media (max-width: 480px) {
+  html {
+    font-size: 16px;
+  }
+
+  /* Touch targets — minimum 44px hit area on all interactive elements */
+  button {
+    min-height: 44px !important;
+  }
+  input, select, textarea {
+    min-height: 44px !important;
+  }
+
+  /* Letter spacing — reduce all wide-tracked labels to readable range */
+  .eyebrow {
+    letter-spacing: 0.06em !important;
+  }
+  button {
+    letter-spacing: 0.05em !important;
+  }
+
+  /* Padding — card interiors are tight on narrow screens */
+  .card-pad {
+    padding: 1.25rem 1rem !important;
+  }
 }

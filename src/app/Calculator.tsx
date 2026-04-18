@@ -234,7 +234,7 @@ function ClientView({ params }: { params: URLSearchParams }) {
     <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "1.1rem 0", borderBottom: "1px solid var(--border)", gap: "1.5rem" }}>
       <div>
         <div style={{ fontSize: "0.75rem", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.25rem" }}>{label}</div>
-        <div style={{ fontFamily: "var(--serif)", fontSize: "0.82rem", color: "var(--text-dim)", lineHeight: 1.65, maxWidth: "400px" }}>{note}</div>
+        <div style={{ fontFamily: "var(--sans)", fontSize: "0.85rem", color: "var(--text-dim)", lineHeight: 1.7, maxWidth: "400px" }}>{note}</div>
       </div>
       <div style={{ fontFamily: "var(--mono)", fontSize: "0.95rem", color: "var(--accent)", whiteSpace: "nowrap", textAlign: "right", paddingTop: "0.1rem" }}>{value}</div>
     </div>
@@ -251,7 +251,7 @@ function ClientView({ params }: { params: URLSearchParams }) {
         <h1 style={{ fontFamily: "var(--mono)", fontSize: "1.6rem", marginTop: "1.25rem", lineHeight: 1.2 }}>
           Rate Justification<br />for a {experience} {discipline}
         </h1>
-        <p style={{ fontFamily: "var(--serif)", color: "var(--text-dim)", fontSize: "0.9rem", marginTop: "0.75rem", lineHeight: 1.75 }}>
+        <p style={{ fontFamily: "var(--sans)", color: "var(--text-dim)", fontSize: "0.9rem", marginTop: "0.75rem", lineHeight: 1.75 }}>
           This document explains how a professional day rate is calculated for a creative freelancer.
           Every line item is a real cost.
         </p>
@@ -376,7 +376,7 @@ function RealityCheck({
 
   return (
     <div style={{ marginTop: "1.5rem", background: "var(--surface)", border: "1px solid var(--border)", padding: "1.75rem 2rem", borderRadius: "4px" }}>
-      <div style={{ fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
+      <div className="eyebrow" style={{ fontSize: "0.75rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "0.5rem" }}>
         Monthly Breakdown
       </div>
       <h2 style={{ fontSize: "1.4rem", fontFamily: "var(--mono)", marginBottom: "0.75rem", lineHeight: 1.2 }}>
@@ -384,7 +384,7 @@ function RealityCheck({
       </h2>
 
       {/* Inflation context */}
-      <p style={{ fontFamily: "var(--serif)", fontSize: "0.88rem", color: "var(--text-dim)", lineHeight: 1.7, marginBottom: "1.5rem" }}>
+      <p style={{ fontFamily: "var(--sans)", fontSize: "0.88rem", color: "var(--text-dim)", lineHeight: 1.7, marginBottom: "1.5rem" }}>
         In {INFLATION_BASE_YEAR} dollars, your {fmt(rc.monthlyTakeHome * 12)} take-home goal
         has the purchasing power of <strong style={{ color: "var(--text)" }}>{fmt(rc.in2019Dollars)}</strong>.
         Inflation didn&apos;t wait for your rate to catch up.
@@ -402,7 +402,7 @@ function RealityCheck({
               color:         familySize === f ? "var(--accent)" : "var(--text-dim)",
               border:        `1px solid ${familySize === f ? "var(--accent)" : "var(--border)"}`,
               fontFamily:    "var(--mono)",
-              fontSize:      "0.7rem",
+              fontSize:      "0.78rem",
               letterSpacing: "0.08em",
               padding:       "0.45rem 0.9rem",
               borderRadius:  "4px",
@@ -444,7 +444,7 @@ function RealityCheck({
               <button
                 onClick={() => setIncludeChildcare(!includeChildcare)}
                 style={{
-                  fontSize: "0.72rem", letterSpacing: "0.04em", textTransform: "uppercase",
+                  fontSize: "0.78rem", letterSpacing: "0.04em", textTransform: "uppercase",
                   background: "none", border: `1px solid var(--border)`,
                   color: "var(--text-dim)", fontFamily: "var(--mono)",
                   padding: "0.15rem 0.5rem", borderRadius: "4px", cursor: "pointer",
@@ -472,7 +472,7 @@ function RealityCheck({
           <div style={{ fontSize: "0.75rem", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600, color: "var(--text)", marginBottom: "0.2rem" }}>
             Left over after all expenses
           </div>
-          <div style={{ fontFamily: "var(--serif)", fontSize: "0.8rem", color: "var(--text-dim)", lineHeight: 1.5 }}>
+          <div style={{ fontFamily: "var(--sans)", fontSize: "0.82rem", color: "var(--text-dim)", lineHeight: 1.7 }}>
             {effectiveLeftOver < 0
               ? "This take-home goal doesn't cover your expenses. You need a higher rate."
               : effectiveLeftOver < 300
@@ -487,7 +487,7 @@ function RealityCheck({
         </div>
       </div>
 
-      <p style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "1rem", lineHeight: 1.6 }}>
+      <p style={{ fontSize: "0.78rem", color: "var(--text-dim)", marginTop: "1rem", lineHeight: 1.7 }}>
         Estimates based on 2025–2026 averages. Sources: BLS Consumer Expenditure Survey, MIT Living Wage Calculator.
         Your actual expenses will vary — but if it&apos;s tight here, it&apos;s tight in real life.
       </p>
@@ -547,7 +547,7 @@ function MarketRangePanel({
         <span style={{ fontFamily: "var(--mono)", fontSize: "0.78rem", color: config ? config.color : "var(--text-dim)", letterSpacing: "0.05em", textTransform: "uppercase", fontWeight: 600 }}>
           {config ? `${rateLabel} — ${config.label}` : "Market range"}
         </span>
-        <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", color: "var(--text-dim)" }}>
+        <span style={{ fontFamily: "var(--mono)", fontSize: "0.78rem", color: "var(--text-dim)" }}>
           {fmt(floor)} — {fmt(ceiling)}
         </span>
       </div>
@@ -570,12 +570,12 @@ function MarketRangePanel({
 
       {/* Contextual message — only when a rate is provided */}
       {config && (
-        <p style={{ fontFamily: "var(--serif)", fontSize: "0.85rem", color: "var(--text-dim)", lineHeight: 1.75, borderLeft: `3px solid ${config.color}`, paddingLeft: "1rem", marginBottom: "0.75rem" }}>
+        <p style={{ fontFamily: "var(--sans)", fontSize: "0.85rem", color: "var(--text)", lineHeight: 1.75, borderLeft: `3px solid ${config.color}`, paddingLeft: "1rem", marginBottom: "0.75rem" }}>
           {config.message}
         </p>
       )}
 
-      <p style={{ fontSize: "0.65rem", color: "var(--text-dim)", lineHeight: 1.6, fontStyle: "italic", opacity: 0.7 }}>
+      <p style={{ fontSize: "0.72rem", color: "var(--text-dim)", lineHeight: 1.6, fontStyle: "italic" }}>
         Range based on industry rate surveys and union data. US market only. Community medians coming as data grows.
       </p>
     </div>
@@ -932,7 +932,7 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
         <div style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "var(--danger)" }}>{error}</div>
       )}
 
-      <div style={{ marginTop: "0.6rem", fontSize: "0.65rem", color: "var(--text-dim)", lineHeight: 1.5 }}>
+      <div style={{ marginTop: "0.6rem", fontSize: "0.75rem", color: "var(--text-dim)", lineHeight: 1.6 }}>
         No spam. Unsubscribe any time.
       </div>
     </div>
@@ -967,9 +967,9 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
         marginBottom:  "2.5rem",
       }}>
         <div style={{ flex: 1, height: "1px", background: "var(--accent-2)" }} />
-        <div style={{
+        <div className="eyebrow" style={{
           fontFamily:    "var(--mono)",
-          fontSize:      "0.65rem",
+          fontSize:      "0.72rem",
           letterSpacing: "0.22em",
           textTransform: "uppercase",
           color:         "var(--accent)",
@@ -999,7 +999,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
         <span style={{ fontFamily: "var(--mono)", fontSize: "1.4rem", color: "var(--accent)", fontWeight: "bold" }}>
           {fmt(results.dayRate + results.kitFee)}/day
         </span>
-        <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", color: "var(--text-dim)" }}>
+        <span style={{ fontFamily: "var(--mono)", fontSize: "0.78rem", color: "var(--text-dim)" }}>
           {fmt(results.halfDayRate)} half · {fmt(results.hourlyRate)}/hr
           {results.kitFee > 0 && ` · incl. ${fmt(results.kitFee)} kit`}
         </span>
@@ -1007,7 +1007,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
 
       {/* Main rate — the hero moment */}
       <div style={{ borderTop: "2px solid var(--accent)", paddingTop: "2.5rem", marginBottom: "2.5rem", textAlign: "center" }}>
-        <div style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", fontWeight: 600, marginBottom: "1rem", fontFamily: "var(--mono)" }}>
+        <div className="eyebrow" style={{ fontSize: "0.75rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", fontWeight: 600, marginBottom: "1rem", fontFamily: "var(--mono)" }}>
           Your Target Day Rate
         </div>
         <div style={{ fontSize: "clamp(3.5rem, 12vw, 6rem)", fontFamily: "var(--mono)", lineHeight: 1, color: "var(--accent)", fontWeight: "bold", letterSpacing: "-0.02em" }}>
@@ -1018,7 +1018,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
             {fmt(results.dayRate)} day rate + {fmt(results.kitFee)} kit fee
           </div>
         )}
-        <div style={{ fontSize: "0.8rem", fontFamily: "var(--serif)", color: "var(--text-dim)", marginTop: "1rem", lineHeight: 1.6 }}>
+        <div style={{ fontSize: "0.8rem", fontFamily: "var(--sans)", color: "var(--text-dim)", marginTop: "1rem", lineHeight: 1.7 }}>
           Every line below is a real cost.
         </div>
       </div>
@@ -1040,7 +1040,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
       )}
 
       {/* Line-by-line breakdown — each line staggers in so users read it, not skip it */}
-      <div className="fade-in-stagger card-hover" style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: "1.75rem 2rem", borderRadius: "4px" }}>
+      <div className="fade-in-stagger card-hover card-pad" style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: "1.75rem 2rem", borderRadius: "4px" }}>
         {[
           {
             label: "Take-Home Goal",
@@ -1084,7 +1084,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
           <div key={label} style={{ ...lineStyle, ...(last ? { borderBottom: "2px solid var(--accent)" } : {}) }}>
             <div>
               <div style={{ fontSize: "0.78rem", letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--text-dim)" }}>{label}</div>
-              <div style={{ fontSize: "0.75rem", color: "var(--text-dim)", lineHeight: 1.6, maxWidth: "420px", marginTop: "0.3rem" }}>{note}</div>
+              <div style={{ fontSize: "0.82rem", color: "var(--text)", lineHeight: 1.7, maxWidth: "420px", marginTop: "0.3rem" }}>{note}</div>
             </div>
             <div style={{ fontFamily: "var(--mono)", fontSize: "1rem", color: "var(--text)", whiteSpace: "nowrap", textAlign: "right" }}>{amount}</div>
           </div>
@@ -1133,13 +1133,13 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
         borderTop:    "1px solid var(--border)",
         borderBottom: "1px solid var(--border)",
       }}>
-        <div style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", fontFamily: "var(--mono)", marginBottom: "0.75rem" }}>
+        <div className="eyebrow" style={{ fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)", fontFamily: "var(--mono)", marginBottom: "0.75rem" }}>
           At {results.billableDays} billable days
         </div>
         <div style={{ fontFamily: "var(--mono)", fontSize: "clamp(2rem, 6vw, 3rem)", color: "var(--text)", lineHeight: 1, marginBottom: "0.6rem" }}>
           {fmt((results.dayRate + results.kitFee) * results.billableDays)}/yr
         </div>
-        <div style={{ fontSize: "0.8rem", color: "var(--text-dim)", fontFamily: "var(--serif)", lineHeight: 1.6 }}>
+        <div style={{ fontSize: "0.8rem", color: "var(--text-dim)", fontFamily: "var(--sans)", lineHeight: 1.7 }}>
           gross — before tax, insurance, and overhead
         </div>
       </div>
@@ -1165,7 +1165,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
 
       {/* Rate strategy note */}
       <div style={{ marginTop: "2rem", padding: "1.5rem 1.75rem", borderLeft: "3px solid var(--accent-2)", background: "var(--surface)" }}>
-        <p style={{ fontFamily: "var(--serif)", fontSize: "0.85rem", color: "var(--text-dim)", lineHeight: 1.75, margin: 0 }}>
+        <p style={{ fontFamily: "var(--sans)", fontSize: "0.85rem", color: "var(--text)", lineHeight: 1.75, margin: 0 }}>
           Your actual rate depends on what the market will bear.
           If you work below your minimum, make it explicit. Tell them your standard rate and name the discount.
           You do the project. They understand what they&apos;re getting. That&apos;s the kind of thing clients remember.
@@ -1183,10 +1183,10 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
 
       {/* Store CTA — negotiation books and resources */}
       <div style={{ marginTop: "3.5rem", borderTop: "2px solid var(--accent-2)", paddingTop: "2rem", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-        <div style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)" }}>
+        <div className="eyebrow" style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)" }}>
           Now that you know your number
         </div>
-        <p style={{ fontFamily: "var(--serif)", fontSize: "0.9rem", color: "var(--text-dim)", lineHeight: 1.75, margin: 0 }}>
+        <p style={{ fontFamily: "var(--sans)", fontSize: "0.9rem", color: "var(--text-dim)", lineHeight: 1.75, margin: 0 }}>
           Knowing your number is one thing. Saying it and holding it when someone pushes back is another. These books help.
         </p>
         <a
@@ -1195,7 +1195,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
             display:        "inline-block",
             marginTop:      "0.5rem",
             fontFamily:     "var(--mono)",
-            fontSize:       "0.72rem",
+            fontSize:       "0.78rem",
             letterSpacing:  "0.15em",
             textTransform:  "uppercase",
             color:          "var(--accent)",
@@ -1212,7 +1212,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
       {/* Start Over — clears all URL params and results */}
       <div style={{ marginTop: "3rem", textAlign: "center" }}>
         <a href="/" style={{
-          fontSize:       "0.7rem",
+          fontSize:       "0.75rem",
           letterSpacing:  "0.15em",
           textTransform:  "uppercase",
           color:          "var(--text-dim)",
@@ -1348,7 +1348,7 @@ function Calculator() {
 
       {/* Header */}
       <div className="fade-in" style={{ marginBottom: "4rem" }}>
-        <div style={{ fontSize: "0.7rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.75rem" }}>
+        <div className="eyebrow" style={{ fontSize: "0.75rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "0.75rem" }}>
           The Rate Guide
         </div>
         <h1 style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", fontFamily: "var(--serif)", fontWeight: 700, lineHeight: 1.1, marginBottom: "0.5rem" }}>
@@ -1373,7 +1373,7 @@ function Calculator() {
           </div>
         )}
         {/* Descriptive paragraph — crawlable by search engines, surfaces all disciplines and use cases */}
-        <p style={{ color: "var(--text-dim)", fontSize: "0.78rem", lineHeight: 1.8, maxWidth: "540px", opacity: 0.7 }}>
+        <p style={{ color: "var(--text-dim)", fontSize: "0.82rem", lineHeight: 1.8, maxWidth: "540px" }}>
           A free day rate calculator for cinematographers, DPs, video editors, colorists, motion designers,
           producers, and camera operators. Enter your take-home goal and we&apos;ll calculate the freelance
           day rate you need to cover self-employment tax, health insurance, and a profit margin — then check
@@ -1383,9 +1383,9 @@ function Calculator() {
 
       {/* ── STEP 1: Profile ── */}
       <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
-        <span style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", fontWeight: 700, color: "var(--accent)", letterSpacing: "0.1em" }}>01</span>
+        <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", fontWeight: 700, color: "var(--accent)", letterSpacing: "0.1em" }}>01</span>
         <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-        <span style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)" }}>Your Profile</span>
+        <span className="eyebrow" style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)" }}>Your Profile</span>
       </div>
       <div className="fade-in-stagger" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
 
@@ -1400,7 +1400,7 @@ function Calculator() {
               borderRadius: "4px",
               color:        "var(--text)",
               fontFamily:   "var(--mono)",
-              fontSize:     "0.85rem",
+              fontSize:     "0.9rem",
               padding:      "0.65rem 1rem",
               width:        "100%",
               cursor:       "pointer",
@@ -1418,7 +1418,7 @@ function Calculator() {
         <div>
           <Label>Market</Label>
           <RadioGroup options={LOCATION_TIERS} value={inputs.location} onChange={(v) => set("location", v)} />
-          <div style={{ fontSize: "0.7rem", color: "var(--text-dim)", marginTop: "0.5rem", lineHeight: 1.6 }}>
+          <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", marginTop: "0.5rem", lineHeight: 1.6 }}>
             Major (LA, NYC, Chicago, Miami) · Mid (Austin, Denver, Atlanta, Seattle) · Small (regional cities, rural)
           </div>
         </div>
@@ -1430,7 +1430,7 @@ function Calculator() {
 
       {/* Current rate input — primary CTA */}
       <div style={{ marginTop: "1.75rem" }}>
-        <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", lineHeight: 1.7, marginBottom: "1.25rem", fontFamily: "var(--serif)" }}>
+        <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", lineHeight: 1.7, marginBottom: "1.25rem", fontFamily: "var(--sans)" }}>
           Enter your current rate to see where you stand — or skip ahead and set an income goal to find out what you should be charging.
         </div>
         <Label>What are you currently charging?</Label>
@@ -1492,7 +1492,7 @@ function Calculator() {
         const earnings = currentEarnings(currentRate, currentBillableDays, inputs.location);
         return (
           <div style={{ marginTop: "2rem", padding: "1.75rem 2rem", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px" }}>
-            <div style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "1.5rem" }}>
+            <div className="eyebrow" style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", marginBottom: "1.5rem" }}>
               At {fmt(currentRate)}/day — what you actually take home
             </div>
 
@@ -1554,7 +1554,7 @@ function Calculator() {
                       <span style={{ color: "var(--text-dim)" }}>Avg. cost of living in {currentRateState}</span>
                       <span style={{ color: "var(--text-dim)", textAlign: "right" }}>
                         {fmt(col)}/yr
-                        <span style={{ fontSize: "0.65rem", opacity: 0.6, marginLeft: "0.5rem" }}>MIT Living Wage</span>
+                        <span style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginLeft: "0.5rem" }}>MIT Living Wage</span>
                       </span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--mono)", fontSize: "0.85rem", marginTop: "0.4rem" }}>
@@ -1563,7 +1563,7 @@ function Calculator() {
                         {covers ? "+" : "−"}{fmt(Math.abs(surplus))}/yr
                       </span>
                     </div>
-                    <div style={{ fontSize: "0.68rem", color: "var(--text-dim)", marginTop: "0.5rem", lineHeight: 1.5, opacity: 0.7 }}>
+                    <div style={{ fontSize: "0.75rem", color: "var(--text-dim)", marginTop: "0.5rem", lineHeight: 1.6 }}>
                       Single adult, no children. livewage.mit.edu
                     </div>
                   </div>
@@ -1577,9 +1577,9 @@ function Calculator() {
       {/* ── STEP 3: Income calculator — collapsible ── */}
       <div style={{ marginTop: "3rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem", borderTop: "1px solid var(--accent-2)", paddingTop: "2rem" }}>
-          <span style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", fontWeight: 700, color: "var(--accent)", letterSpacing: "0.1em" }}>02</span>
+          <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", fontWeight: 700, color: "var(--accent)", letterSpacing: "0.1em" }}>02</span>
           <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-          <span style={{ fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)" }}>Income Goal</span>
+          <span className="eyebrow" style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--text-dim)" }}>Income Goal</span>
         </div>
 
 
@@ -1636,7 +1636,7 @@ function Calculator() {
                   }}
                 />
               </div>
-              <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
+              <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
                 What you want in your pocket after taxes and expenses.
               </div>
             </div>
@@ -1688,7 +1688,7 @@ function Calculator() {
                 )}
               </div>
               {zipLookupStatus !== "ok" && (
-                <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
+                <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
                   Without a ZIP we use the national average of ${HEALTH_INSURANCE_ANNUAL.toLocaleString()}/yr. Your actual cost may vary significantly.
                 </div>
               )}
