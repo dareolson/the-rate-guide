@@ -4,8 +4,9 @@
   --bg:        #16120d;   /* warm espresso black */
   --surface:   #251f17;   /* card / panel background */
   --border:    #413925;   /* warm dark divider */
-  --text:      #f2ede5;   /* warm cream white */
-  --text-dim:  #a8a097;   /* warm mid-gray for secondary text */
+  --text:      #f2ede5;   /* warm cream white — headings, numbers, key content */
+  --text-mid:  #d0c8c0;   /* warm mid tone — body explanatory text */
+  --text-dim:  #a8a097;   /* warm mid-gray — labels, metadata, fine print */
   --accent:    #d4920a;   /* rich amber gold */
   --accent-dim:#a87010;   /* deeper amber for hover/muted states */
   --accent-2:  #9c6030;   /* warm copper/bronze — section dividers, nav border, callout stripes */
@@ -139,6 +140,16 @@ textarea:focus {
   border-color: var(--accent) !important;
   box-shadow:   0 0 0 3px rgba(212, 146, 10, 0.12);
   transition:   border-color 0.15s, box-shadow 0.15s;
+}
+
+/* Onboarding pulse — draws attention to the income goal toggle before first calculation */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 146, 10, 0); }
+  50%       { box-shadow: 0 0 0 8px rgba(212, 146, 10, 0.15); }
+}
+.step-cta-pulse {
+  animation: pulseGlow 2s ease-in-out 4; /* pulses 4× then stops */
+  border-radius: 6px;
 }
 
 /* Mobile overrides

@@ -251,7 +251,7 @@ function ClientView({ params }: { params: URLSearchParams }) {
         <h1 style={{ fontFamily: "var(--mono)", fontSize: "1.6rem", marginTop: "1.25rem", lineHeight: 1.2 }}>
           Rate Justification<br />for a {experience} {discipline}
         </h1>
-        <p style={{ fontFamily: "var(--sans)", color: "var(--text-dim)", fontSize: "0.9rem", marginTop: "0.75rem", lineHeight: 1.75 }}>
+        <p style={{ fontFamily: "var(--sans)", color: "var(--text-mid)", fontSize: "0.9rem", marginTop: "0.75rem", lineHeight: 1.75 }}>
           This document explains how a professional day rate is calculated for a creative freelancer.
           Every line item is a real cost.
         </p>
@@ -384,7 +384,7 @@ function RealityCheck({
       </h2>
 
       {/* Inflation context */}
-      <p style={{ fontFamily: "var(--sans)", fontSize: "0.88rem", color: "var(--text-dim)", lineHeight: 1.7, marginBottom: "1.5rem" }}>
+      <p style={{ fontFamily: "var(--sans)", fontSize: "0.88rem", color: "var(--text-mid)", lineHeight: 1.7, marginBottom: "1.5rem" }}>
         In {INFLATION_BASE_YEAR} dollars, your {fmt(rc.monthlyTakeHome * 12)} take-home goal
         has the purchasing power of <strong style={{ color: "var(--text)" }}>{fmt(rc.in2019Dollars)}</strong>.
         Inflation didn&apos;t wait for your rate to catch up.
@@ -1018,7 +1018,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
             {fmt(results.dayRate)} day rate + {fmt(results.kitFee)} kit fee
           </div>
         )}
-        <div style={{ fontSize: "0.8rem", fontFamily: "var(--sans)", color: "var(--text-dim)", marginTop: "1rem", lineHeight: 1.7 }}>
+        <div style={{ fontSize: "0.8rem", fontFamily: "var(--sans)", color: "var(--text-mid)", marginTop: "1rem", lineHeight: 1.7 }}>
           Every line below is a real cost.
         </div>
       </div>
@@ -1139,7 +1139,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
         <div style={{ fontFamily: "var(--mono)", fontSize: "clamp(2rem, 6vw, 3rem)", color: "var(--text)", lineHeight: 1, marginBottom: "0.6rem" }}>
           {fmt((results.dayRate + results.kitFee) * results.billableDays)}/yr
         </div>
-        <div style={{ fontSize: "0.8rem", color: "var(--text-dim)", fontFamily: "var(--sans)", lineHeight: 1.7 }}>
+        <div style={{ fontSize: "0.8rem", color: "var(--text-mid)", fontFamily: "var(--sans)", lineHeight: 1.7 }}>
           gross — before tax, insurance, and overhead
         </div>
       </div>
@@ -1186,7 +1186,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
         <div className="eyebrow" style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)" }}>
           Now that you know your number
         </div>
-        <p style={{ fontFamily: "var(--sans)", fontSize: "0.9rem", color: "var(--text-dim)", lineHeight: 1.75, margin: 0 }}>
+        <p style={{ fontFamily: "var(--sans)", fontSize: "0.9rem", color: "var(--text-mid)", lineHeight: 1.75, margin: 0 }}>
           Knowing your number is one thing. Saying it and holding it when someone pushes back is another. These books help.
         </p>
         <a
@@ -1229,6 +1229,133 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
 }
 
 // ==============================================
+// SAVED SCENARIOS — localStorage persistence
+// Up to 5 past calculations, loadable in one click.
+// ==============================================
+type SavedScenario = {
+  id:         string;
+  discipline: string;
+  experience: string;
+  location:   string;
+  takeHome:   number;
+  dayRate:    number;
+  savedAt:    number;
+};
+
+function useSavedScenarios() {
+  const [scenarios, setScenarios] = useState<SavedScenario[]>([]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("rg_saved_scenarios");
+      if (raw) setScenarios(JSON.parse(raw));
+    } catch { /* ignore */ }
+  }, []);
+
+  const save = (entry: Omit<SavedScenario, "id" | "savedAt">) => {
+    const scenario: SavedScenario = { ...entry, id: crypto.randomUUID(), savedAt: Date.now() };
+    const updated = [scenario, ...scenarios].slice(0, 5); // keep last 5
+    setScenarios(updated);
+    try { localStorage.setItem("rg_saved_scenarios", JSON.stringify(updated)); } catch { /* ignore */ }
+  };
+
+  const remove = (id: string) => {
+    const updated = scenarios.filter(s => s.id !== id);
+    setScenarios(updated);
+    try { localStorage.setItem("rg_saved_scenarios", JSON.stringify(updated)); } catch { /* ignore */ }
+  };
+
+  return { scenarios, save, remove };
+}
+
+function SavedScenariosPanel({
+  scenarios,
+  onLoad,
+  onRemove,
+}: {
+  scenarios: SavedScenario[];
+  onLoad:    (s: SavedScenario) => void;
+  onRemove:  (id: string) => void;
+}) {
+  if (scenarios.length === 0) return null;
+
+  return (
+    <div style={{ marginBottom: "2.5rem" }}>
+      <div className="eyebrow" style={{
+        fontFamily:    "var(--mono)",
+        fontSize:      "0.7rem",
+        letterSpacing: "0.2em",
+        textTransform: "uppercase",
+        color:         "var(--text-dim)",
+        marginBottom:  "0.75rem",
+      }}>
+        Saved Scenarios
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        {scenarios.map((s) => (
+          <div key={s.id} style={{
+            display:        "flex",
+            alignItems:     "center",
+            justifyContent: "space-between",
+            gap:            "0.75rem",
+            padding:        "0.65rem 1rem",
+            background:     "var(--surface)",
+            border:         "1px solid var(--border)",
+            borderRadius:   "4px",
+            flexWrap:       "wrap",
+          }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", flex: 1, minWidth: 0 }}>
+              <span style={{ fontFamily: "var(--mono)", fontSize: "1rem", color: "var(--accent)", whiteSpace: "nowrap" }}>
+                {fmt(s.dayRate)}/day
+              </span>
+              <span style={{ fontSize: "0.78rem", color: "var(--text-dim)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {s.experience} {s.discipline} · {s.location} · {fmt(s.takeHome)}/yr goal
+              </span>
+            </div>
+            <div style={{ display: "flex", gap: "0.5rem", flexShrink: 0 }}>
+              <button
+                type="button"
+                onClick={() => onLoad(s)}
+                style={{
+                  background:    "none",
+                  border:        "1px solid var(--border)",
+                  borderRadius:  "4px",
+                  color:         "var(--text-dim)",
+                  fontFamily:    "var(--mono)",
+                  fontSize:      "0.7rem",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  padding:       "0.3rem 0.7rem",
+                  cursor:        "pointer",
+                }}
+              >
+                Load
+              </button>
+              <button
+                type="button"
+                onClick={() => onRemove(s.id)}
+                aria-label="Remove saved scenario"
+                style={{
+                  background: "none",
+                  border:     "none",
+                  color:      "var(--text-dim)",
+                  cursor:     "pointer",
+                  fontSize:   "1.1rem",
+                  lineHeight: 1,
+                  padding:    "0.2rem 0.4rem",
+                }}
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ==============================================
 // CALCULATOR — form + state
 // Detects ?client=1 and renders ClientView instead
 // ==============================================
@@ -1263,6 +1390,29 @@ function Calculator() {
   const [rateLogged,           setRateLogged]           = useState(false);
   // Income calculator starts collapsed; auto-expands when URL has params (shared link)
   const [showIncomeCalc, setShowIncomeCalc] = useState(false);
+
+  // Saved scenarios — persisted to localStorage
+  const { scenarios: savedScenarios, save: saveScenario, remove: removeScenario } = useSavedScenarios();
+  const [savedThisCalc, setSavedThisCalc] = useState(false);
+
+  // Load a saved scenario — restores inputs and re-calculates immediately
+  const handleLoadScenario = (s: SavedScenario) => {
+    const loaded: CalcInputs = {
+      discipline:    s.discipline as Discipline,
+      experience:    s.experience as ExperienceLevel,
+      location:      s.location as LocationTier,
+      takeHome:      s.takeHome,
+      billableDays:  DEFAULT_BILLABLE_DAYS,
+      hasKit:        false,
+      includeProfit: true,
+    };
+    setInputs(loaded);
+    setTakeHomeRaw(String(s.takeHome));
+    setShowIncomeCalc(true);
+    setResults(calculate(loaded));
+    setSavedThisCalc(true); // already saved — don't offer to save again
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Health insurance — ZIP lookup
   const [zipRaw,           setZipRaw]           = useState("");
@@ -1381,6 +1531,13 @@ function Calculator() {
         </p>
       </div>
 
+      {/* ── Saved Scenarios ── */}
+      <SavedScenariosPanel
+        scenarios={savedScenarios}
+        onLoad={handleLoadScenario}
+        onRemove={removeScenario}
+      />
+
       {/* ── STEP 1: Profile ── */}
       <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
         <span style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", fontWeight: 700, color: "var(--accent)", letterSpacing: "0.1em" }}>01</span>
@@ -1430,7 +1587,7 @@ function Calculator() {
 
       {/* Current rate input — primary CTA */}
       <div style={{ marginTop: "1.75rem" }}>
-        <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", lineHeight: 1.7, marginBottom: "1.25rem", fontFamily: "var(--sans)" }}>
+        <div style={{ fontSize: "0.78rem", color: "var(--text-mid)", lineHeight: 1.7, marginBottom: "1.25rem", fontFamily: "var(--sans)" }}>
           Enter your current rate to see where you stand — or skip ahead and set an income goal to find out what you should be charging.
         </div>
         <Label>What are you currently charging?</Label>
@@ -1583,27 +1740,29 @@ function Calculator() {
         </div>
 
 
-        {/* Toggle */}
-        <button
-          onClick={() => setShowIncomeCalc(v => !v)}
-          style={{
-            background:    "none",
-            border:        "none",
-            cursor:        "pointer",
-            display:       "flex",
-            alignItems:    "center",
-            gap:           "0.6rem",
-            padding:       0,
-            fontFamily:    "var(--mono)",
-            fontSize:      "0.75rem",
-            letterSpacing: "0.15em",
-            textTransform: "uppercase",
-            color:         "var(--accent)",
-          }}
-        >
-          <span style={{ fontSize: "1rem", lineHeight: 1, transform: showIncomeCalc ? "rotate(90deg)" : "none", transition: "transform 0.2s", display: "inline-block" }}>›</span>
-          {showIncomeCalc ? "Hide income goal calculator" : "What should I charge to hit a goal?"}
-        </button>
+        {/* Toggle — pulse when user hasn't calculated yet to signal "this is the next step" */}
+        <div className={!results && !showIncomeCalc ? "step-cta-pulse" : ""} style={{ display: "inline-flex" }}>
+          <button
+            onClick={() => setShowIncomeCalc(v => !v)}
+            style={{
+              background:    "none",
+              border:        "none",
+              cursor:        "pointer",
+              display:       "flex",
+              alignItems:    "center",
+              gap:           "0.6rem",
+              padding:       "0.4rem 0.5rem",
+              fontFamily:    "var(--mono)",
+              fontSize:      "0.75rem",
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              color:         "var(--accent)",
+            }}
+          >
+            <span style={{ fontSize: "1rem", lineHeight: 1, transform: showIncomeCalc ? "rotate(90deg)" : "none", transition: "transform 0.2s", display: "inline-block" }}>›</span>
+            {showIncomeCalc ? "Hide income goal calculator" : "What should I charge to hit a goal?"}
+          </button>
+        </div>
 
         {showIncomeCalc && (
           <div style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "1.75rem" }}>
@@ -1740,6 +1899,7 @@ function Calculator() {
                 onClick={async () => {
                   const r = calculate({ ...inputs, healthInsurance: healthInsuranceAnnual });
                   setResults(r);
+                  setSavedThisCalc(false);
 
                   track("calculate", {
                     discipline: inputs.discipline,
@@ -1779,39 +1939,75 @@ function Calculator() {
               </button>
 
               {results && (
-                <button
-                  onClick={() => {
-                    setResults(null);
-                    setCurrentRate(null);
-                    setCurrentRateRaw("");
-                    setTakeHomeRaw("");
-                    setInputs({
-                      discipline:    "Cinematographer / DP",
-                      experience:    "Mid",
-                      location:      "Mid Market",
-                      takeHome:      0,
-                      billableDays:  DEFAULT_BILLABLE_DAYS,
-                      hasKit:        false,
-                      includeProfit: true,
-                    });
-                    router.replace("/", { scroll: false });
-                  }}
-                  style={{
-                    padding:        "1rem 1.25rem",
-                    background:     "none",
-                    border:         "1px solid var(--border)",
-                    borderRadius:   "4px",
-                    color:          "var(--text-dim)",
-                    fontFamily:     "var(--mono)",
-                    fontSize:       "0.72rem",
-                    letterSpacing:  "0.15em",
-                    textTransform:  "uppercase",
-                    cursor:         "pointer",
-                    whiteSpace:     "nowrap",
-                  }}
-                >
-                  Reset
-                </button>
+                <>
+                  {/* Save scenario to localStorage */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      saveScenario({
+                        discipline: inputs.discipline,
+                        experience: inputs.experience,
+                        location:   inputs.location,
+                        takeHome:   inputs.takeHome,
+                        dayRate:    Math.round(results.dayRate + results.kitFee),
+                      });
+                      setSavedThisCalc(true);
+                    }}
+                    disabled={savedThisCalc}
+                    style={{
+                      padding:       "1rem 1.25rem",
+                      background:    savedThisCalc ? "rgba(212,146,10,0.08)" : "none",
+                      border:        `1px solid ${savedThisCalc ? "var(--accent)" : "var(--border)"}`,
+                      borderRadius:  "4px",
+                      color:         savedThisCalc ? "var(--accent)" : "var(--text-dim)",
+                      fontFamily:    "var(--mono)",
+                      fontSize:      "0.72rem",
+                      letterSpacing: "0.15em",
+                      textTransform: "uppercase",
+                      cursor:        savedThisCalc ? "default" : "pointer",
+                      whiteSpace:    "nowrap",
+                    }}
+                  >
+                    {savedThisCalc ? "Saved ✓" : "Save"}
+                  </button>
+
+                  {/* Reset — clears everything */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setResults(null);
+                      setCurrentRate(null);
+                      setCurrentRateRaw("");
+                      setTakeHomeRaw("");
+                      setSavedThisCalc(false);
+                      setInputs({
+                        discipline:    "Cinematographer / DP",
+                        experience:    "Mid",
+                        location:      "Mid Market",
+                        takeHome:      0,
+                        billableDays:  DEFAULT_BILLABLE_DAYS,
+                        hasKit:        false,
+                        includeProfit: true,
+                      });
+                      router.replace("/", { scroll: false });
+                    }}
+                    style={{
+                      padding:        "1rem 1.25rem",
+                      background:     "none",
+                      border:         "1px solid var(--border)",
+                      borderRadius:   "4px",
+                      color:          "var(--text-dim)",
+                      fontFamily:     "var(--mono)",
+                      fontSize:       "0.72rem",
+                      letterSpacing:  "0.15em",
+                      textTransform:  "uppercase",
+                      cursor:         "pointer",
+                      whiteSpace:     "nowrap",
+                    }}
+                  >
+                    Reset
+                  </button>
+                </>
               )}
             </div>
 
