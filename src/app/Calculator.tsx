@@ -1868,30 +1868,65 @@ function Calculator() {
 
               {/* Manual premium input — shown for state-exchange ZIPs */}
               {zipLookupStatus === "state-exchange" && (
-                <div style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "0.9rem" }}>$</span>
-                  <input
-                    type="number"
-                    min="0"
-                    placeholder="e.g. 520"
-                    value={manualPremiumRaw}
-                    onChange={e => setManualPremiumRaw(e.target.value)}
-                    style={{
-                      background:   "var(--surface)",
-                      border:       `1px solid ${manualPremiumRaw ? "var(--accent)" : "var(--border)"}`,
-                      borderRadius: "4px",
-                      color:        "var(--text)",
-                      fontFamily:   "var(--mono)",
-                      fontSize:     "0.95rem",
-                      padding:      "0.55rem 0.85rem",
-                      width:        "120px",
-                    }}
-                  />
-                  <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "0.8rem" }}>/mo</span>
+                <div style={{ marginTop: "0.75rem", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                  <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                    <button
+                      onClick={() => setManualPremiumRaw("")}
+                      style={{
+                        background:    !manualPremiumRaw ? "rgba(212,146,10,0.12)" : "transparent",
+                        color:         !manualPremiumRaw ? "var(--accent)" : "var(--text-dim)",
+                        border:        `1px solid ${!manualPremiumRaw ? "var(--accent)" : "var(--border)"}`,
+                        fontFamily:    "var(--mono)",
+                        fontSize:      "0.75rem",
+                        padding:       "0.35rem 0.75rem",
+                        borderRadius:  "4px",
+                        cursor:        "pointer",
+                      }}
+                    >
+                      Use national avg (${Math.round(HEALTH_INSURANCE_ANNUAL / 12 / 50) * 50}/mo)
+                    </button>
+                    <button
+                      onClick={() => setManualPremiumRaw(manualPremiumRaw || String(Math.round(HEALTH_INSURANCE_ANNUAL / 12 / 50) * 50))}
+                      style={{
+                        background:    manualPremiumRaw ? "rgba(212,146,10,0.12)" : "transparent",
+                        color:         manualPremiumRaw ? "var(--accent)" : "var(--text-dim)",
+                        border:        `1px solid ${manualPremiumRaw ? "var(--accent)" : "var(--border)"}`,
+                        fontFamily:    "var(--mono)",
+                        fontSize:      "0.75rem",
+                        padding:       "0.35rem 0.75rem",
+                        borderRadius:  "4px",
+                        cursor:        "pointer",
+                      }}
+                    >
+                      Enter my premium
+                    </button>
+                  </div>
                   {manualPremiumRaw && (
-                    <span style={{ fontFamily: "var(--mono)", fontSize: "0.75rem", color: "var(--accent)" }}>
-                      = ${(Number(manualPremiumRaw) * 12).toLocaleString()}/yr
-                    </span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "0.9rem" }}>$</span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="50"
+                        placeholder="e.g. 550"
+                        value={manualPremiumRaw}
+                        onChange={e => setManualPremiumRaw(e.target.value)}
+                        style={{
+                          background:   "var(--surface)",
+                          border:       "1px solid var(--accent)",
+                          borderRadius: "4px",
+                          color:        "var(--text)",
+                          fontFamily:   "var(--mono)",
+                          fontSize:     "0.95rem",
+                          padding:      "0.55rem 0.85rem",
+                          width:        "120px",
+                        }}
+                      />
+                      <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "0.8rem" }}>/mo</span>
+                      <span style={{ fontFamily: "var(--mono)", fontSize: "0.75rem", color: "var(--accent)" }}>
+                        = ${(Number(manualPremiumRaw) * 12).toLocaleString()}/yr
+                      </span>
+                    </div>
                   )}
                 </div>
               )}
