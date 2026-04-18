@@ -528,7 +528,7 @@ function MarketRangePanel({
     low:   { label: "Low end of market",  color: "#f5a623",         message: "You're in the market but on the lower end. There's room to grow without pricing yourself out." },
     mid:   { label: "Mid market",         color: "var(--accent)",   message: "This rate is solid and defensible. You're where working professionals at your level land." },
     high:  { label: "High end of market", color: "var(--accent)",   message: "You're commanding a strong rate, where well-positioned, in-demand professionals operate." },
-    above: { label: "Above market",       color: "var(--text-dim)", message: "This rate is above the typical ceiling. Make sure your credits and reputation can support it." },
+    above: { label: "Above market high",   color: "var(--text-dim)", message: "This rate is above the typical market high. Make sure your credits and reputation can support it." },
   };
   const config = mr ? POSITION_CONFIG[mr.position] : null;
 
@@ -548,7 +548,7 @@ function MarketRangePanel({
           {config ? `${rateLabel} — ${config.label}` : "Market range"}
         </span>
         <span style={{ fontFamily: "var(--mono)", fontSize: "0.78rem", color: "var(--text-dim)" }}>
-          {fmt(floor)} — {fmt(ceiling)}
+          {fmt(floor)} floor — {fmt(ceiling)} high
         </span>
       </div>
 
@@ -564,8 +564,8 @@ function MarketRangePanel({
 
       {/* Floor / ceiling labels */}
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-        <span style={{ fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Floor</span>
-        <span style={{ fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Ceiling</span>
+        <span style={{ fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Market floor</span>
+        <span style={{ fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--mono)" }}>Market high</span>
       </div>
 
       {/* Contextual message — only when a rate is provided */}
