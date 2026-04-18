@@ -1371,7 +1371,7 @@ function Calculator() {
   const urlInputs = paramsToInputs(searchParams);
 
   const [inputs, setInputs] = useState<CalcInputs>({
-    discipline:    urlInputs.discipline    ?? "Cinematographer / DP",
+    discipline:    urlInputs.discipline    ?? "" as Discipline,
     experience:    urlInputs.experience    ?? "Mid",
     location:      urlInputs.location      ?? "Mid Market",
     takeHome:      urlInputs.takeHome      ?? 0,
@@ -1563,6 +1563,7 @@ function Calculator() {
               cursor:       "pointer",
             }}
           >
+            <option value="" disabled>Select your discipline…</option>
             {DISCIPLINES.map((d) => <option key={d}>{d}</option>)}
           </select>
         </div>
@@ -1582,11 +1583,11 @@ function Calculator() {
 
       </div>
 
-      {/* ── STEP 2: Market snapshot — renders immediately from profile ── */}
-      <MarketRangePanel inputs={inputs} dayRate={currentRate ?? undefined} rateLabel="Your current rate" />
+      {/* ── STEP 2: Market snapshot — renders once a discipline is selected ── */}
+      {inputs.discipline && <MarketRangePanel inputs={inputs} dayRate={currentRate ?? undefined} rateLabel="Your current rate" />}
 
-      {/* Current rate input — primary CTA */}
-      <div style={{ marginTop: "1.75rem" }}>
+      {/* Current rate input — only shown once a discipline is selected */}
+      {inputs.discipline && <div style={{ marginTop: "1.75rem" }}>
         <div style={{ fontSize: "0.78rem", color: "var(--text-mid)", lineHeight: 1.7, marginBottom: "1.25rem", fontFamily: "var(--sans)" }}>
           Enter your current rate to see where you stand — or skip ahead and set an income goal to find out what you should be charging.
         </div>
@@ -1642,7 +1643,7 @@ function Calculator() {
         <div style={{ fontSize: "0.7rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
           Optional — updates the market range above and helps us build community averages.
         </div>
-      </div>
+      </div>}
 
       {/* ── Reality check: what your current rate actually earns ── */}
       {currentRate !== null && currentRate > 0 && (() => {
@@ -1931,8 +1932,9 @@ function Calculator() {
                   textTransform: "uppercase",
                   border:        "none",
                   borderRadius:  "4px",
-                  cursor:        "pointer",
+                  cursor:        !inputs.discipline ? "not-allowed" : "pointer",
                   fontWeight:    "bold",
+                  opacity:       !inputs.discipline ? 0.4 : 1,
                 }}
               >
                 Calculate My Rate
@@ -1981,7 +1983,7 @@ function Calculator() {
                       setTakeHomeRaw("");
                       setSavedThisCalc(false);
                       setInputs({
-                        discipline:    "Cinematographer / DP",
+                        discipline:    "" as Discipline,
                         experience:    "Mid",
                         location:      "Mid Market",
                         takeHome:      0,
