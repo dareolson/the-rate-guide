@@ -1567,9 +1567,9 @@ function Calculator() {
             onChange={(e) => set("discipline", e.target.value as Discipline)}
             style={{
               background:   "var(--surface)",
-              border:       "1px solid var(--border)",
+              border:       `1px solid ${!inputs.discipline ? "var(--accent)" : "var(--border)"}`,
               borderRadius: "4px",
-              color:        "var(--text)",
+              color:        inputs.discipline ? "var(--text)" : "var(--text-dim)",
               fontFamily:   "var(--mono)",
               fontSize:     "0.9rem",
               padding:      "0.65rem 1rem",
@@ -2031,6 +2031,12 @@ function Calculator() {
               >
                 Calculate My Rate
               </button>
+
+              {!inputs.discipline && (
+                <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", textAlign: "center", marginTop: "0.5rem", fontFamily: "var(--mono)" }}>
+                  Select a discipline above to continue
+                </div>
+              )}
 
               {results && (
                 <>
