@@ -1416,7 +1416,9 @@ function Calculator() {
 
   // Health insurance — ZIP lookup
   const [zipRaw,           setZipRaw]           = useState("");
-  const [zipLookupStatus,  setZipLookupStatus]  = useState<"idle" | "loading" | "ok" | "error" | "no-key">("idle");
+  const [zipLookupStatus,  setZipLookupStatus]  = useState<"idle" | "loading" | "ok" | "error" | "no-key" | "state-exchange">("idle");
+  const [zipExchangeState, setZipExchangeState] = useState<string | null>(null);
+  const [manualPremiumRaw, setManualPremiumRaw] = useState("");
   const [zipPremiumData,   setZipPremiumData]   = useState<{
     avgMonthlyPremium: number;
     avgAnnualPremium:  number;
@@ -1431,6 +1433,11 @@ function Calculator() {
       const res  = await fetch(`/api/health-insurance?zip=${zip}`);
       const data = await res.json();
       if (res.status === 503) { setZipLookupStatus("no-key"); return; }
+      if (res.status === 404 && data.error === "state-exchange") {
+        setZipExchangeState(data.state ?? null);
+        setZipLookupStatus("state-exchange");
+        return;
+      }
       if (!res.ok) throw new Error(data.error);
       setZipPremiumData(data);
       setZipLookupStatus("ok");
@@ -1440,8 +1447,12 @@ function Calculator() {
     }
   };
 
-  // The health insurance figure used in the calculation — live if ZIP resolved, else static default
-  const healthInsuranceAnnual = zipPremiumData?.avgAnnualPremium ?? HEALTH_INSURANCE_ANNUAL;
+  // The health insurance figure used in the calculation:
+  // 1. Live ZIP lookup if resolved
+  // 2. Manual entry if state-exchange ZIP
+  // 3. National average fallback
+  const manualPremiumAnnual = manualPremiumRaw ? Number(manualPremiumRaw) * 12 : null;
+  const healthInsuranceAnnual = zipPremiumData?.avgAnnualPremium ?? manualPremiumAnnual ?? HEALTH_INSURANCE_ANNUAL;
 
   // Fetch total calculation count for trust signal
   useEffect(() => {
@@ -1817,6 +1828,8 @@ function Calculator() {
                     setZipRaw(v);
                     if (zipLookupStatus !== "idle") setZipLookupStatus("idle");
                     setZipPremiumData(null);
+                    setZipExchangeState(null);
+                    setManualPremiumRaw("");
                   }}
                   onBlur={() => {
                     if (zipRaw.length === 5) fetchHealthPremium(zipRaw);
@@ -1846,9 +1859,45 @@ function Calculator() {
                 {zipLookupStatus === "no-key" && (
                   <span style={{ fontFamily: "var(--mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>ZIP lookup coming soon — using national average for now</span>
                 )}
+                {zipLookupStatus === "state-exchange" && (
+                  <span style={{ fontFamily: "var(--mono)", fontSize: "0.75rem", color: "var(--text-dim)" }}>
+                    {zipExchangeState ?? "Your state"} uses a state-run exchange — enter your monthly premium below
+                  </span>
+                )}
               </div>
-              {zipLookupStatus !== "ok" && (
-                <div style={{ fontSize: "0.78rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
+
+              {/* Manual premium input — shown for state-exchange ZIPs */}
+              {zipLookupStatus === "state-exchange" && (
+                <div style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "0.9rem" }}>$</span>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder="e.g. 520"
+                    value={manualPremiumRaw}
+                    onChange={e => setManualPremiumRaw(e.target.value)}
+                    style={{
+                      background:   "var(--surface)",
+                      border:       `1px solid ${manualPremiumRaw ? "var(--accent)" : "var(--border)"}`,
+                      borderRadius: "4px",
+                      color:        "var(--text)",
+                      fontFamily:   "var(--mono)",
+                      fontSize:     "0.95rem",
+                      padding:      "0.55rem 0.85rem",
+                      width:        "120px",
+                    }}
+                  />
+                  <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "0.8rem" }}>/mo</span>
+                  {manualPremiumRaw && (
+                    <span style={{ fontFamily: "var(--mono)", fontSize: "0.75rem", color: "var(--accent)" }}>
+                      = ${(Number(manualPremiumRaw) * 12).toLocaleString()}/yr
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {zipLookupStatus !== "ok" && zipLookupStatus !== "state-exchange" && (
+                <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
                   Without a ZIP we use the national average of ${HEALTH_INSURANCE_ANNUAL.toLocaleString()}/yr. Your actual cost may vary significantly.
                 </div>
               )}

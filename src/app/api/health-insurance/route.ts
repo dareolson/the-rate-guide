@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
 
     if (silverPlans.length === 0) {
       // State-run exchanges (CA, NY, WA, etc.) don't appear in the CMS API
-      throw new Error("No Silver plans found — may be a state-run exchange state");
+      return NextResponse.json({ error: "state-exchange", state }, { status: 404 });
     }
 
     const avgMonthly = silverPlans.reduce((sum, p) => sum + p.premium, 0) / silverPlans.length;
