@@ -753,6 +753,7 @@ function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcIn
         <input
           type="number"
           min="0"
+          step="50"
           autoComplete="off"
           placeholder="e.g. 450"
           value={raw}
@@ -1610,6 +1611,7 @@ function Calculator() {
           <input
             type="number"
             min="0"
+            step="50"
             autoComplete="off"
             placeholder="e.g. 450"
             value={currentRateRaw}
