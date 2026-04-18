@@ -753,6 +753,7 @@ function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcIn
         <input
           type="number"
           min="0"
+          autoComplete="off"
           placeholder="e.g. 450"
           value={raw}
           onChange={e => { setRaw(e.target.value); setLogged(false); }}
@@ -891,6 +892,7 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
         <input
           type="email"
           required
+          autoComplete="email"
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -1608,6 +1610,7 @@ function Calculator() {
           <input
             type="number"
             min="0"
+            autoComplete="off"
             placeholder="e.g. 450"
             value={currentRateRaw}
             onChange={e => {
@@ -1787,6 +1790,7 @@ function Calculator() {
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
+                  autoComplete="off"
                   value={takeHomeRaw}
                   onChange={(e) => {
                     const raw = e.target.value.replace(/[^0-9]/g, "");
@@ -1821,6 +1825,7 @@ function Calculator() {
                   inputMode="numeric"
                   pattern="[0-9]*"
                   maxLength={5}
+                  autoComplete="off"
                   placeholder="e.g. 90210"
                   value={zipRaw}
                   onChange={e => {
@@ -1908,6 +1913,7 @@ function Calculator() {
                         type="number"
                         min="0"
                         step="50"
+                        autoComplete="off"
                         placeholder="e.g. 550"
                         value={manualPremiumRaw}
                         onChange={e => setManualPremiumRaw(e.target.value)}
