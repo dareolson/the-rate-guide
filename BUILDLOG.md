@@ -214,23 +214,46 @@ Location multipliers: Major Market 1.3x, Mid Market 1.0x, Small Market 0.85x.
 - TypeScript build error on `resend` module — fixed with `npm install resend`
 - Calculate button grayed out — home machine commit defaulted discipline to `""` which triggered `!inputs.discipline` gate; fixed with visual affordances (accent border, hint text)
 
+### 2026-04-19
+
+**Features added:**
+- `/cinematographer-day-rate` — SEO blog post, ~1,400 words, research-backed
+  - Data: No Film School survey (2,000+ respondents), IATSE Local 600 rate cards, Assemble, Ambient Skies
+  - 4 inline React chart components: rate range bars, production type table, union rates table, market multiplier bars
+  - Hero image via Unsplash (`next/image`), gradient overlay, photo credit
+  - CTA links to calculator pre-filled with `?d=Cinematographer+%2F+DP`
+  - Enabled Unsplash remote images in `next.config.ts`
+- `/video-editor-day-rate` — SEO blog post, ~1,500 words, research-backed
+  - Data: Cutjamm 2025 salary survey (201 respondents), IATSE Local 700 2024-27 Majors Agreement, ZipRecruiter April 2026, Creative COW practitioner forum
+  - 4 inline React chart components: rate range bars, production type table, union rates table, pricing model breakdown chart
+  - Covers day rate vs. hourly vs. project rate debate with real numbers
+  - Post house markup section (2.5–4x markup data from Creative COW)
+  - CTA links to calculator pre-filled with `?d=Video+Editor`
+- "Rate Guides" link added to global nav (`layout.tsx`) pointing to cinematographer post
+  - When more posts exist, this should become a `/guides` index page or dropdown
+
+**Content strategy note:**
+Both posts follow the same template: hero image + eyebrow + H1 + intro with data hook + TOC + sections with H2/H3 + inline React charts + callout blocks + CTA box + sources. Reuse this pattern for every new discipline post.
+
 ---
 
 ## Backlog / Suggestions
 
 Priority order based on impact:
 
-1. **Email capture** — "Email me my results" opt-in with list-building prompt. Users who calculate are self-identified freelancers. List feeds future product launches (Clientward, etc.).
+1. **More rate guide posts** — colorist, motion designer, producer, gaffer, sound mixer. Each is a standalone SEO page. Same research + write pattern. I can do these one at a time, no input needed from Derek.
 
-2. **Supabase dashboard** — Read `calc_events` table to see which disciplines are most popular, what take-home goals people enter, whether users hit the Calculate button. Data should inform what to build next.
+2. **Rate Guides index page** (`/guides`) — once 3+ posts exist, a landing page listing all posts with discipline thumbnails. Nav link points there instead of directly to one post.
 
-3. **More disciplines** — Writers, photographers, web designers, brand strategists all search for rate calculators. Expanding the discipline list widens SEO surface.
+3. **Email capture** — "Email me my results" opt-in with list-building prompt. Users who calculate are self-identified freelancers. List feeds future product launches (Clientward, etc.).
 
-4. **Blog / content** — One 800-word post per discipline ("What should a freelance motion designer charge in 2026?") pulls long-tail search traffic directly into the calculator. FAQ schema is already in place; blog posts are the next SEO tier.
+4. **Supabase dashboard** — Read `calc_events` table to see which disciplines are most popular, what take-home goals people enter, whether users hit the Calculate button. Data should inform what to build next.
 
-5. **Mobile audit** — Radio button groups and number inputs on small screens need a real look. Most organic search traffic lands on mobile first.
+5. **More disciplines** — Writers, photographers, web designers, brand strategists all search for rate calculators. Expanding the discipline list widens SEO surface.
 
-6. **Share your rate card** — Client-facing URL (`?client=1`) exists but there's no obvious "share this" prompt after calculating. A visible copy-link button in the results panel would increase return visits and word-of-mouth.
+6. **Mobile audit** — Radio button groups and number inputs on small screens need a real look. Most organic search traffic lands on mobile first.
+
+7. **Share your rate card** — Client-facing URL (`?client=1`) exists but there's no obvious "share this" prompt after calculating. A visible copy-link button in the results panel would increase return visits and word-of-mouth.
 
 ---
 
