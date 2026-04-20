@@ -134,7 +134,7 @@ function Nav() {
       {/* Page links */}
       <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
         {[
-          { label: "Rate Guides",  href: "/cinematographer-day-rate" },
+          { label: "Rate Guides",  href: "/guides" },
           { label: "Methodology", href: "/methodology" },
           { label: "The Store",   href: "/store" },
         ].map(({ label, href }) => (
