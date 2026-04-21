@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     description:
       "Stop losing money to scope creep, late payments, and no-kill-fee cancellations. Five production-industry contract templates, fully annotated.",
     url: "https://therateguide.com/store/contract-pack",
+    images: [{ url: "/contract-pack-banner.png", width: 1280, height: 720 }],
   },
 };
 
@@ -234,7 +235,7 @@ function ValueCard({ stat, label, desc }: typeof WORTH_IT[0]) {
 
 export default function ContractPackPage() {
   // Replace this URL with the actual Gumroad product URL when listed
-  const GUMROAD_URL = "https://therateguide.gumroad.com/l/contract-pack";
+  const GUMROAD_URL = "https://daredevil484.gumroad.com/l/ktqssh";
 
   return (
     <div style={{ maxWidth: "760px", margin: "0 auto", padding: "5rem 1.5rem 6rem" }}>
