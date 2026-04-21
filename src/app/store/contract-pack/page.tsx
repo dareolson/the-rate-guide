@@ -235,6 +235,8 @@ function ValueCard({ stat, label, desc }: typeof WORTH_IT[0]) {
 
 export default function ContractPackPage() {
   // Replace this URL with the actual Gumroad product URL when listed
+  // Restore both buttons to use this URL once the Gumroad product is live
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const GUMROAD_URL = "https://daredevil484.gumroad.com/l/ktqssh";
 
   return (
@@ -332,26 +334,23 @@ export default function ContractPackPage() {
             </div>
           </div>
 
-          <a
-            href={GUMROAD_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+          <div
             style={{
-              background:    "var(--accent)",
-              color:         "#000",
+              background:    "var(--surface)",
+              color:         "var(--text-dim)",
               fontFamily:    "var(--mono)",
               fontSize:      "0.8rem",
               letterSpacing: "0.2em",
               textTransform: "uppercase",
               padding:       "0.9rem 1.75rem",
-              textDecoration: "none",
               fontWeight:    "bold",
               whiteSpace:    "nowrap",
               borderRadius:  "4px",
+              border:        "1px solid var(--border)",
             }}
           >
-            Get the Pack →
-          </a>
+            Coming Soon
+          </div>
         </div>
 
         {/* Trust line */}
@@ -622,26 +621,23 @@ export default function ContractPackPage() {
           Start running a business.
         </div>
 
-        <a
-          href={GUMROAD_URL}
-          target="_blank"
-          rel="noopener noreferrer"
+        <div
           style={{
             display:       "inline-block",
-            background:    "var(--accent)",
-            color:         "#000",
+            background:    "var(--surface)",
+            color:         "var(--text-dim)",
             fontFamily:    "var(--mono)",
             fontSize:      "0.8rem",
             letterSpacing: "0.2em",
             textTransform: "uppercase",
             padding:       "1rem 2.5rem",
-            textDecoration: "none",
             fontWeight:    "bold",
             borderRadius:  "4px",
+            border:        "1px solid var(--border)",
           }}
         >
-          Get the Pack — $9.99 →
-        </a>
+          Coming Soon — $9.99
+        </div>
 
         <p style={{
           fontFamily:  "var(--mono)",
