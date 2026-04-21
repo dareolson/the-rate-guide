@@ -26,25 +26,8 @@ export const metadata: Metadata = {
 // ratePreview: 3 tiers shown as a mini spectrum
 // inside the card — gives readers a data hook
 // before they click.
-//
-// comingSoon: true — card renders without a link,
-// shows a "Coming Soon" badge. Remove flag when
-// the page file exists.
 // ==============================================
-type Guide = {
-  slug:        string;
-  discipline:  string;
-  title:       string;
-  description: string;
-  readTime:    string;
-  calcUrl:     string;
-  image:       string;
-  imageAlt:    string;
-  comingSoon?: boolean;
-  ratePreview: readonly { label: string; range: string }[];
-};
-
-const GUIDES: readonly Guide[] = [
+const GUIDES = [
   {
     slug:       "cinematographer-day-rate",
     discipline: "Cinematographer / DP",
@@ -80,20 +63,19 @@ const GUIDES: readonly Guide[] = [
     ],
   },
   {
-    slug:        "colorist-day-rate",
-    discipline:  "Colorist",
-    title:       "Colorist Day Rate: What to Charge in 2026",
+    slug:       "colorist-day-rate",
+    discipline: "Colorist",
+    title:      "Colorist Day Rate: What to Charge in 2026",
     description:
-      "Day rates for freelance colorists — commercial, narrative, and streaming work. DaVinci Resolve suite ownership, union scale, and the specialization premium explained.",
-    readTime:    "8 min",
-    calcUrl:     "/?d=Colorist",
-    image:       "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&q=80&auto=format&fit=crop",
-    imageAlt:    "Color grading workstation",
-    comingSoon:  true,
+      "Rates by experience level, production type, and market — with IATSE Local 700 union minimums, the DaVinci Resolve ownership factor, and the revision trap that quietly kills colorist margins.",
+    readTime:   "9 min",
+    calcUrl:    "/?d=Colorist",
+    image:      "https://images.unsplash.com/photo-1536240478700-b869ad10e128?w=1200&q=80&auto=format&fit=crop",
+    imageAlt:   "Color grading monitors in a post-production suite",
     ratePreview: [
-      { label: "Emerging", range: "$400–$700" },
-      { label: "Mid",      range: "$700–$1,000" },
-      { label: "Senior",   range: "$1,000–$1,500" },
+      { label: "Emerging", range: "$300–$500" },
+      { label: "Mid",      range: "$500–$900" },
+      { label: "Senior",   range: "$900–$1,500" },
       { label: "Expert",   range: "$1,500+" },
     ],
   },
@@ -189,6 +171,8 @@ const GUIDES: readonly Guide[] = [
   },
 ];
 
+type Guide = typeof GUIDES[number];
+
 // ==============================================
 // RATE PREVIEW BAR
 // Mini spectrum shown inside cards.
@@ -242,14 +226,14 @@ function RatePreview({ tiers }: { tiers: Guide["ratePreview"] }) {
 // FEATURED CARD — full width, image hero
 // ==============================================
 function FeaturedCard({ guide }: { guide: Guide }) {
-  const inner = (
-    <article className={guide.comingSoon ? undefined : "card-hover"} style={{
-      position:      "relative",
-      border:        "1px solid var(--border)",
-      borderRadius:  "4px",
-      overflow:      "hidden",
-      cursor:        guide.comingSoon ? "default" : "pointer",
-      opacity:       guide.comingSoon ? 0.6 : 1,
+  const card = (
+    <article className={guide.comingSoon ? "" : "card-hover"} style={{
+      position:     "relative",
+      border:       "1px solid var(--border)",
+      borderRadius: "4px",
+      overflow:     "hidden",
+      cursor:       guide.comingSoon ? "default" : "pointer",
+      opacity:      guide.comingSoon ? 0.6 : 1,
     }}>
       {/* Hero image */}
       <div style={{ position: "relative", height: "420px" }}>
@@ -266,6 +250,7 @@ function FeaturedCard({ guide }: { guide: Guide }) {
           inset:      0,
           background: "linear-gradient(to bottom, rgba(14,14,14,0.2) 0%, rgba(14,14,14,0.7) 50%, rgba(14,14,14,0.97) 100%)",
         }} />
+        {/* Discipline badge */}
         <div style={{
           position:      "absolute",
           top:           "1.5rem",
@@ -274,35 +259,51 @@ function FeaturedCard({ guide }: { guide: Guide }) {
           fontSize:      "0.68rem",
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color:         guide.comingSoon ? "var(--text-dim)" : "var(--accent)",
+          color:         "var(--accent)",
           fontWeight:    700,
           background:    "rgba(14,14,14,0.7)",
           padding:       "0.3rem 0.7rem",
           borderRadius:  "3px",
-          border:        `1px solid ${guide.comingSoon ? "rgba(112,104,96,0.4)" : "rgba(212,146,10,0.3)"}`,
+          border:        "1px solid rgba(212,146,10,0.3)",
         }}>
           {guide.discipline}
         </div>
+        {/* Coming soon badge or read time */}
         <div style={{
           position:      "absolute",
           top:           "1.5rem",
           right:         "1.75rem",
           fontFamily:    "var(--mono)",
           fontSize:      "0.68rem",
-          color:         guide.comingSoon ? "var(--accent)" : "var(--text-dim)",
+          color:         guide.comingSoon ? "var(--text-dim)" : "var(--text-dim)",
           letterSpacing: "0.05em",
-          fontWeight:    guide.comingSoon ? 700 : 400,
         }}>
-          {guide.comingSoon ? "Coming Soon" : `${guide.readTime} read`}
+          {guide.comingSoon ? "Coming soon" : `${guide.readTime} read`}
         </div>
+        {/* Title — bottom-anchored */}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "1.75rem 2rem 1.5rem" }}>
-          <h2 style={{ fontFamily: "var(--mono)", fontSize: "clamp(1.2rem, 3vw, 1.75rem)", fontWeight: 700, color: "var(--text)", lineHeight: 1.2, margin: "0 0 0.75rem" }}>
+          <h2 style={{
+            fontFamily: "var(--mono)",
+            fontSize:   "clamp(1.2rem, 3vw, 1.75rem)",
+            fontWeight: 700,
+            color:      "var(--text)",
+            lineHeight: 1.2,
+            margin:     "0 0 0.75rem",
+          }}>
             {guide.title}
           </h2>
           <RatePreview tiers={guide.ratePreview} />
         </div>
       </div>
-      <div style={{ background: "var(--surface)", padding: "1.25rem 2rem", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1.5rem" }}>
+      {/* Description strip */}
+      <div style={{
+        background:     "var(--surface)",
+        padding:        "1.25rem 2rem",
+        display:        "flex",
+        alignItems:     "center",
+        justifyContent: "space-between",
+        gap:            "1.5rem",
+      }}>
         <p style={{ fontFamily: "var(--sans)", fontSize: "0.88rem", color: "var(--text-mid)", lineHeight: 1.65, margin: 0, flex: 1 }}>
           {guide.description}
         </p>
@@ -315,30 +316,28 @@ function FeaturedCard({ guide }: { guide: Guide }) {
     </article>
   );
 
-  if (guide.comingSoon) return inner;
-  return (
-    <Link href={`/${guide.slug}`} style={{ textDecoration: "none", display: "block" }}>
-      {inner}
-    </Link>
-  );
+  return guide.comingSoon
+    ? <div>{card}</div>
+    : <Link href={`/${guide.slug}`} style={{ textDecoration: "none", display: "block" }}>{card}</Link>;
 }
 
 // ==============================================
 // GRID CARD — for non-featured posts
 // ==============================================
 function GridCard({ guide }: { guide: Guide }) {
-  const inner = (
-    <article className={guide.comingSoon ? undefined : "card-hover"} style={{
+  const card = (
+    <article className={guide.comingSoon ? "" : "card-hover"} style={{
       background:    "var(--surface)",
       border:        "1px solid var(--border)",
       borderRadius:  "4px",
       overflow:      "hidden",
       cursor:        guide.comingSoon ? "default" : "pointer",
-      opacity:       guide.comingSoon ? 0.55 : 1,
+      opacity:       guide.comingSoon ? 0.6 : 1,
       height:        "100%",
       display:       "flex",
       flexDirection: "column",
     }}>
+      {/* Image */}
       <div style={{ position: "relative", height: "200px", flexShrink: 0 }}>
         <Image
           src={guide.image}
@@ -347,28 +346,47 @@ function GridCard({ guide }: { guide: Guide }) {
           style={{ objectFit: "cover", objectPosition: "center" }}
           sizes="(max-width: 600px) 100vw, 420px"
         />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(14,14,14,0.1) 0%, rgba(14,14,14,0.6) 100%)" }} />
         <div style={{
-          position: "absolute", top: "1rem", left: "1.25rem",
-          fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.2em",
-          textTransform: "uppercase", fontWeight: 700,
-          color:      guide.comingSoon ? "var(--text-dim)" : "var(--accent)",
-          background: "rgba(14,14,14,0.7)", padding: "0.25rem 0.6rem",
-          borderRadius: "3px",
-          border: `1px solid ${guide.comingSoon ? "rgba(112,104,96,0.4)" : "rgba(212,146,10,0.3)"}`,
+          position:   "absolute",
+          inset:      0,
+          background: "linear-gradient(to bottom, rgba(14,14,14,0.1) 0%, rgba(14,14,14,0.6) 100%)",
+        }} />
+        <div style={{
+          position:      "absolute",
+          top:           "1rem",
+          left:          "1.25rem",
+          fontFamily:    "var(--mono)",
+          fontSize:      "0.65rem",
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          color:         "var(--accent)",
+          fontWeight:    700,
+          background:    "rgba(14,14,14,0.7)",
+          padding:       "0.25rem 0.6rem",
+          borderRadius:  "3px",
+          border:        "1px solid rgba(212,146,10,0.3)",
         }}>
           {guide.discipline}
         </div>
         {guide.comingSoon && (
           <div style={{
-            position: "absolute", top: "1rem", right: "1.25rem",
-            fontFamily: "var(--mono)", fontSize: "0.65rem", letterSpacing: "0.1em",
-            textTransform: "uppercase", fontWeight: 700, color: "var(--accent)",
+            position:      "absolute",
+            top:           "1rem",
+            right:         "1.25rem",
+            fontFamily:    "var(--mono)",
+            fontSize:      "0.65rem",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color:         "var(--text-dim)",
+            background:    "rgba(14,14,14,0.7)",
+            padding:       "0.25rem 0.6rem",
+            borderRadius:  "3px",
           }}>
-            Coming Soon
+            Coming soon
           </div>
         )}
       </div>
+      {/* Content */}
       <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "0.75rem", flex: 1 }}>
         <h2 style={{ fontFamily: "var(--mono)", fontSize: "1rem", fontWeight: 700, color: "var(--text)", lineHeight: 1.3, margin: 0 }}>
           {guide.title}
@@ -391,12 +409,9 @@ function GridCard({ guide }: { guide: Guide }) {
     </article>
   );
 
-  if (guide.comingSoon) return inner;
-  return (
-    <Link href={`/${guide.slug}`} style={{ textDecoration: "none", display: "block", height: "100%" }}>
-      {inner}
-    </Link>
-  );
+  return guide.comingSoon
+    ? <div style={{ height: "100%" }}>{card}</div>
+    : <Link href={`/${guide.slug}`} style={{ textDecoration: "none", display: "block", height: "100%" }}>{card}</Link>;
 }
 
 // ==============================================
@@ -463,35 +478,9 @@ export default function GuidesPage() {
         </div>
       )}
 
-      {/* More coming */}
-      <div style={{
-        marginTop:      "3.5rem",
-        paddingTop:     "2rem",
-        borderTop:      "1px solid var(--border)",
-        display:        "flex",
-        alignItems:     "center",
-        justifyContent: "space-between",
-        flexWrap:       "wrap",
-        gap:            "1rem",
-      }}>
-        <p style={{
-          fontFamily: "var(--sans)",
-          fontSize:   "0.85rem",
-          color:      "var(--text-dim)",
-          lineHeight: 1.6,
-          margin:     0,
-        }}>
-          More guides in progress — new disciplines added regularly.
-        </p>
-        <Link href="/" style={{
-          fontFamily:    "var(--mono)",
-          fontSize:      "0.72rem",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          color:         "var(--accent)",
-          textDecoration:"none",
-          whiteSpace:    "nowrap",
-        }}>
+      {/* Footer CTA */}
+      <div style={{ marginTop: "3.5rem", paddingTop: "2rem", borderTop: "1px solid var(--border)", textAlign: "right" }}>
+        <Link href="/" style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--accent)", textDecoration: "none" }}>
           Calculate your rate →
         </Link>
       </div>
