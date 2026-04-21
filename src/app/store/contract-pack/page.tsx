@@ -31,7 +31,7 @@ const DOCUMENTS = [
     clauses: [
       "What a kill fee is and why every working freelancer needs one",
       "The difference between a quote and a contract",
-      "How getting paid actually works at a production company",
+      "How getting paid works at a production company",
       "What \"Net 30\" means and why it matters for your cash flow",
       "The one question to ask every corporate client before you invoice",
     ],
@@ -76,7 +76,7 @@ const DOCUMENTS = [
     title:  "Invoice Template",
     desc:   "A professional invoice that gets you paid. Line items for services, equipment, and expenses. PO number field for corporate clients. Late fee clause reference. Step-by-step notes on getting invoices processed faster.",
     clauses: [
-      "PO number field — the thing that actually gets corporate clients to pay",
+      "PO number field — the thing that gets corporate clients to pay",
       "Line items with day/hour rate and total calculations",
       "Deposit credit line (shows balance due, not just total)",
       "Two payment method slots — prioritized by your preference",
@@ -475,7 +475,7 @@ export default function ContractPackPage() {
           {[
             {
               label: "Production-specific language",
-              desc:  "Kill fees, reel rights, raw footage ownership, work-for-hire vs. licensing — the concepts that actually come up in production work, not generic freelance scenarios.",
+              desc:  "Kill fees, reel rights, raw footage ownership, work-for-hire vs. licensing — the concepts that come up in production work, not generic freelance scenarios.",
             },
             {
               label: "Annotated, not naked",

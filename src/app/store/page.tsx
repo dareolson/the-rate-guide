@@ -78,7 +78,7 @@ const CATEGORIES: Category[] = [
         type:        "book",
         name:        "Profit First",
         author:      "Mike Michalowicz",
-        description: "Flips the formula: take profit before expenses, not after. Designed for irregular creative income. Simple, counterintuitive, and it actually works.",
+        description: "Flips the formula: take profit before expenses, not after. Designed for irregular creative income. Simple, counterintuitive, and it works.",
         price:       "~$14",
         url:         "https://amzn.to/4sz4Y7a",
         isbn:        "9780735214149",
