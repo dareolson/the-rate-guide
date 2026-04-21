@@ -441,6 +441,120 @@ function ServiceCard({ product }: { product: Service }) {
 }
 
 // ==============================================
+// ORIGINAL PRODUCTS SECTION
+// The Rate Guide's own products — shown above affiliates
+// ==============================================
+function OriginalProductCard() {
+  return (
+    <a
+      href="/store/contract-pack"
+      style={{
+        display:       "block",
+        textDecoration: "none",
+        background:    "var(--surface)",
+        border:        "1px solid var(--accent)",
+        borderRadius:  "4px",
+        padding:       "2rem 2.5rem",
+        position:      "relative",
+        overflow:      "hidden",
+      }}
+    >
+      {/* Badge */}
+      <div style={{
+        position:      "absolute",
+        top:           "1rem",
+        right:         "1rem",
+        background:    "var(--accent)",
+        color:         "#000",
+        fontFamily:    "var(--mono)",
+        fontSize:      "0.58rem",
+        letterSpacing: "0.12em",
+        textTransform: "uppercase",
+        fontWeight:    "bold",
+        padding:       "0.25rem 0.6rem",
+      }}>
+        Original
+      </div>
+
+      <div style={{
+        fontFamily:    "var(--mono)",
+        fontSize:      "0.65rem",
+        letterSpacing: "0.2em",
+        textTransform: "uppercase",
+        color:         "var(--accent)",
+        marginBottom:  "0.6rem",
+      }}>
+        The Rate Guide
+      </div>
+
+      <h2 style={{
+        fontFamily:  "var(--mono)",
+        fontSize:    "clamp(1.2rem, 3vw, 1.6rem)",
+        lineHeight:  1.2,
+        color:       "var(--text)",
+        margin:      "0 0 0.75rem",
+      }}>
+        The Freelancer&apos;s Contract Pack
+      </h2>
+
+      <p style={{
+        fontFamily: "var(--serif)",
+        fontSize:   "0.9rem",
+        color:      "var(--text-dim)",
+        lineHeight: 1.75,
+        margin:     "0 0 1.5rem",
+        maxWidth:   "540px",
+      }}>
+        Five production-industry documents: services agreement, quote sheet, change order, invoice, and email templates.
+        Every clause annotated with what it protects you from.
+        Written for cinematographers, editors, colorists, motion designers, and producers.
+      </p>
+
+      <div style={{
+        display:     "flex",
+        gap:         "2.5rem",
+        alignItems:  "center",
+        flexWrap:    "wrap",
+      }}>
+        <div style={{
+          fontFamily: "var(--mono)",
+          fontSize:   "1.75rem",
+          fontWeight: "bold",
+          color:      "var(--text)",
+        }}>
+          $9.99
+        </div>
+
+        <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+          {["Services Agreement", "Quote Sheet", "Change Order", "Invoice", "5 Email Templates"].map((item) => (
+            <div key={item} style={{
+              fontFamily:    "var(--mono)",
+              fontSize:      "0.65rem",
+              color:         "var(--text-dim)",
+              letterSpacing: "0.05em",
+            }}>
+              &#x2192; {item}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{
+        marginTop:     "1.5rem",
+        fontFamily:    "var(--mono)",
+        fontSize:      "0.72rem",
+        letterSpacing: "0.15em",
+        textTransform: "uppercase",
+        color:         "var(--accent)",
+        fontWeight:    "bold",
+      }}>
+        See what&apos;s included →
+      </div>
+    </a>
+  );
+}
+
+// ==============================================
 // PAGE
 // ==============================================
 export default function StorePage() {
@@ -458,6 +572,26 @@ export default function StorePage() {
         <p style={{ fontFamily: "var(--serif)", color: "var(--text-dim)", fontSize: "1rem", marginTop: "0.75rem", lineHeight: 1.75, maxWidth: "560px" }}>
           Everything here is hand-picked. Some links are affiliate links — I earn a small commission if you buy, at no extra cost to you. I only list things I&apos;d recommend to a working professional.
         </p>
+      </div>
+
+      {/* Original Products — The Rate Guide's own */}
+      <div style={{ marginBottom: "4.5rem" }}>
+        <div style={{
+          borderTop:    "2px solid var(--accent)",
+          paddingTop:   "2rem",
+          marginBottom: "1.5rem",
+        }}>
+          <div style={{
+            fontFamily:    "var(--mono)",
+            fontSize:      "0.65rem",
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color:         "var(--accent)",
+          }}>
+            Made by The Rate Guide
+          </div>
+        </div>
+        <OriginalProductCard />
       </div>
 
       {/* Categories */}
