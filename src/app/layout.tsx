@@ -149,6 +149,21 @@ function Nav() {
             {label}
           </a>
         ))}
+        {/* Discord community link — replace href with real invite URL */}
+        <a href="#" style={{
+          fontFamily:     "var(--mono)",
+          fontSize:       "0.68rem",
+          letterSpacing:  "0.12em",
+          textTransform:  "uppercase",
+          color:          "var(--accent)",
+          textDecoration: "none",
+          border:         "1px solid var(--accent)",
+          padding:        "0.35rem 0.75rem",
+          borderRadius:   "3px",
+          whiteSpace:     "nowrap",
+        }}>
+          Community ↗
+        </a>
         <NavAuthLink />
       </div>
     </nav>
