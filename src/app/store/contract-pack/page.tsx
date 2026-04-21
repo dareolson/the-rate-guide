@@ -24,6 +24,18 @@ export const metadata: Metadata = {
 
 const DOCUMENTS = [
   {
+    number: "00",
+    title:  "The Plain English Guide",
+    desc:   "Read this first. A plain-language walkthrough of all five documents — what each one is, when you use it with a client, what the terms mean, and why they matter. Written at a level that assumes you've never used a contract before. About 10 pages. No legal jargon.",
+    clauses: [
+      "What a kill fee is and why every working freelancer needs one",
+      "The difference between a quote and a contract",
+      "How getting paid actually works at a production company",
+      "What \"Net 30\" means and why it matters for your cash flow",
+      "The one question to ask every corporate client before you invoice",
+    ],
+  },
+  {
     number: "01",
     title:  "Freelance Services Agreement",
     desc:   "The full contract. Covers scope, payment, kill fees, IP ownership, reel rights, indie contractor status, indemnification, and change orders. Every major clause annotated with what it protects you from.",
@@ -281,9 +293,9 @@ export default function ContractPackPage() {
           margin:     "0 0 2rem",
           maxWidth:   "580px",
         }}>
-          Five production-industry documents you can use on the next job.
-          Every clause is annotated with what it protects you from and a decision note
-          for the choices that matter. Not generic legal boilerplate. Built for cinematographers,
+          Five production-industry contract templates plus a plain English guide that
+          explains every document, every term, and when to use each one with a client.
+          Every clause annotated with what it protects you from. Built for cinematographers,
           editors, colorists, motion designers, and producers.
         </p>
 
@@ -315,7 +327,7 @@ export default function ContractPackPage() {
               color:      "var(--text-dim)",
               marginTop:  "0.3rem",
             }}>
-              5 documents. Instant download. Yours forever.
+              6 documents. Instant download. Yours forever.
             </div>
           </div>
 
@@ -379,9 +391,9 @@ export default function ContractPackPage() {
             margin:     0,
             maxWidth:   "560px",
           }}>
-            Five documents that cover the full lifecycle of a freelance project — from the first quote to
-            the last invoice. Each one has bracketed decision notes so you know which option fits your
-            situation, and annotations on every major clause explaining exactly what it protects you from.
+            Six documents. Start with the Plain English Guide — it explains every term and every situation
+            in language that assumes you have never used a contract before. Then use the five templates on
+            your actual jobs. Each template has bracketed decision notes and annotations on every major clause.
           </p>
         </div>
 

@@ -505,9 +505,8 @@ function OriginalProductCard() {
         margin:     "0 0 1.5rem",
         maxWidth:   "540px",
       }}>
-        Five production-industry documents: services agreement, quote sheet, change order, invoice, and email templates.
-        Every clause annotated with what it protects you from.
-        Written for cinematographers, editors, colorists, motion designers, and producers.
+        Six documents: five production contract templates plus a plain English guide that explains every term and every situation — written for freelancers who have never used a contract before.
+        Every clause annotated. Built for cinematographers, editors, colorists, motion designers, and producers.
       </p>
 
       <div style={{
@@ -526,7 +525,7 @@ function OriginalProductCard() {
         </div>
 
         <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
-          {["Services Agreement", "Quote Sheet", "Change Order", "Invoice", "5 Email Templates"].map((item) => (
+          {["Plain English Guide", "Services Agreement", "Quote Sheet", "Change Order", "Invoice", "Email Templates"].map((item) => (
             <div key={item} style={{
               fontFamily:    "var(--mono)",
               fontSize:      "0.65rem",
