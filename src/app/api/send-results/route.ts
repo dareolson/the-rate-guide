@@ -147,9 +147,27 @@ function buildEmail({
             </td>
           </tr>
 
+          <!-- Contract Pack soft sell -->
+          <tr>
+            <td style="padding-top:32px;border-top:1px solid #413925;">
+              <p style="margin:0 0 8px;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#f2ede5;">
+                Now protect that rate
+              </p>
+              <p style="margin:0 0 12px;font-size:13px;color:#a8a097;line-height:1.6;">
+                The Freelancer's Contract Pack has everything you need to actually charge what you're worth — a services agreement, quote sheet, change order, invoice template, and five email scripts for the conversations most freelancers avoid.
+              </p>
+              <a href="https://daredevil484.gumroad.com/l/therateguidecontractpack" style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#d4920a;text-decoration:none;">
+                Get the Contract Pack — $9.99 →
+              </a>
+            </td>
+          </tr>
+
+          <!-- Spacer -->
+          <tr><td style="height:32px;"></td></tr>
+
           <!-- Footer -->
           <tr>
-            <td style="padding-top:32px;">
+            <td style="border-top:1px solid #413925;padding-top:24px;">
               <p style="margin:0;font-size:11px;color:#413925;line-height:1.6;">
                 You're receiving this because you entered your email at therateguide.com.<br/>
                 <a href="https://therateguide.com" style="color:#413925;">Unsubscribe</a>
