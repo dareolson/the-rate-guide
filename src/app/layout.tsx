@@ -3,6 +3,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"; // page view + event tracking
 import { JetBrains_Mono, Lora, Inter } from "next/font/google";
 import NavAuthLink from "@/components/NavAuthLink";
+import Script from "next/script";
 
 // Load fonts via next/font — self-hosted, zero layout shift, no external requests
 const jetbrainsMono = JetBrains_Mono({
@@ -181,6 +182,7 @@ export default function RootLayout({
         <Nav />
         {children}
         <Analytics /> {/* Vercel Analytics — tracks page views automatically */}
+        <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />
       </body>
     </html>
   );

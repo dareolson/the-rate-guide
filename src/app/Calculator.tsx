@@ -820,50 +820,88 @@ function GapAnalysis({ results, inputs }: { results: CalcResults; inputs: CalcIn
 // Shown after the rate card. Offer: "save your results."
 // Captures email + rate data to Supabase for follow-up.
 // ==============================================
-function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; inputs: CalcInputs; currentRate: number | null }) {
-  const [email,     setEmail]     = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading,   setLoading]   = useState(false);
-  const [error,     setError]     = useState<string | null>(null);
+// Turnstile global type — loaded via <Script> in layout.tsx
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (el: HTMLElement, opts: Record<string, unknown>) => string;
+      reset:  (id: string) => void;
+      remove: (id: string) => void;
+    };
+  }
+}
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; inputs: CalcInputs; currentRate: number | null }) {
+  const [email,          setEmail]          = useState("");
+  const [submitted,      setSubmitted]      = useState(false);
+  const [loading,        setLoading]        = useState(false);
+  const [error,          setError]          = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetId     = useRef<string | null>(null);
+
+  useEffect(() => {
+    const render = () => {
+      if (!window.turnstile || !turnstileRef.current || widgetId.current) return;
+      widgetId.current = window.turnstile.render(turnstileRef.current, {
+        sitekey:     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "",
+        appearance:  "interaction-only", // invisible unless challenge needed
+        callback:    (token: string) => setTurnstileToken(token),
+        "expired-callback": () => setTurnstileToken(null),
+        "error-callback":   () => setTurnstileToken(null),
+      });
+    };
+
+    if (window.turnstile) {
+      render();
+    } else {
+      const interval = setInterval(() => {
+        if (window.turnstile) { clearInterval(interval); render(); }
+      }, 100);
+      return () => clearInterval(interval);
+    }
+
+    return () => {
+      if (widgetId.current && window.turnstile) {
+        window.turnstile.remove(widgetId.current);
+        widgetId.current = null;
+      }
+    };
+  }, []);
+
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !turnstileToken) return;
     setLoading(true);
     setError(null);
 
     try {
-      const supabase = createClient();
-      const { error: dbError } = await supabase.from("email_captures").insert({
-        email,
-        discipline:    inputs.discipline,
-        experience:    inputs.experience,
-        location:      inputs.location,
-        day_rate:      Math.round(results.dayRate + results.kitFee),
-        current_rate:  currentRate ?? null,
-        take_home:     inputs.takeHome,
-        billable_days: inputs.billableDays,
-      });
-      if (dbError) throw dbError;
-      track("email_capture", { discipline: inputs.discipline, experience: inputs.experience });
-
-      // Send rate breakdown email — fire and forget, never block on failure
-      fetch("/api/send-results", {
+      const res = await fetch("/api/send-results", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({
           email,
-          discipline:  inputs.discipline,
-          experience:  inputs.experience,
-          location:    inputs.location,
-          dayRate:     Math.round(results.dayRate + results.kitFee),
-          currentRate: currentRate ?? null,
+          discipline:     inputs.discipline,
+          experience:     inputs.experience,
+          location:       inputs.location,
+          dayRate:        Math.round(results.dayRate + results.kitFee),
+          currentRate:    currentRate ?? null,
+          takeHome:       inputs.takeHome    ?? null,
+          billableDays:   inputs.billableDays ?? null,
+          turnstileToken,
         }),
-      }).catch(() => {}); // silent — email is best-effort
+      });
 
+      if (!res.ok) throw new Error("Request failed");
+      track("email_capture", { discipline: inputs.discipline, experience: inputs.experience });
       setSubmitted(true);
     } catch {
       setError("Something went wrong. Try again.");
+      // Reset Turnstile so user can retry
+      if (widgetId.current && window.turnstile) {
+        window.turnstile.reset(widgetId.current);
+        setTurnstileToken(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -912,7 +950,7 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
         />
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !turnstileToken}
           style={{
             background:    "var(--accent)",
             color:         "#000",
@@ -925,13 +963,15 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
             padding:       "0.65rem 1.25rem",
             cursor:        "pointer",
             fontWeight:    "bold",
-            opacity:       loading ? 0.6 : 1,
+            opacity:       loading || !turnstileToken ? 0.6 : 1,
             whiteSpace:    "nowrap",
           }}
         >
           {loading ? "..." : "Send It"}
         </button>
       </form>
+      {/* Turnstile widget — invisible unless a challenge is needed */}
+      <div ref={turnstileRef} style={{ marginTop: "0.5rem" }} />
 
       {error && (
         <div style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "var(--danger)" }}>{error}</div>

@@ -11,6 +11,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { createClient } from "@/lib/supabase/server";
 
 // Lazily initialized — Resend throws at construction time if key is missing
 let resend: Resend | null = null;
@@ -205,31 +206,48 @@ function isRateLimited(ip: string): boolean {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function isValidPayload(body: unknown): body is {
-  email: string;
-  discipline: string;
-  experience: string;
-  location: string;
-  dayRate: number;
-  currentRate: number | null;
+  email:        string;
+  discipline:   string;
+  experience:   string;
+  location:     string;
+  dayRate:      number;
+  currentRate:  number | null;
+  takeHome:     number | null;
+  billableDays: number | null;
+  turnstileToken: string;
 } {
   if (!body || typeof body !== "object") return false;
   const b = body as Record<string, unknown>;
   return (
-    typeof b.email === "string" && EMAIL_RE.test(b.email) &&
-    typeof b.discipline === "string" && b.discipline.length > 0 &&
-    typeof b.experience === "string" && b.experience.length > 0 &&
-    typeof b.location === "string" && b.location.length > 0 &&
-    typeof b.dayRate === "number" && b.dayRate > 0 && b.dayRate < 100_000 &&
-    (b.currentRate === null || (typeof b.currentRate === "number" && b.currentRate >= 0))
+    typeof b.email          === "string"  && EMAIL_RE.test(b.email) &&
+    typeof b.discipline     === "string"  && b.discipline.length > 0 &&
+    typeof b.experience     === "string"  && b.experience.length > 0 &&
+    typeof b.location       === "string"  && b.location.length > 0 &&
+    typeof b.dayRate        === "number"  && b.dayRate > 0 && b.dayRate < 100_000 &&
+    typeof b.turnstileToken === "string"  && b.turnstileToken.length > 0 &&
+    (b.currentRate  === null || (typeof b.currentRate  === "number" && b.currentRate  >= 0)) &&
+    (b.takeHome     === null || (typeof b.takeHome     === "number" && b.takeHome     >= 0)) &&
+    (b.billableDays === null || (typeof b.billableDays === "number" && b.billableDays >= 0))
   );
 }
 
-export async function POST(request: NextRequest) {
-  // Silently succeed if key isn't configured — never block the UI
-  if (!process.env.RESEND_API_KEY) {
-    return NextResponse.json({ ok: true });
+async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
+  // Skip verification if secret key isn't configured (local dev without Turnstile set up)
+  if (!process.env.TURNSTILE_SECRET_KEY) return true;
+  try {
+    const res  = await fetch("https://challenges.cloudflare.com/turnstile/v1/siteverify", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ secret: process.env.TURNSTILE_SECRET_KEY, response: token, remoteip: ip }),
+    });
+    const data = await res.json() as { success: boolean };
+    return data.success === true;
+  } catch {
+    return false;
   }
+}
 
+export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
   if (isRateLimited(ip)) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
@@ -246,7 +264,35 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const { email, discipline, experience, location, dayRate, currentRate } = body;
+  const { email, discipline, experience, location, dayRate, currentRate, takeHome, billableDays, turnstileToken } = body;
+
+  // Verify Turnstile token before doing anything
+  const isHuman = await verifyTurnstile(turnstileToken, ip);
+  if (!isHuman) {
+    return NextResponse.json({ error: "Bot check failed" }, { status: 403 });
+  }
+
+  // Insert to email_captures server-side — rate limiting and Turnstile already passed
+  try {
+    const supabase = await createClient();
+    await supabase.from("email_captures").insert({
+      email,
+      discipline,
+      experience,
+      location,
+      day_rate:      Math.round(dayRate),
+      current_rate:  currentRate ?? null,
+      take_home:     takeHome    ?? null,
+      billable_days: billableDays ?? null,
+    });
+  } catch {
+    // DB insert failure is non-fatal — still send the email
+  }
+
+  // Silently succeed if Resend key isn't configured — never block the UI
+  if (!process.env.RESEND_API_KEY) {
+    return NextResponse.json({ ok: true });
+  }
 
   try {
     await getResend().emails.send({
@@ -258,7 +304,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    // Log in dev, fail silently in prod — email is best-effort
     if (process.env.NODE_ENV === "development") {
       console.error("[send-results]", err);
     }
