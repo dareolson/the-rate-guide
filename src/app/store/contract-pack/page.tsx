@@ -234,10 +234,7 @@ function ValueCard({ stat, label, desc }: typeof WORTH_IT[0]) {
 // ==============================================
 
 export default function ContractPackPage() {
-  // Replace this URL with the actual Gumroad product URL when listed
-  // Restore both buttons to use this URL once the Gumroad product is live
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const GUMROAD_URL = "https://daredevil484.gumroad.com/l/ktqssh";
+  const GUMROAD_URL = "https://daredevil484.gumroad.com/l/therateguidecontractpack";
 
   return (
     <div style={{ maxWidth: "760px", margin: "0 auto", padding: "5rem 1.5rem 6rem" }}>
@@ -334,10 +331,12 @@ export default function ContractPackPage() {
             </div>
           </div>
 
-          <div
+          <a
+            href={GUMROAD_URL}
             style={{
-              background:    "var(--surface)",
-              color:         "var(--text-dim)",
+              display:       "inline-block",
+              background:    "var(--accent)",
+              color:         "#000",
               fontFamily:    "var(--mono)",
               fontSize:      "0.8rem",
               letterSpacing: "0.2em",
@@ -346,11 +345,11 @@ export default function ContractPackPage() {
               fontWeight:    "bold",
               whiteSpace:    "nowrap",
               borderRadius:  "4px",
-              border:        "1px solid var(--border)",
+              textDecoration: "none",
             }}
           >
-            Coming Soon
-          </div>
+            Buy Now — $9.99
+          </a>
         </div>
 
         {/* Trust line */}
@@ -621,11 +620,12 @@ export default function ContractPackPage() {
           Start running a business.
         </div>
 
-        <div
+        <a
+          href={GUMROAD_URL}
           style={{
             display:       "inline-block",
-            background:    "var(--surface)",
-            color:         "var(--text-dim)",
+            background:    "var(--accent)",
+            color:         "#000",
             fontFamily:    "var(--mono)",
             fontSize:      "0.8rem",
             letterSpacing: "0.2em",
@@ -633,11 +633,11 @@ export default function ContractPackPage() {
             padding:       "1rem 2.5rem",
             fontWeight:    "bold",
             borderRadius:  "4px",
-            border:        "1px solid var(--border)",
+            textDecoration: "none",
           }}
         >
-          Coming Soon — $9.99
-        </div>
+          Buy Now — $9.99
+        </a>
 
         <p style={{
           fontFamily:  "var(--mono)",
