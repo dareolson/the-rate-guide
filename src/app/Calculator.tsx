@@ -836,11 +836,13 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
       const supabase = createClient();
       const { error: dbError } = await supabase.from("email_captures").insert({
         email,
-        discipline: inputs.discipline,
-        experience: inputs.experience,
-        location:   inputs.location,
+        discipline:    inputs.discipline,
+        experience:    inputs.experience,
+        location:      inputs.location,
         day_rate:      Math.round(results.dayRate + results.kitFee),
         current_rate:  currentRate ?? null,
+        take_home:     inputs.takeHome,
+        billable_days: inputs.billableDays,
       });
       if (dbError) throw dbError;
       track("email_capture", { discipline: inputs.discipline, experience: inputs.experience });
