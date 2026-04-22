@@ -36,8 +36,8 @@ const GUIDES = [
       "Rate ranges by experience level, production type, and market — drawn from IATSE Local 600 rate cards, No Film School's 2,000-respondent survey, and working DP rate sheets.",
     readTime:   "8 min",
     calcUrl:    "/?d=Cinematographer+%2F+DP",
-    image:      "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&q=80&auto=format&fit=crop",
-    imageAlt:   "Cinematographer on set",
+    image:      "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=1200&q=80&auto=format&fit=crop",
+    imageAlt:   "Cinematographer shooting on location",
     ratePreview: [
       { label: "Emerging", range: "$300–$600" },
       { label: "Mid",      range: "$800–$1,500" },
@@ -70,8 +70,8 @@ const GUIDES = [
       "Rates by experience level, production type, and market — with IATSE Local 700 union minimums, the DaVinci Resolve ownership factor, and the revision trap that quietly kills colorist margins.",
     readTime:   "9 min",
     calcUrl:    "/?d=Colorist",
-    image:      "https://images.unsplash.com/photo-1536240478700-b869ad10e128?w=1200&q=80&auto=format&fit=crop",
-    imageAlt:   "Color grading monitors in a post-production suite",
+    image:      "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1200&q=80&auto=format&fit=crop",
+    imageAlt:   "Color grading in a dark post-production suite",
     ratePreview: [
       { label: "Emerging", range: "$300–$500" },
       { label: "Mid",      range: "$500–$900" },
@@ -105,8 +105,8 @@ const GUIDES = [
       "Day rates for freelance producers — line producers, field producers, and executive producers. Budget tier, project type, and when a percentage deal makes more sense than a day rate.",
     readTime:    "9 min",
     calcUrl:     "/?d=Producer",
-    image:       "https://images.unsplash.com/photo-1559523161-0fc0d8b814f4?w=1200&q=80&auto=format&fit=crop",
-    imageAlt:    "Producer on a film set",
+    image:       "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&q=80&auto=format&fit=crop",
+    imageAlt:    "Film clapperboard on set",
     comingSoon:  true,
     ratePreview: [
       { label: "Emerging", range: "$400–$650" },

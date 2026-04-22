@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     url: "https://therateguide.com/colorist-day-rate",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1536240478700-b869ad10e128?w=1200&q=80&auto=format&fit=crop",
+        url: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1200&q=80&auto=format&fit=crop",
         width: 1200,
         height: 630,
         alt: "Color grading monitors in a post-production suite",
@@ -240,7 +240,7 @@ export default function ColoristDayRatePage() {
       {/* Hero Image */}
       <div style={{ position: "relative", width: "100%", aspectRatio: "16/7", borderRadius: "6px", overflow: "hidden", marginBottom: "3rem" }}>
         <Image
-          src="https://images.unsplash.com/photo-1536240478700-b869ad10e128?w=1200&q=80&auto=format&fit=crop"
+          src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1200&q=80&auto=format&fit=crop"
           alt="Color grading monitors in a post-production suite"
           fill
           style={{ objectFit: "cover", objectPosition: "center" }}
