@@ -170,7 +170,7 @@ function buildEmail({
             <td style="border-top:1px solid #413925;padding-top:24px;">
               <p style="margin:0;font-size:11px;color:#413925;line-height:1.6;">
                 You're receiving this because you entered your email at therateguide.com.<br/>
-                <a href="https://therateguide.com" style="color:#413925;">Unsubscribe</a>
+                <a href="mailto:hello@therateguide.com?subject=Unsubscribe" style="color:#413925;">Unsubscribe</a>
               </p>
             </td>
           </tr>
@@ -183,18 +183,70 @@ function buildEmail({
 </html>`;
 }
 
+// Basic rate limiting — module-level Map, resets on cold start.
+// Good enough to limit casual abuse within a single serverless instance.
+// For real cross-instance rate limiting, replace with Upstash Redis + @upstash/ratelimit.
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX       = 5;      // requests per IP per window
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now  = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return true;
+  entry.count++;
+  return false;
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function isValidPayload(body: unknown): body is {
+  email: string;
+  discipline: string;
+  experience: string;
+  location: string;
+  dayRate: number;
+  currentRate: number | null;
+} {
+  if (!body || typeof body !== "object") return false;
+  const b = body as Record<string, unknown>;
+  return (
+    typeof b.email === "string" && EMAIL_RE.test(b.email) &&
+    typeof b.discipline === "string" && b.discipline.length > 0 &&
+    typeof b.experience === "string" && b.experience.length > 0 &&
+    typeof b.location === "string" && b.location.length > 0 &&
+    typeof b.dayRate === "number" && b.dayRate > 0 && b.dayRate < 100_000 &&
+    (b.currentRate === null || (typeof b.currentRate === "number" && b.currentRate >= 0))
+  );
+}
+
 export async function POST(request: NextRequest) {
   // Silently succeed if key isn't configured — never block the UI
   if (!process.env.RESEND_API_KEY) {
     return NextResponse.json({ ok: true });
   }
 
-  const { email, discipline, experience, location, dayRate, currentRate } =
-    await request.json();
-
-  if (!email || !dayRate) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  if (!isValidPayload(body)) {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+
+  const { email, discipline, experience, location, dayRate, currentRate } = body;
 
   try {
     await getResend().emails.send({
