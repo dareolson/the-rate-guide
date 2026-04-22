@@ -61,19 +61,36 @@ Use this to onboard Claude in a new session, replicate patterns in future projec
 ```
 src/
   app/
-    page.tsx               — Server component. Renders JSON-LD structured data + <Suspense><Calculator /></Suspense>
-    Calculator.tsx         — "use client". All interactive logic. ~2100 lines.
+    page.tsx                         — Server component. JSON-LD schemas + <Suspense><Calculator /></Suspense>
+    Calculator.tsx                   — "use client". All interactive logic. ~2100 lines.
+    layout.tsx                       — Global nav (sticky, frosted glass), Analytics, font loading
     methodology/
-      page.tsx             — Static page. SEO metadata + full formula explainer.
+      page.tsx                       — Static page. SEO metadata + full formula explainer.
+    guides/
+      page.tsx                       — Rate Guides index. GUIDES array + FeaturedCard + GridCard. comingSoon flag.
+    cinematographer-day-rate/
+      page.tsx                       — SEO post. IATSE Local 600, No Film School data, 4 React charts.
+    video-editor-day-rate/
+      page.tsx                       — SEO post. Cutjamm 2025, IATSE Local 700, 4 React charts.
+    colorist-day-rate/
+      page.tsx                       — SEO post. IATSE Local 700, Mixing Light survey, DC Color rate card.
+    store/
+      page.tsx                       — Store index. Contract pack featured card.
+      contract-pack/
+        page.tsx                     — Product page. $9.99. Buy buttons disabled until Gumroad is live.
     api/
       health-insurance/
-        route.ts           — GET /api/health-insurance?zip=XXXXX → Silver plan avg premium
+        route.ts                     — GET /api/health-insurance?zip=XXXXX → Silver plan avg premium
       send-results/
-        route.ts           — POST /api/send-results → Resend email with calc results
+        route.ts                     — POST /api/send-results → Resend dark HTML email with calc results
+  components/
+    NavAuthLink.tsx                  — Auth-aware nav link (sign in / dashboard)
   lib/
-    calculator.ts          — All math, constants, discipline data, types
+    calculator.ts                    — All math, constants, discipline data, types
     supabase/
-      client.ts            — Supabase browser client
+      client.ts                      — Supabase browser client
+documents/
+  contract-pack/                     — 6 .md + 6 .pdf files — upload to Gumroad to sell
 ```
 
 ### Server vs Client Split
@@ -235,6 +252,55 @@ Location multipliers: Major Market 1.3x, Mid Market 1.0x, Small Market 0.85x.
 **Content strategy note:**
 Both posts follow the same template: hero image + eyebrow + H1 + intro with data hook + TOC + sections with H2/H3 + inline React charts + callout blocks + CTA box + sources. Reuse this pattern for every new discipline post.
 
+### 2026-04-20 / 2026-04-21
+
+**Features added:**
+- `/colorist-day-rate` — SEO blog post, written by Derek at home
+  - Data: IATSE Local 700, Mixing Light pay transparency survey, colorbox.net, dayrates.org, DC Color rate card
+  - CTA links to calculator pre-filled with `?d=Colorist`
+- `/guides` — Rate Guides index page
+  - GUIDES array with `comingSoon?: boolean` field on Guide type
+  - 8 entries: 3 live (Cinematographer, Video Editor, Colorist), 5 coming-soon (Motion Designer, Producer, Camera Operator, Sound Mixer, Gaffer)
+  - FeaturedCard + GridCard components — both handle comingSoon: dimmed, non-clickable, "Coming Soon" badge
+  - To activate a card when a post is ready: remove `comingSoon: true` from the GUIDES entry
+  - Nav link updated from `/cinematographer-day-rate` to `/guides`
+- `/store/contract-pack` — Freelancer's Contract Pack product page
+  - Price: $9.99
+  - Gumroad URL preserved as `GUMROAD_URL` constant: `"https://daredevil484.gumroad.com/l/ktqssh"`
+  - Buy buttons currently disabled — replaced with "Coming Soon" divs until product is uploaded to Gumroad
+  - To re-enable: swap both Coming Soon divs back to `<a>` tags pointing at `GUMROAD_URL`
+- `/store` — Featured contract pack with gold border + "Original" badge; links to /store/contract-pack
+- Community nav button — gold outlined button added to global nav (layout.tsx)
+  - `href="#"` placeholder — wire up real Discord invite URL when ready
+  - Styled: accent color, 1px accent border, mono font, uppercase, borderRadius 3px
+
+**Copy changes:**
+- Removed "actually" from all store copy (/store and /store/contract-pack)
+
+**Email / DNS:**
+- Resend fully verified and working as of 2026-04-21
+- Resend requires SPF record on `send` subdomain (host=`send`, not `@`)
+- Resend requires MX record on `send` subdomain — must be added via Namecheap Advanced DNS tab (not Mail Settings, which only handles root domain)
+- MX priority value: `10`
+
+**Email capture discovery:**
+- EmailCapture component already fully built in Calculator.tsx (line ~823)
+- Already rendered in results panel (line ~1126): `<EmailCapture results={results} inputs={inputs} currentRate={currentRate} />`
+- Inserts to Supabase `email_captures` table (email, discipline, experience, location, day_rate, current_rate)
+- Fires `/api/send-results` as fire-and-forget after insert
+- Shows success state "Check your inbox"
+- Tracks with Vercel Analytics `track("email_capture", ...)`
+- `email_captures` table defined in `supabase-schema.sql` — verify it exists in Supabase dashboard before testing
+
+**Contract pack documents (in `documents/contract-pack/`):**
+- `00-plain-english-guide.md`
+- `01-freelance-services-agreement.md`
+- `02-project-quote-sheet.md`
+- `03-change-order-form.md`
+- `04-invoice-template.md`
+- `05-email-templates.md`
+- All 6 docs have PDF counterparts — upload to Gumroad when ready to sell
+
 ---
 
 ---
@@ -270,19 +336,23 @@ Both posts follow the same template: hero image + eyebrow + H1 + intro with data
 
 Priority order based on impact:
 
-1. **More rate guide posts** — colorist, motion designer, producer, gaffer, sound mixer. Each is a standalone SEO page. Same research + write pattern. I can do these one at a time, no input needed from Derek.
+1. **Motion designer rate guide** — next post in the discipline hierarchy. Same research + write pattern as cinematographer/editor/colorist posts. No input needed from Derek.
 
-2. **Rate Guides index page** (`/guides`) — once 3+ posts exist, a landing page listing all posts with discipline thumbnails. Nav link points there instead of directly to one post.
+2. **Wire Discord invite URL** — Community nav button in layout.tsx has `href="#"` placeholder. Replace with real Discord invite link when ready.
 
-3. **Email capture** — "Email me my results" opt-in with list-building prompt. Users who calculate are self-identified freelancers. List feeds future product launches (Clientward, etc.).
+3. **Enable Gumroad buy buttons** — Upload contract pack files to Gumroad, configure payment, then swap both Coming Soon divs back to `<a>` tags in `/store/contract-pack/page.tsx`. GUMROAD_URL constant is already set.
 
-4. **Supabase dashboard** — Read `calc_events` table to see which disciplines are most popular, what take-home goals people enter, whether users hit the Calculate button. Data should inform what to build next.
+4. **Verify `email_captures` table in Supabase** — Check Supabase dashboard > Table Editor. If missing, run the CREATE TABLE block from supabase-schema.sql in the SQL Editor.
 
-5. **More disciplines** — Writers, photographers, web designers, brand strategists all search for rate calculators. Expanding the discipline list widens SEO surface.
+5. **More rate guide posts** — producer, gaffer, sound mixer, camera operator. Each is a standalone SEO page. Same pattern. Cards in /guides already exist as coming-soon — remove `comingSoon: true` to activate each one.
 
-6. **Mobile audit** — Radio button groups and number inputs on small screens need a real look. Most organic search traffic lands on mobile first.
+6. **Supabase dashboard** — Read `calc_events` table to see which disciplines are most popular, what take-home goals people enter, whether users hit the Calculate button. Data should inform what to build next.
 
-7. **Share your rate card** — Client-facing URL (`?client=1`) exists but there's no obvious "share this" prompt after calculating. A visible copy-link button in the results panel would increase return visits and word-of-mouth.
+7. **More disciplines** — Writers, photographers, web designers, brand strategists all search for rate calculators. Expanding the discipline list widens SEO surface.
+
+8. **Mobile audit** — Radio button groups and number inputs on small screens need a real look. Most organic search traffic lands on mobile first.
+
+9. **Share your rate card** — Client-facing URL (`?client=1`) exists but there's no obvious "share this" prompt after calculating. A visible copy-link button in the results panel would increase return visits and word-of-mouth.
 
 ---
 
