@@ -1186,32 +1186,50 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
 
       <Survey inputs={inputs} />
 
-      {/* Store CTA — contract pack */}
+      {/* Store CTA — contract pack + books */}
       <div style={{ marginTop: "3.5rem", borderTop: "2px solid var(--accent-2)", paddingTop: "2rem", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
         <div className="eyebrow" style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)" }}>
           Now that you know your number
         </div>
         <p style={{ fontFamily: "var(--sans)", fontSize: "0.9rem", color: "var(--text-mid)", lineHeight: 1.75, margin: 0 }}>
-          Charging it is the next step. The Freelancer&rsquo;s Contract Pack has the paperwork to back it up — a services agreement, quote sheet, change order, invoice template, and email scripts for the conversations most freelancers avoid.
+          Charging it is the next step. The Freelancer&rsquo;s Contract Pack has the paperwork to back it up — a services agreement, quote sheet, change order, invoice template, and email scripts for the conversations most freelancers avoid. The store also has books to get your head right before the rate conversation happens.
         </p>
-        <a
-          href="/store/contract-pack"
-          style={{
-            display:        "inline-block",
-            marginTop:      "0.5rem",
-            fontFamily:     "var(--mono)",
-            fontSize:       "0.78rem",
-            letterSpacing:  "0.15em",
-            textTransform:  "uppercase",
-            color:          "var(--accent)",
-            textDecoration: "none",
-            borderBottom:   "1px solid var(--accent)",
-            paddingBottom:  "2px",
-            alignSelf:      "flex-start",
-          }}
-        >
-          Get the Contract Pack — $9.99 →
-        </a>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.5rem" }}>
+          <a
+            href="/store/contract-pack"
+            style={{
+              display:        "inline-block",
+              fontFamily:     "var(--mono)",
+              fontSize:       "0.78rem",
+              letterSpacing:  "0.15em",
+              textTransform:  "uppercase",
+              color:          "var(--accent)",
+              textDecoration: "none",
+              borderBottom:   "1px solid var(--accent)",
+              paddingBottom:  "2px",
+              alignSelf:      "flex-start",
+            }}
+          >
+            Get the Contract Pack — $9.99 →
+          </a>
+          <a
+            href="/store"
+            style={{
+              display:        "inline-block",
+              fontFamily:     "var(--mono)",
+              fontSize:       "0.78rem",
+              letterSpacing:  "0.15em",
+              textTransform:  "uppercase",
+              color:          "var(--text-mid)",
+              textDecoration: "none",
+              borderBottom:   "1px solid var(--text-mid)",
+              paddingBottom:  "2px",
+              alignSelf:      "flex-start",
+            }}
+          >
+            Browse the store →
+          </a>
+        </div>
       </div>
 
       {/* Start Over — clears all URL params and results */}
