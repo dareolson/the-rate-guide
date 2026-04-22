@@ -1186,16 +1186,16 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
 
       <Survey inputs={inputs} />
 
-      {/* Store CTA — negotiation books and resources */}
+      {/* Store CTA — contract pack */}
       <div style={{ marginTop: "3.5rem", borderTop: "2px solid var(--accent-2)", paddingTop: "2rem", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
         <div className="eyebrow" style={{ fontFamily: "var(--mono)", fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)" }}>
           Now that you know your number
         </div>
         <p style={{ fontFamily: "var(--sans)", fontSize: "0.9rem", color: "var(--text-mid)", lineHeight: 1.75, margin: 0 }}>
-          Knowing your number is one thing. Saying it and holding it when someone pushes back is another. These books help.
+          Charging it is the next step. The Freelancer&rsquo;s Contract Pack has the paperwork to back it up — a services agreement, quote sheet, change order, invoice template, and email scripts for the conversations most freelancers avoid.
         </p>
         <a
-          href="/store"
+          href="/store/contract-pack"
           style={{
             display:        "inline-block",
             marginTop:      "0.5rem",
@@ -1210,7 +1210,7 @@ function Results({ results, inputs, currentRate, zipCounty }: { results: CalcRes
             alignSelf:      "flex-start",
           }}
         >
-          Browse negotiation resources →
+          Get the Contract Pack — $9.99 →
         </a>
       </div>
 
