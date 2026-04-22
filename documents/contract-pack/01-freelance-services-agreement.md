@@ -64,13 +64,13 @@ Examples:
 `[DECISION: Choose your billing model and delete the others.]`
 
 **Option A — Day Rate**
-Contractor's day rate is **$`[Amount]` per 10-hour day**. Days exceeding 10 hours will be billed at **$`[Amount]`/hour** (1/10th of the day rate) in one-hour increments.
+Contractor's day rate is **\$`[Amount]` per 10-hour day**. Days exceeding 10 hours will be billed at **\$`[Amount]`/hour** (1/10th of the day rate) in one-hour increments.
 
 **Option B — Project Rate**
-Total project compensation is **$`[Amount]`**, inclusive of all deliverables described in Section 1. Revisions beyond those specified in Section 7 will be billed at Contractor's hourly rate of **$`[Amount]`/hour**.
+Total project compensation is **\$`[Amount]`**, inclusive of all deliverables described in Section 1. Revisions beyond those specified in Section 7 will be billed at Contractor's hourly rate of **\$`[Amount]`/hour**.
 
 **Option C — Combination**
-`[Number]` shoot days at **$`[Amount]`/day** (day rate) plus **$`[Amount]`** for post-production services (project rate), for a total of **$`[Total]`**.
+`[Number]` shoot days at **\$`[Amount]`/day** (day rate) plus **\$`[Amount]`** for post-production services (project rate), for a total of **\$`[Total]`**.
 
 > **Protects you from:** "We thought the edit was included in your day rate." Day rate covers the shoot day. Post is billed separately unless you say otherwise in writing.
 
@@ -78,7 +78,7 @@ Total project compensation is **$`[Amount]`**, inclusive of all deliverables des
 
 `[DECISION: Whether to require a deposit depends on project size and client history.]`
 
-A non-refundable deposit of **`[25–50%]` ($`[Amount]`)** is due upon signing. Work will not commence until the deposit is received.
+A non-refundable deposit of **`[25–50%]` (\$`[Amount]`)** is due upon signing. Work will not commence until the deposit is received.
 
 `[DECISION: For repeat clients you trust, you may waive the deposit. For new clients or projects over $2,000, always require one. 50% is standard for large projects; 25–30% is standard for smaller ones.]`
 
@@ -112,7 +112,7 @@ Invoices unpaid after the due date will accrue interest at **`[1.5]`% per month*
 
 ### 2E. Expenses
 
-Client will reimburse Contractor for all pre-approved out-of-pocket expenses within `[15]` days of receipt of itemized documentation. Expenses exceeding **$`[50–100]`** require written approval before they are incurred.
+Client will reimburse Contractor for all pre-approved out-of-pocket expenses within `[15]` days of receipt of itemized documentation. Expenses exceeding **\$`[50–100]`** require written approval before they are incurred.
 
 `[DECISION: Set the approval threshold based on the project. For commercials or broadcast work: $100–200. For smaller or indie projects: $50. This prevents disputes over "who approved the $300 hard drive."]`
 

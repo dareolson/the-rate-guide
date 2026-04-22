@@ -5,6 +5,25 @@
 
 ---
 
+## Before You Open Anything: Protect Your Originals
+
+This pack includes two copies of every document — one in the **contracts** folder, one in the **originals** folder.
+
+**Always work from the contracts folder. Never edit the originals.**
+
+Here's why: these templates took time to set up. If you accidentally delete a clause, overwrite a section, or just want to start fresh on a project, the originals folder is your safety net. It takes five seconds to copy a file. It takes a lot longer to recreate a contract from scratch.
+
+The workflow is simple:
+
+1. Open the file from the **contracts** folder
+2. Fill in the blanks, make your decisions, delete the instructions
+3. Save it with a new name — something like `ClientName-Agreement-2024.docx`
+4. Send that renamed copy to your client
+
+The original in the **contracts** folder stays clean for the next job.
+
+---
+
 ## Before We Start: Why Any of This Matters
 
 When you work a regular job, your company handles the paperwork. They send you a job offer. They put your hours in a system. They pay you every two weeks whether or not you remembered to send a bill.

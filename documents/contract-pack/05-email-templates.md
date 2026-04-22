@@ -35,7 +35,7 @@ A few quick questions to make sure I can give you an accurate quote:
 - What's the expected scope for post-production, if any?
 - What's your target delivery date?
 
-My day rate is **$`[Amount]`** for `[role]` work. `[Add one sentence of context if helpful: "That's inclusive of my camera package." / "Post is billed separately as a project rate." / "Rates for commercial work differ from my indie rate — happy to discuss."]`
+My day rate is **\$`[Amount]`** for `[role]` work. `[Add one sentence of context if helpful: "That's inclusive of my camera package." / "Post is billed separately as a project rate." / "Rates for commercial work differ from my indie rate — happy to discuss."]`
 
 Once I have answers to the above, I'll put together a full quote within 24 hours.
 
@@ -67,13 +67,13 @@ Once I have answers to the above, I'll put together a full quote within 24 hours
 
 Hi `[Name]`,
 
-I wanted to give you a heads-up before you plan any upcoming projects: my day rate for `[role]` work is increasing to **$`[New Rate]`/day**, effective **`[Date — e.g., January 1 / March 1]`**.
+I wanted to give you a heads-up before you plan any upcoming projects: my day rate for `[role]` work is increasing to **\$`[New Rate]`/day**, effective **`[Date — e.g., January 1 / March 1]`**.
 
 `[DECISION: Add 1–2 sentences of context if you want to. You don't have to explain yourself, but context can soften the message for longtime clients. Examples:]`
 - *"This reflects my current market rate after `[X years]` of `[type of work]` experience."*
 - *"I've been holding my rate steady since `[year]`, and this brings it in line with current market rates."*
 
-If you have any projects coming up before `[effective date]`, I'm happy to hold the current rate of **$`[Current Rate]`** for those bookings.
+If you have any projects coming up before `[effective date]`, I'm happy to hold the current rate of **\$`[Current Rate]`** for those bookings.
 
 `[Your Name]`
 
