@@ -237,6 +237,35 @@ Both posts follow the same template: hero image + eyebrow + H1 + intro with data
 
 ---
 
+---
+
+## 2026-04-21 — Contract Pack Launch
+
+### Word Doc Export
+- Installed pandoc via Homebrew
+- Created `/tmp/make-reference.py` — generates a styled `reference.docx` (Calibri, navy/amber palette, clean heading hierarchy)
+- Converted all 6 markdown sources to `.docx` via pandoc + reference doc, output to `documents/contract-pack/docx/`
+- Fixed dollar-sign/backtick parsing issue in pandoc markdown (`\$` escaping in contract and email template sources)
+
+### Packaging
+- Added "protect your originals" warning section to `00-plain-english-guide.md`
+- Created `documents/contract-pack/package-zip.sh` — builds `Freelancers-Contract-Pack.zip` with:
+  - `READ ME FIRST — Plain English Guide.pdf` at root
+  - `contracts/` folder (5 editable Word docs)
+  - `originals — do not edit/` folder (same 5 files as safety net)
+- Run `bash documents/contract-pack/package-zip.sh` to rebuild zip after any changes
+
+### Gumroad
+- Contract Pack published at $9.99: `daredevil484.gumroad.com/l/therateguidecontractpack`
+- Zip uploaded as the delivery file
+
+### Email CTA
+- Added Contract Pack soft sell block to rate results email (`/api/send-results/route.ts`)
+- Appears between the methodology link and footer
+- Links directly to Gumroad listing
+
+---
+
 ## Backlog / Suggestions
 
 Priority order based on impact:
