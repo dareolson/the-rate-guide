@@ -77,7 +77,7 @@ src/
     store/
       page.tsx                       — Store index. Contract pack featured card.
       contract-pack/
-        page.tsx                     — Product page. $9.99. Buy buttons disabled until Gumroad is live.
+        page.tsx                     — Product page. $9.99. Buy buttons live — links to Gumroad.
     api/
       health-insurance/
         route.ts                     — GET /api/health-insurance?zip=XXXXX → Silver plan avg premium
@@ -267,8 +267,7 @@ Both posts follow the same template: hero image + eyebrow + H1 + intro with data
 - `/store/contract-pack` — Freelancer's Contract Pack product page
   - Price: $9.99
   - Gumroad URL preserved as `GUMROAD_URL` constant: `"https://daredevil484.gumroad.com/l/ktqssh"`
-  - Buy buttons currently disabled — replaced with "Coming Soon" divs until product is uploaded to Gumroad
-  - To re-enable: swap both Coming Soon divs back to `<a>` tags pointing at `GUMROAD_URL`
+  - Buy buttons live — `<a>` tags pointing at `GUMROAD_URL`, product uploaded and active on Gumroad
 - `/store` — Featured contract pack with gold border + "Original" badge; links to /store/contract-pack
 - Community nav button — gold outlined button added to global nav (layout.tsx)
   - `href="#"` placeholder — wire up real Discord invite URL when ready
@@ -299,7 +298,7 @@ Both posts follow the same template: hero image + eyebrow + H1 + intro with data
 - `03-change-order-form.md`
 - `04-invoice-template.md`
 - `05-email-templates.md`
-- All 6 docs have PDF counterparts — upload to Gumroad when ready to sell
+- All 6 docs have PDF counterparts — uploaded to Gumroad, live at $9.99
 
 ---
 
@@ -340,19 +339,17 @@ Priority order based on impact:
 
 2. **Wire Discord invite URL** — Community nav button in layout.tsx has `href="#"` placeholder. Replace with real Discord invite link when ready.
 
-3. **Enable Gumroad buy buttons** — Upload contract pack files to Gumroad, configure payment, then swap both Coming Soon divs back to `<a>` tags in `/store/contract-pack/page.tsx`. GUMROAD_URL constant is already set.
+3. **Verify `email_captures` table in Supabase** — Check Supabase dashboard > Table Editor. If missing, run the CREATE TABLE block from supabase-schema.sql in the SQL Editor.
 
-4. **Verify `email_captures` table in Supabase** — Check Supabase dashboard > Table Editor. If missing, run the CREATE TABLE block from supabase-schema.sql in the SQL Editor.
+4. **More rate guide posts** — producer, gaffer, sound mixer, camera operator. Each is a standalone SEO page. Same pattern. Cards in /guides already exist as coming-soon — remove `comingSoon: true` to activate each one.
 
-5. **More rate guide posts** — producer, gaffer, sound mixer, camera operator. Each is a standalone SEO page. Same pattern. Cards in /guides already exist as coming-soon — remove `comingSoon: true` to activate each one.
+5. **Supabase dashboard** — Read `calc_events` table to see which disciplines are most popular, what take-home goals people enter, whether users hit the Calculate button. Data should inform what to build next.
 
-6. **Supabase dashboard** — Read `calc_events` table to see which disciplines are most popular, what take-home goals people enter, whether users hit the Calculate button. Data should inform what to build next.
+6. **More disciplines** — Writers, photographers, web designers, brand strategists all search for rate calculators. Expanding the discipline list widens SEO surface.
 
-7. **More disciplines** — Writers, photographers, web designers, brand strategists all search for rate calculators. Expanding the discipline list widens SEO surface.
+7. **Mobile audit** — Radio button groups and number inputs on small screens need a real look. Most organic search traffic lands on mobile first.
 
-8. **Mobile audit** — Radio button groups and number inputs on small screens need a real look. Most organic search traffic lands on mobile first.
-
-9. **Share your rate card** — Client-facing URL (`?client=1`) exists but there's no obvious "share this" prompt after calculating. A visible copy-link button in the results panel would increase return visits and word-of-mouth.
+8. **Share your rate card** — Client-facing URL (`?client=1`) exists but there's no obvious "share this" prompt after calculating. A visible copy-link button in the results panel would increase return visits and word-of-mouth.
 
 ---
 
