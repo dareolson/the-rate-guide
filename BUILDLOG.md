@@ -331,6 +331,36 @@ Both posts follow the same template: hero image + eyebrow + H1 + intro with data
 
 ---
 
+## 2026-04-22 — Security Pass
+
+Addressed all open security issues identified by a systematic review of the codebase.
+
+### Input Validation — `/api/send-results`
+- Route was accepting raw unvalidated JSON — anyone could POST arbitrary email addresses and abuse Resend as a relay
+- Added `isValidPayload()` type guard: validates email format (regex), all string fields non-empty, `dayRate` is a positive number under 100,000, `currentRate` is null or a non-negative number
+- Replaced loose `if (!email || !dayRate)` check — new validator covers all fields and types
+
+### Rate Limiting — `/api/send-results`
+- Added IP-based rate limiter: 5 requests per IP per 60-second window
+- Module-level `Map` — functional within a single serverless instance, resets on cold start
+- Note: for cross-instance rate limiting, replace with Upstash Redis + `@upstash/ratelimit` (backlog item)
+
+### Security Headers — `next.config.ts`
+- Added to all routes via `headers()` config:
+  - `X-Frame-Options: DENY` — prevents clickjacking
+  - `X-Content-Type-Options: nosniff` — prevents MIME sniffing
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+
+### Unsubscribe Link
+- Email footer unsubscribe was linking to homepage (not a real unsubscribe — CAN-SPAM violation)
+- Fixed to `mailto:hello@therateguide.com?subject=Unsubscribe`
+
+### .gitignore
+- Added `documents/contract-pack/*.zip` — generated artifact, belongs on Gumroad not in git
+
+---
+
 ## Backlog / Suggestions
 
 Priority order based on impact:
