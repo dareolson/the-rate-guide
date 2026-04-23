@@ -2020,6 +2020,93 @@ function Calculator() {
               </div>
             </div>
 
+            {/* Write-offs selector */}
+            {(() => {
+              const WRITEOFF_PRESETS = [
+                { label: "Minimal",    value: 4000,  hint: "Editor / remote worker" },
+                { label: "Standard",   value: 10000, hint: "Most freelancers" },
+                { label: "Gear-heavy", value: 20000, hint: "Camera op / modest kit" },
+                { label: "Full kit",   value: 35000, hint: "DP / large inventory" },
+              ] as const;
+              const writeoffs     = (inputs as CalcInputs & { writeoffs?: number }).writeoffs ?? 10000;
+              const isCustom = !WRITEOFF_PRESETS.some(p => p.value === writeoffs);
+              return (
+                <div>
+                  <Label>Estimated write-offs / year — <span style={{ color: "var(--text)" }}>${writeoffs.toLocaleString()}</span></Label>
+                  <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+                    {WRITEOFF_PRESETS.map(p => (
+                      <button
+                        key={p.value}
+                        onClick={() => set("writeoffs" as keyof CalcInputs, p.value as never)}
+                        title={p.hint}
+                        style={{
+                          background:    writeoffs === p.value && !isCustom ? "rgba(212,146,10,0.12)" : "transparent",
+                          color:         writeoffs === p.value && !isCustom ? "var(--accent)" : "var(--text-dim)",
+                          border:        `1px solid ${writeoffs === p.value && !isCustom ? "var(--accent)" : "var(--border)"}`,
+                          fontFamily:    "var(--mono)",
+                          fontSize:      "0.83rem",
+                          letterSpacing: "0.04em",
+                          padding:       "0.45rem 0.9rem",
+                          borderRadius:  "4px",
+                          cursor:        "pointer",
+                          transition:    "all 0.15s",
+                        }}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => {
+                        if (!isCustom) set("writeoffs" as keyof CalcInputs, 15000 as never);
+                        else set("writeoffs" as keyof CalcInputs, 10000 as never);
+                      }}
+                      style={{
+                        background:    isCustom ? "rgba(212,146,10,0.12)" : "transparent",
+                        color:         isCustom ? "var(--accent)" : "var(--text-dim)",
+                        border:        `1px solid ${isCustom ? "var(--accent)" : "var(--border)"}`,
+                        fontFamily:    "var(--mono)",
+                        fontSize:      "0.83rem",
+                        letterSpacing: "0.04em",
+                        padding:       "0.45rem 0.9rem",
+                        borderRadius:  "4px",
+                        cursor:        "pointer",
+                        transition:    "all 0.15s",
+                      }}
+                    >
+                      Custom
+                    </button>
+                  </div>
+                  {isCustom && (
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <span style={{ fontFamily: "var(--mono)", color: "var(--text-dim)", fontSize: "0.85rem" }}>$</span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={200000}
+                        step={500}
+                        value={writeoffs}
+                        onChange={e => set("writeoffs" as keyof CalcInputs, Math.max(0, Number(e.target.value)) as never)}
+                        style={{
+                          background:  "var(--surface)",
+                          border:      "1px solid var(--border)",
+                          color:       "var(--text)",
+                          fontFamily:  "var(--mono)",
+                          fontSize:    "0.9rem",
+                          padding:     "0.4rem 0.6rem",
+                          borderRadius:"4px",
+                          width:       "120px",
+                        }}
+                      />
+                      <span style={{ fontSize: "0.75rem", color: "var(--text-dim)" }}>/yr</span>
+                    </div>
+                  )}
+                  <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "0.4rem" }}>
+                    Write-offs reduce your taxable income — home office, equipment, software, business meals. Higher write-offs = lower tax burden = lower required rate.
+                  </div>
+                </div>
+              );
+            })()}
+
             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
               {([
                 { key: "hasKit" as const, label: "I carry a kit (+$300/day)" },

@@ -171,6 +171,7 @@ export interface CalcInputs {
   hasKit:           boolean;
   includeProfit:    boolean;
   healthInsurance?: number; // override static default when ZIP-based data is available
+  writeoffs?:       number; // estimated annual business deductions (default: FREELANCE_WRITEOFFS)
 }
 
 export interface CalcResults {
@@ -195,6 +196,7 @@ export interface CalcResults {
 export function calculate(inputs: CalcInputs): CalcResults {
   const { takeHome, billableDays, hasKit, includeProfit, discipline, experience, location } = inputs;
   const healthInsurance = inputs.healthInsurance ?? HEALTH_INSURANCE_ANNUAL;
+  const writeoffs       = inputs.writeoffs       ?? FREELANCE_WRITEOFFS;
 
   // Step 1 — take-home goal
   // Step 2 — add health insurance (ZIP-based if available, else national average)
@@ -207,10 +209,10 @@ export function calculate(inputs: CalcInputs): CalcResults {
   // Taxable income = take-home minus the three key self-employed deductions:
   //   • health insurance premium (100% deductible for self-employed)
   //   • half of SE tax (~7.65% of gross, mandatory deduction)
-  //   • estimated business write-offs ($10k typical for working creatives)
+  //   • estimated business write-offs (user-provided or default $10k)
   // Health insurance is already subtracted from take-home conceptually (it's
   // a pre-tax cost), so we reduce by ½ SE tax and write-offs only.
-  const taxableIncome = Math.max(0, takeHome - (seTax * 0.5) - FREELANCE_WRITEOFFS);
+  const taxableIncome = Math.max(0, takeHome - (seTax * 0.5) - writeoffs);
   const federalTaxRate = federalEffectiveRate(taxableIncome);
   const stateTaxRate   = STATE_TAX_RATE[location];
   const federalTax     = taxableIncome * federalTaxRate;
