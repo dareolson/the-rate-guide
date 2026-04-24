@@ -895,11 +895,16 @@ function EmailCapture({ results, inputs, currentRate }: { results: CalcResults; 
         }),
       });
 
-      if (!res.ok) throw new Error("Request failed");
+      if (!res.ok) {
+        const status = res.status;
+        if (status === 429) throw new Error("Too many attempts. Wait a minute and try again.");
+        if (status === 403) throw new Error("Security check failed. Refresh the page and try again.");
+        throw new Error(`Request failed (${status})`);
+      }
       track("email_capture", { discipline: inputs.discipline, experience: inputs.experience });
       setSubmitted(true);
-    } catch {
-      setError("Something went wrong. Try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
       // Reset Turnstile so user can retry
       if (widgetId.current && window.turnstile) {
         window.turnstile.reset(widgetId.current);
