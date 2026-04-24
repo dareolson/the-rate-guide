@@ -382,6 +382,8 @@ Addressed all open security issues identified by a systematic review of the code
 
 ## Backlog / Suggestions
 
+> **Security:** Rotate `RESEND_API_KEY` — generate a new key in Resend, save it in Vercel as Sensitive, revoke the old key. Current key is stored in plaintext (Vercel warning). Not urgent but worth doing before launch.
+
 Priority order based on impact:
 
 1. ~~**Motion designer rate guide**~~ — Done. `/motion-designer-day-rate` live. Covers rate ranges by experience + specialization (2D/3D/Houdini), production type table, IATSE Local 839 union context, billing models, and six motion-design-specific pricing mistakes. `comingSoon` flag removed from `/guides`.
