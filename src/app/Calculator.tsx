@@ -1434,7 +1434,7 @@ function Calculator() {
   const urlInputs = paramsToInputs(searchParams);
 
   const [inputs, setInputs] = useState<CalcInputs>({
-    discipline:    urlInputs.discipline    ?? "" as Discipline,
+    discipline:    urlInputs.discipline    ?? "Cinematographer / DP",
     experience:    urlInputs.experience    ?? "Mid",
     location:      urlInputs.location      ?? "Mid Market",
     takeHome:      urlInputs.takeHome      ?? 0,
