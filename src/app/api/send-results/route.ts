@@ -244,6 +244,11 @@ async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body:    form.toString(),
     });
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("[turnstile] siteverify HTTP error:", res.status, text);
+      return false;
+    }
     const data = await res.json() as { success: boolean; "error-codes"?: string[] };
     if (!data.success) {
       console.error("[turnstile] verification failed:", data["error-codes"]);
