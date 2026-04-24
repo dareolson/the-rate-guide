@@ -150,8 +150,8 @@ function Nav() {
             {label}
           </a>
         ))}
-        {/* Discord community link — replace href with real invite URL */}
-        <a href="#" style={{
+        {/* Discord community link */}
+        <a href="https://discord.gg/72uq9Bsh" target="_blank" rel="noopener noreferrer" style={{
           fontFamily:     "var(--mono)",
           fontSize:       "0.68rem",
           letterSpacing:  "0.12em",
