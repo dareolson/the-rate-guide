@@ -240,9 +240,13 @@ async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({ secret: process.env.TURNSTILE_SECRET_KEY, response: token, remoteip: ip }),
     });
-    const data = await res.json() as { success: boolean };
+    const data = await res.json() as { success: boolean; "error-codes"?: string[] };
+    if (!data.success) {
+      console.error("[turnstile] verification failed:", data["error-codes"]);
+    }
     return data.success === true;
-  } catch {
+  } catch (err) {
+    console.error("[turnstile] fetch error:", err);
     return false;
   }
 }
