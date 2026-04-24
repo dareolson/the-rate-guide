@@ -331,6 +331,41 @@ Both posts follow the same template: hero image + eyebrow + H1 + intro with data
 
 ---
 
+## 2026-04-24
+
+### Housekeeping
+- Confirmed Discord invite URL (`https://discord.gg/72uq9Bsh`) wired into Community nav button — removed from backlog
+- Confirmed `email_captures` table exists in Supabase (3 rows, all test entries from Derek)
+- Added `TURNSTILE_SECRET_KEY` and `NEXT_PUBLIC_TURNSTILE_SITE_KEY` to env var table in BUILDLOG
+- Added Resend API key rotation to backlog (key stored in plaintext — Vercel flagged it as "Needs Attention")
+
+### Motion Designer Rate Guide
+- `/motion-designer-day-rate` — SEO blog post, ~2,000 words, research-backed
+  - Data: School of Motion 2024 State of the Industry survey, ZipRecruiter April 2026, IATSE Local 839 (Animation Guild) 2024–27 Majors Agreement, Motionographer community
+  - 4 inline React chart components: rate range bars by experience, specialization bars (2D → Houdini FX), production type table, IATSE Local 839 union rate table
+  - Key differentiator from other posts: 2D vs 3D rate split, render time billing, styleframes as a billable deliverable
+  - CTA links to calculator pre-filled with `?d=Motion+Designer`
+  - `comingSoon` flag removed from `/guides` — card is now live and clickable
+
+### Email Capture Bug Fix
+- **Root cause:** Cloudflare Turnstile siteverify URL was `v1` — that endpoint only accepts GET (405 on POST). Correct URL is `v0`.
+- **Investigation path:**
+  - Added status-specific error messages to client (429 = rate limit, 403 = security check failed)
+  - Added `console.error` logging of Turnstile error codes and HTTP status to Vercel function logs
+  - Added `cache: no-store` to fetch (Next.js App Router caches fetch by default)
+  - Confirmed via curl that `challenges.cloudflare.com/turnstile/v1/siteverify` returns `Allow: GET` — wrong version
+  - `v0` endpoint accepts JSON POST and returns proper error JSON
+- Email capture now working end-to-end
+
+### Email Template — Contract Pack
+- Banner image (`public/contract-pack-banner.png`) added above contract pack section, wrapped in Gumroad link
+- Eyebrow label changed from cream to gold
+- Price (`$9.99`) now visible in section heading
+- Body copy expanded to name all six documents
+- Soft text link replaced with full gold CTA button matching the day rate hero style
+
+---
+
 ## 2026-04-22 — Security Pass
 
 Addressed all open security issues identified by a systematic review of the codebase.
