@@ -359,6 +359,25 @@ Addressed all open security issues identified by a systematic review of the code
 ### .gitignore
 - Added `documents/contract-pack/*.zip` — generated artifact, belongs on Gumroad not in git
 
+### Cloudflare Turnstile (Bot Protection) — `Calculator.tsx` + `/api/send-results`
+- Added Turnstile widget to `EmailCapture` component — renders invisible/managed challenge before form submit
+- Turnstile script loaded via `<Script>` in `layout.tsx`
+- `EmailCapture` renders a `<div ref={turnstileRef}>` that Turnstile mounts into; token stored in state
+- Submit button disabled until token is present
+- Token sent to `/api/send-results` as `turnstileToken` field
+- API verifies token against `https://challenges.cloudflare.com/turnstile/v1/siteverify` using `TURNSTILE_SECRET_KEY` env var
+- If `TURNSTILE_SECRET_KEY` is not set, verification is skipped (safe for local dev)
+- Returns 403 if bot check fails
+- Supabase insert moved server-side to `/api/send-results` (after rate limit + Turnstile pass) — removed client-side insert from `Calculator.tsx`
+- New fields passed to API: `takeHome`, `billableDays` (stored in `email_captures` table)
+
+### Unit Tests — `src/lib/calculator.test.ts`
+- Added Vitest test suite for all exported functions in `calculator.ts`
+- Run with: `npm test`
+- Covers: `federalEffectiveRate`, `calculate`, `currentEarnings`, `marketRange`, `realityCheck`, `fmt`
+- Tests bracket boundaries, edge cases, and output shape
+- 377 lines — comprehensive coverage of the core math
+
 ---
 
 ## Backlog / Suggestions
