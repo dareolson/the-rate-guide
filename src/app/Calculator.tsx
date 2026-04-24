@@ -516,6 +516,9 @@ function MarketRangePanel({
   rateLabel?: string;
   topBorder?: boolean;
 }) {
+  // No discipline selected yet — nothing to render
+  if (!inputs.discipline || !RATE_FLOORS[inputs.discipline]) return null;
+
   const multiplier = LOCATION_MULTIPLIERS[inputs.location];
   const floor      = RATE_FLOORS[inputs.discipline][inputs.experience]   * multiplier;
   const ceiling    = RATE_CEILINGS[inputs.discipline][inputs.experience] * multiplier;
@@ -1434,7 +1437,7 @@ function Calculator() {
   const urlInputs = paramsToInputs(searchParams);
 
   const [inputs, setInputs] = useState<CalcInputs>({
-    discipline:    urlInputs.discipline    ?? "Cinematographer / DP",
+    discipline:    urlInputs.discipline    ?? "" as Discipline,
     experience:    urlInputs.experience    ?? "Mid",
     location:      urlInputs.location      ?? "Mid Market",
     takeHome:      urlInputs.takeHome      ?? 0,
