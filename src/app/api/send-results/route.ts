@@ -235,14 +235,11 @@ async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
   // Skip verification if secret key isn't configured (local dev without Turnstile set up)
   if (!process.env.TURNSTILE_SECRET_KEY) return true;
   try {
-    const form = new FormData();
-    form.append("secret",   process.env.TURNSTILE_SECRET_KEY!);
-    form.append("response", token);
-    form.append("remoteip", ip);
-    const res  = await fetch("https://challenges.cloudflare.com/turnstile/v1/siteverify", {
-      method: "POST",
-      body:   form,
-      cache:  "no-store",
+    const res  = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ secret: process.env.TURNSTILE_SECRET_KEY, response: token, remoteip: ip }),
+      cache:   "no-store",
     });
     if (!res.ok) {
       const text = await res.text();
