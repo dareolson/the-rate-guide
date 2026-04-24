@@ -148,17 +148,28 @@ function buildEmail({
             </td>
           </tr>
 
-          <!-- Contract Pack soft sell -->
+          <!-- Contract Pack -->
           <tr>
             <td style="padding-top:32px;border-top:1px solid #413925;">
-              <p style="margin:0 0 8px;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#f2ede5;">
+              <a href="https://daredevil484.gumroad.com/l/therateguidecontractpack" style="display:block;text-decoration:none;">
+                <img
+                  src="https://therateguide.com/contract-pack-banner.png"
+                  alt="The Freelancer's Contract Pack"
+                  width="560"
+                  style="display:block;width:100%;max-width:560px;border-radius:4px;margin-bottom:20px;"
+                />
+              </a>
+              <p style="margin:0 0 6px;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#d4920a;">
                 Now protect that rate
               </p>
-              <p style="margin:0 0 12px;font-size:13px;color:#a8a097;line-height:1.6;">
-                The Freelancer's Contract Pack has everything you need to actually charge what you're worth — a services agreement, quote sheet, change order, invoice template, and five email scripts for the conversations most freelancers avoid.
+              <p style="margin:0 0 16px;font-size:15px;font-weight:bold;color:#f2ede5;line-height:1.4;">
+                The Freelancer's Contract Pack — $9.99
               </p>
-              <a href="https://daredevil484.gumroad.com/l/therateguidecontractpack" style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#d4920a;text-decoration:none;">
-                Get the Contract Pack — $9.99 →
+              <p style="margin:0 0 20px;font-size:13px;color:#a8a097;line-height:1.7;">
+                Six documents: a services agreement, project quote sheet, change order form, invoice template, plain-English guide, and five email scripts for the conversations most freelancers avoid. Everything you need to charge what you calculated above and get paid for it.
+              </p>
+              <a href="https://daredevil484.gumroad.com/l/therateguidecontractpack" style="display:inline-block;background:#d4920a;color:#000;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;font-weight:bold;padding:14px 28px;text-decoration:none;">
+                Get the Contract Pack →
               </a>
             </td>
           </tr>
