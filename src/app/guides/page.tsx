@@ -89,7 +89,6 @@ const GUIDES = [
     calcUrl:     "/?d=Motion+Designer",
     image:       "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&q=80&auto=format&fit=crop",
     imageAlt:    "Motion graphics on screen",
-    comingSoon:  true,
     ratePreview: [
       { label: "Emerging", range: "$350–$600" },
       { label: "Mid",      range: "$600–$900" },

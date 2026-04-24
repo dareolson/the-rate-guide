@@ -384,9 +384,9 @@ Addressed all open security issues identified by a systematic review of the code
 
 Priority order based on impact:
 
-1. **Motion designer rate guide** — next post in the discipline hierarchy. Same research + write pattern as cinematographer/editor/colorist posts. No input needed from Derek.
+1. ~~**Motion designer rate guide**~~ — Done. `/motion-designer-day-rate` live. Covers rate ranges by experience + specialization (2D/3D/Houdini), production type table, IATSE Local 839 union context, billing models, and six motion-design-specific pricing mistakes. `comingSoon` flag removed from `/guides`.
 
-2. **Wire Discord invite URL** — Community nav button in layout.tsx has `href="#"` placeholder. Replace with real Discord invite link when ready.
+2. ~~**Wire Discord invite URL**~~ — Done. `https://discord.gg/72uq9Bsh` wired into Community nav button in `layout.tsx`.
 
 3. **Verify `email_captures` table in Supabase** — Check Supabase dashboard > Table Editor. If missing, run the CREATE TABLE block from supabase-schema.sql in the SQL Editor.
 
@@ -410,6 +410,8 @@ Priority order based on impact:
 | `RESEND_API_KEY` | Vercel | Resend email sending |
 | `NEXT_PUBLIC_SUPABASE_URL` | Vercel + `.env.local` | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Vercel + `.env.local` | Supabase anon key |
+| `TURNSTILE_SECRET_KEY` | Vercel | Cloudflare Turnstile bot protection (email capture) |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Vercel + `.env.local` | Cloudflare Turnstile site key (client-side widget) |
 
 ---
 
