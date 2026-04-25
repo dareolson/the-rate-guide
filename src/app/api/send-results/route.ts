@@ -231,9 +231,9 @@ function isValidPayload(body: unknown): body is {
   const b = body as Record<string, unknown>;
   return (
     typeof b.email          === "string"  && EMAIL_RE.test(b.email) &&
-    typeof b.discipline     === "string"  && b.discipline.length > 0 && b.discipline.length <= 100 &&
-    typeof b.experience     === "string"  && b.experience.length > 0 && b.experience.length <= 100 &&
-    typeof b.location       === "string"  && b.location.length > 0 && b.location.length <= 100 &&
+    typeof b.discipline     === "string"  && b.discipline.length > 0 && b.discipline.length <= 50 &&
+    typeof b.experience     === "string"  && b.experience.length > 0 && b.experience.length <= 50 &&
+    typeof b.location       === "string"  && b.location.length > 0 && b.location.length <= 50 &&
     typeof b.dayRate        === "number"  && b.dayRate > 0 && b.dayRate < 100_000 &&
     typeof b.turnstileToken === "string"  && b.turnstileToken.length > 0 &&
     (b.currentRate  === null || (typeof b.currentRate  === "number" && b.currentRate  >= 0)) &&
