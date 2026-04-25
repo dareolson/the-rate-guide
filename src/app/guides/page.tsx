@@ -106,7 +106,6 @@ const GUIDES = [
     calcUrl:     "/?d=Producer",
     image:       "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&q=80&auto=format&fit=crop",
     imageAlt:    "Film clapperboard on set",
-    comingSoon:  true,
     ratePreview: [
       { label: "Emerging", range: "$400–$650" },
       { label: "Mid",      range: "$650–$1,000" },

@@ -433,7 +433,7 @@ Priority order based on impact:
 
 3. **Verify `email_captures` table in Supabase** — Check Supabase dashboard > Table Editor. If missing, run the CREATE TABLE block from supabase-schema.sql in the SQL Editor.
 
-4. **More rate guide posts** — producer, gaffer, sound mixer, camera operator. Each is a standalone SEO page. Same pattern. Cards in /guides already exist as coming-soon — remove `comingSoon: true` to activate each one.
+4. **More rate guide posts** — gaffer, sound mixer, camera operator remaining. Producer done 2026-04-25. Cards in /guides already exist as coming-soon — remove `comingSoon: true` to activate each one.
 
 5. **Supabase dashboard** — Read `calc_events` table to see which disciplines are most popular, what take-home goals people enter, whether users hit the Calculate button. Data should inform what to build next.
 
