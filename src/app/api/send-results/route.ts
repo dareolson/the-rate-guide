@@ -24,6 +24,15 @@ function fmt(n: number) {
   return "$" + Math.round(n).toLocaleString("en-US");
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function buildEmail({
   email,
   discipline,
@@ -86,7 +95,7 @@ function buildEmail({
                 ${fmt(dayRate)}
               </p>
               <p style="margin:8px 0 0;font-size:13px;color:#a8a097;">
-                ${experience} ${discipline} · ${location}
+                ${escapeHtml(experience)} ${escapeHtml(discipline)} · ${escapeHtml(location)}
               </p>
             </td>
           </tr>
@@ -243,8 +252,13 @@ function isValidPayload(body: unknown): body is {
 }
 
 async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
-  // Skip verification if secret key isn't configured (local dev without Turnstile set up)
-  if (!process.env.TURNSTILE_SECRET_KEY) return true;
+  if (!process.env.TURNSTILE_SECRET_KEY) {
+    if (process.env.NODE_ENV === "production") {
+      console.error("[turnstile] TURNSTILE_SECRET_KEY is not set in production");
+      return false;
+    }
+    return true; // local dev only
+  }
   try {
     const res  = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
       method:  "POST",

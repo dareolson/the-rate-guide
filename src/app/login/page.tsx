@@ -78,7 +78,11 @@ function LoginForm() {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) { setError(error.message); setLoading(false); return; }
       // Redirect to the page they were trying to reach, or dashboard by default
-      const next = searchParams.get("next") ?? "/dashboard";
+      const nextRaw = searchParams.get("next") ?? "/dashboard";
+      const ALLOWED = ["/dashboard", "/"];
+      const next = ALLOWED.includes(nextRaw) && !nextRaw.startsWith("//") && !nextRaw.startsWith("http")
+        ? nextRaw
+        : "/dashboard";
       router.push(next);
     }
   };

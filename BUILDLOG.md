@@ -419,6 +419,12 @@ Addressed all open security issues identified by a systematic review of the code
 
 > **Security:** Rotate `RESEND_API_KEY` — generate a new key in Resend, save it in Vercel as Sensitive, revoke the old key. Current key is stored in plaintext (Vercel warning). Not urgent but worth doing before launch.
 
+> **Security:** Upgrade to Upstash Redis rate limiting — current in-memory `Map` resets on cold start and doesn't work across multiple serverless instances. Install `@upstash/ratelimit` + `@upstash/redis`, add two env vars from Upstash dashboard, replace ~15 lines in both API routes. ~30 min.
+
+> **Security:** Verify Supabase RLS policies — the anon key is exposed client-side (normal for Supabase), but Row-Level Security must be enabled on `profiles`, `rate_history`, and `email_captures` tables or any authenticated user can read/write other users' data. Check Supabase dashboard → Authentication → Policies.
+
+> **Security:** Tighten Content-Security-Policy — current CSP uses `'unsafe-inline'` for scripts (required for Next.js inline scripts). Long-term fix is to use nonce-based CSP. Not urgent but worth revisiting when there's time.
+
 Priority order based on impact:
 
 1. ~~**Motion designer rate guide**~~ — Done. `/motion-designer-day-rate` live. Covers rate ranges by experience + specialization (2D/3D/Houdini), production type table, IATSE Local 839 union context, billing models, and six motion-design-specific pricing mistakes. `comingSoon` flag removed from `/guides`.

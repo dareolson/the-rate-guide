@@ -15,6 +15,24 @@ import { NextRequest, NextResponse } from "next/server";
 
 const CMS_API_KEY = process.env.CMS_MARKETPLACE_API_KEY ?? "";
 const CMS_BASE    = "https://marketplace.api.healthcare.gov/api/v1";
+
+// Basic rate limiting — same caveat as send-results: resets on cold start.
+// Replace with Upstash Redis for distributed enforcement.
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX       = 10;
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now   = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return true;
+  entry.count++;
+  return false;
+}
 const DEFAULT_AGE = 35;
 
 // Try the current plan year, fall back to prior year if no plans are found.
@@ -60,6 +78,11 @@ async function fetchSilverPlans(
 }
 
 export async function GET(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const zip = request.nextUrl.searchParams.get("zip")?.trim();
 
   if (!zip || !/^\d{5}$/.test(zip)) {
