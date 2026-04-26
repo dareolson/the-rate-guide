@@ -366,6 +366,15 @@ Both posts follow the same template: hero image + eyebrow + H1 + intro with data
 
 ---
 
+## 2026-04-25
+
+### Housekeeping
+- Added `PRD.md` to repo root — product overview, problem statement, feature list, business model, tech stack, and open backlog
+- Rotated `RESEND_API_KEY` — generated new key in Resend, updated in Vercel as Sensitive (Production + Preview only), revoked old key, redeployed. Removed from backlog.
+  - Sensitive variables cannot target Development in Vercel — Development env left without the key (not needed locally)
+
+---
+
 ## 2026-04-22 — Security Pass
 
 Addressed all open security issues identified by a systematic review of the codebase.
@@ -417,7 +426,7 @@ Addressed all open security issues identified by a systematic review of the code
 
 ## Backlog / Suggestions
 
-> **Security:** Rotate `RESEND_API_KEY` — generate a new key in Resend, save it in Vercel as Sensitive, revoke the old key. Current key is stored in plaintext (Vercel warning). Not urgent but worth doing before launch.
+> ~~**Security:** Rotate `RESEND_API_KEY`~~ — Done 2026-04-25. New key saved as Sensitive in Vercel (Production + Preview), old key revoked.
 
 > **Security:** Upgrade to Upstash Redis rate limiting — current in-memory `Map` resets on cold start and doesn't work across multiple serverless instances. Install `@upstash/ratelimit` + `@upstash/redis`, add two env vars from Upstash dashboard, replace ~15 lines in both API routes. ~30 min.
 
